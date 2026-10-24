@@ -1,6 +1,7 @@
 package com.example.trabajofinalprogramacion2.entidades.usuarios;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 public abstract class Usuarios {
@@ -91,5 +92,11 @@ public abstract class Usuarios {
 
     // METODOS
 
-    public abstract void mostrarMenu();
+    public int calcularEdad()
+    {
+        LocalDate a = LocalDate.of(2007, 10, 25);
+        LocalDate hoy = LocalDate.now();
+
+        return Period.between(a, hoy).getYears();
+    }
 }
