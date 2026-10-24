@@ -15,7 +15,6 @@ public abstract class Usuarios {
     // CONSTRUCTORES
 
     public Usuarios() {
-
     }
 
     public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento,  boolean activo) {
