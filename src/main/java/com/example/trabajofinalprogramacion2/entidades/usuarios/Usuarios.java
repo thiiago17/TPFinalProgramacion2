@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public abstract class Usuarios {
-    private UUID id;
     private String nombre;
     private String apellido;
     private String dni;
@@ -19,8 +18,7 @@ public abstract class Usuarios {
     public Usuarios() {
     }
 
-    public Usuarios(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo) {
-        this.id = UUID.randomUUID();
+    public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
