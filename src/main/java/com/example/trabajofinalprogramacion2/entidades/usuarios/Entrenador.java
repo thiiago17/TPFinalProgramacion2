@@ -13,8 +13,8 @@ public class Entrenador extends Usuarios {
     public Entrenador() {
     }
 
-    public Entrenador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados) {
-        super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, edad, activo);
+    public Entrenador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados) {
+        super(nombre, apellido, dni, email, password, fechaDeNacimiento, edad, activo);
         this.especialidad = especialidad;
         this.salario = salario;
         this.alumnosAsociados = alumnosAsociados;

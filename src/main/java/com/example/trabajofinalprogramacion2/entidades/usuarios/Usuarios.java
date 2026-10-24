@@ -31,10 +31,6 @@ public abstract class Usuarios {
 
     // GETTERS
 
-    public UUID getId() {
-        return id;
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -68,10 +64,6 @@ public abstract class Usuarios {
     }
 
     // SETTERS
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
