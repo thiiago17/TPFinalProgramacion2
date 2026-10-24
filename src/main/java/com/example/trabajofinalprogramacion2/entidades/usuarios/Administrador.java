@@ -10,8 +10,8 @@ public class Administrador extends Usuarios {
     public Administrador() {
     }
 
-    public Administrador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo, LocalDate fechaIngreso) {
-        super(nombre, apellido, dni, email, password, fechaDeNacimiento, edad, activo);
+    public Administrador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
+        super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         this.fechaIngreso = fechaIngreso;
     }
 

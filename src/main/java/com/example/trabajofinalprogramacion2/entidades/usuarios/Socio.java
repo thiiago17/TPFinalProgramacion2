@@ -15,8 +15,8 @@ public class Socio extends Usuarios {
     public Socio() {
     }
 
-    public Socio(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo, Double pesoActual, Double altura, LocalDate fechaAlta, Membresia membresia) {
-        super(nombre, apellido, dni, email, password, fechaDeNacimiento, edad, activo);
+    public Socio(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, Double pesoActual, Double altura, LocalDate fechaAlta, Membresia membresia) {
+        super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         this.pesoActual = pesoActual;
         this.altura = altura;
         this.fechaAlta = fechaAlta;

@@ -10,7 +10,6 @@ public abstract class Usuarios {
     private String email;
     private String password;
     private LocalDate fechaDeNacimiento;
-    private int edad;
     private boolean activo;
 
     // CONSTRUCTORES
@@ -18,14 +17,13 @@ public abstract class Usuarios {
     public Usuarios() {
     }
 
-    public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, int edad, boolean activo) {
+    public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento,  boolean activo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
         this.email = email;
         this.password = password;
         this.fechaDeNacimiento = fechaDeNacimiento;
-        this.edad = edad;
         this.activo = activo;
     }
 
@@ -53,10 +51,6 @@ public abstract class Usuarios {
 
     public LocalDate getFechaDeNacimiento() {
         return fechaDeNacimiento;
-    }
-
-    public int getEdad() {
-        return edad;
     }
 
     public boolean isActivo() {
@@ -87,10 +81,6 @@ public abstract class Usuarios {
 
     public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
         this.fechaDeNacimiento = fechaDeNacimiento;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
     }
 
     public void setActivo(boolean activo) {
