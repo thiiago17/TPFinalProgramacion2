@@ -62,4 +62,31 @@ public class Socio extends Usuarios {
     // MOSTRAR
 
     // METODOS
+    public double calcularIMC() {
+        if (pesoActual==null || altura==null || pesoActual<=0 || altura<=0){
+            return 0;
+        }
+        return pesoActual/(altura*altura);
+    }
+
+    public String verEstadoIMC(){
+        double IMC=calcularIMC();
+
+        if (IMC==0){
+            return "Datos de altura o peso invalidos.";
+        }else if(IMC<18.5){
+            return "Bajo peso";
+        }else if (IMC>=18.5 && IMC<25.0){
+            return "Peso normal (Saludable)";
+        }else if (IMC>=25.0 && IMC<30.0) {
+            return "Sobrepeso";
+        }else if (IMC>=30.0 && IMC<34.9){
+            return "Obesidad (Grado I)";
+        }else if (IMC>=34.9 && IMC<39.9){
+            return "Obesidad severa (Grado II)";
+        }else {
+            return "Obesidad mórbida / Grado III";
+        }
+    }
+
 }

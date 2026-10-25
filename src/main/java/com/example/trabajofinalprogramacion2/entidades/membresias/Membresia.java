@@ -32,6 +32,7 @@ public class Membresia {
         return plan;
     }
 
+
     // SETTERS
 
     public void setFechaInicio(LocalDate fechaInicio) {
@@ -49,4 +50,31 @@ public class Membresia {
     // MOSTRAR
 
     // METODOS
+
+    public boolean isVencida(){
+        if (fechaVencimiento==null){
+            return true;
+        }
+        return LocalDate.now().isAfter(fechaVencimiento);
+    }
+
+    public String verPlanActual(){
+        if (plan==null){
+            return "Sin plan asignado";
+        }
+
+        return "Plan actual: "+plan.name();
+    }
+
+    //Metodo abonar cuota
+
+    public String mostrarPlanes (){
+        String textoPlanes= "Planes disponibles: \n";
+        for (Plan p:Plan.values()){
+            textoPlanes+= "- "+p.name()+"\n";
+        }
+        return textoPlanes;
+    }
+
+    //Metodo elegir plan
 }
