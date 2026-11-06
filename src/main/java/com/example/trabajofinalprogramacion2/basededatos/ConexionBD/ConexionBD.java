@@ -5,12 +5,24 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBD {
-    public static final String url="jdbc:mysql://localhost:3306/TrabajoPracticoFinal2";
-    public static final String user="root";
-    public static final String password="";
 
-    public static Connection conectar()throws SQLException {
-        return DriverManager.getConnection(url,user,password);
+    private static final String URL =
+            System.getenv("DB_URL");
+
+    private static final String USER =
+            System.getenv("DB_USER");
+
+    private static final String PASSWORD =
+            System.getenv("DB_PASSWORD");
+
+    public static Connection conectar() throws SQLException {
+
+        if (URL == null || USER == null || PASSWORD == null) {
+            throw new IllegalStateException(
+                    "Faltan configurar las variables de entorno"
+            );
+        }
+
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
-
 }
