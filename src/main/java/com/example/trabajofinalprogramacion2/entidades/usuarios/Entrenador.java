@@ -20,6 +20,13 @@ public class Entrenador extends Usuarios {
         this.alumnosAsociados = alumnosAsociados;
     }
 
+    public Entrenador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados) {
+        super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
+        this.especialidad = especialidad;
+        this.salario = salario;
+        this.alumnosAsociados = alumnosAsociados;
+    }
+
     // GETTERS
 
     public String getEspecialidad() {

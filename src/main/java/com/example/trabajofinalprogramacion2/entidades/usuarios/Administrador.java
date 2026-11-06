@@ -15,6 +15,11 @@ public class Administrador extends Usuarios {
         this.fechaIngreso = fechaIngreso;
     }
 
+    public Administrador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
+        super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
+        this.fechaIngreso = fechaIngreso;
+    }
+
     // GETTERS
 
     public LocalDate getFechaIngreso() {

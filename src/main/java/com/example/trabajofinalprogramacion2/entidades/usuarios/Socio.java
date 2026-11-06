@@ -23,6 +23,14 @@ public class Socio extends Usuarios {
         this.membresia = membresia;
     }
 
+    public Socio(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, Double pesoActual, Double altura, LocalDate fechaAlta, Membresia membresia) {
+        super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
+        this.pesoActual = pesoActual;
+        this.altura = altura;
+        this.fechaAlta = fechaAlta;
+        this.membresia = membresia;
+    }
+
     // GETTERS
 
     public Double getPesoActual() {

@@ -5,6 +5,7 @@ import java.time.Period;
 import java.util.UUID;
 
 public abstract class Usuarios {
+    private int id;
     private String nombre;
     private String apellido;
     private String dni;
@@ -28,7 +29,22 @@ public abstract class Usuarios {
         this.activo = activo;
     }
 
+    public Usuarios(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.email = email;
+        this.password = password;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.activo = activo;
+    }
+
     // GETTERS
+
+    public int getId() {
+        return id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -59,6 +75,10 @@ public abstract class Usuarios {
     }
 
     // SETTERS
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
