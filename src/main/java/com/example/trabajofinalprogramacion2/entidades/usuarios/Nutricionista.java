@@ -64,6 +64,22 @@ public class Nutricionista extends Usuarios{
 
     public double calcularExtraPorComision()
     {
-        return salario+(comisionPorConsulta*turnos.size());
+
+        int consultasReservadas = 0;
+
+        for (Turno turno : turnos) {
+            if (!turno.isEstado()) {
+                consultasReservadas++;
+            }
+        }
+
+        return consultasReservadas * comisionPorConsulta;
+    }
+
+    public void agregarTurno(Turno turno)
+    {
+        if (turno != null && !turnos.contains(turno)) {
+            turnos.add(turno);
+        }
     }
 }
