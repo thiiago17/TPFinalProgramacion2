@@ -68,13 +68,51 @@ public class Membresia {
 
     //Metodo abonar cuota
 
+    public String abonarCuota(){
+        if (this.plan==null){
+            return "No se puede abonar, primero debe elegir un plan";
+        }
+
+        if (isVencida()){
+            this.fechaInicio=LocalDate.now();
+            this.fechaVencimiento=LocalDate.now().plusMonths(1);
+        }else {
+            return "Usted esta al dia con la cuota";
+        }
+
+        return "Cuota abonada con éxito.\n" +
+                "Plan: " + this.plan.name() + "\n" +
+                "Monto: $" + this.plan.getPrecio() + "\n" +
+                "Nuevo vencimiento: " + this.fechaVencimiento;
+    }
+
     public String mostrarPlanes (){
         String textoPlanes= "Planes disponibles: \n";
         for (Plan p:Plan.values()){
-            textoPlanes+= "- "+p.name()+"\n";
+            textoPlanes += "- " + p.name() + " ($" + p.getPrecio() + ")\n";
         }
         return textoPlanes;
     }
 
     //Metodo elegir plan
+
+    public void elegirPlan (Plan nuevoPlan){
+        if (nuevoPlan==null){
+            throw new IllegalArgumentException("El plan seleccionado no puede estar vacio");
+        }
+        this.plan=nuevoPlan;
+
+        if (this.fechaInicio==null){
+            this.fechaInicio=LocalDate.now();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Membresia{" +
+                "fechaInicio=" + fechaInicio +
+                ", fechaVencimiento=" + fechaVencimiento +
+                ", plan=" + plan +
+                '}';
+    }
 }
