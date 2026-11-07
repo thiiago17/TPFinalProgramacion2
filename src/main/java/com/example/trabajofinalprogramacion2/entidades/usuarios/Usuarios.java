@@ -46,9 +46,7 @@ public abstract class Usuarios {
         return id;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() {return nombre;}
 
     public String getApellido() {
         return apellido;
@@ -111,6 +109,14 @@ public abstract class Usuarios {
     // MOSTRAR
 
     // METODOS
+
+    public String verEstadoTexto (){
+        if (this.activo){
+            return "Activo";
+        }else {
+            return "Inactivo";
+        }
+    }
 
     public int calcularEdad()
     {
