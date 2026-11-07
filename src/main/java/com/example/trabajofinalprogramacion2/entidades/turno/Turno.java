@@ -2,8 +2,10 @@ package com.example.trabajofinalprogramacion2.entidades.turno;
 
 import com.example.trabajofinalprogramacion2.entidades.usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.entidades.usuarios.Socio;
+import com.example.trabajofinalprogramacion2.entidades.usuarios.Usuarios;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Turno {
     private Socio socio;
@@ -70,4 +72,88 @@ public class Turno {
 
     // METODOS
 
+    // Reservar turno
+    public String sacarTurno(Socio socio)
+    {
+
+        if (socio == null) {
+            return "Error: el socio no puede ser nulo.";
+        }
+
+        if (!estado) {
+            return "El turno ya se encuentra reservado.";
+        }
+
+        this.socio = socio;
+        this.estado = false;
+
+        return "Turno reservado correctamente.";
+    }
+
+    // Cancelar turno
+    public String cancelarTurno()
+    {
+
+        if (estado)
+        {
+            return "El turno ya se encuentra disponible.";
+        }
+
+        this.socio = null;
+        this.estado = true;
+
+        return "Turno cancelado correctamente.";
+    }
+
+    // Consultar turnos disponibles
+    public static String verTurnosDisponibles(List<Turno> turnos) {
+
+        StringBuilder resultado = new StringBuilder();
+
+        for (Turno turno : turnos) {
+
+            if (turno.isEstado()) {
+
+                resultado.append("Fecha: ")
+                        .append(turno.getFechaTurno())
+                        .append(" | Nutricionista disponible")
+                        .append("\n");
+            }
+        }
+
+        if (resultado.isEmpty()) {
+            return "No hay turnos disponibles.";
+        }
+
+        return resultado.toString();
+    }
+
+    // Consultar turnos de un usuario
+    public static String verMisTurnos(Usuarios usuario, List<Turno> turnos) {
+
+        if (usuario == null) {
+            return "Error: usuario no válido.";
+        }
+
+        StringBuilder resultado = new StringBuilder();
+
+        for (Turno turno : turnos) {
+
+            if (turno.getSocio() != null &&
+                    turno.getSocio().equals(usuario)) {
+
+                resultado.append("Fecha: ")
+                        .append(turno.getFechaTurno())
+                        .append(" | Precio: ")
+                        .append(turno.getPrecio())
+                        .append("\n");
+            }
+        }
+
+        if (resultado.isEmpty()) {
+            return "No tienes turnos reservados.";
+        }
+
+        return resultado.toString();
+    }
 }
