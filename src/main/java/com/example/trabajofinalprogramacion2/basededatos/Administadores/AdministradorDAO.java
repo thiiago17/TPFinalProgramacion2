@@ -2,13 +2,15 @@ package com.example.trabajofinalprogramacion2.basededatos.Administadores;
 
 import com.example.trabajofinalprogramacion2.basededatos.ConexionBD.ConexionBD;
 import com.example.trabajofinalprogramacion2.entidades.usuarios.Administrador;
+import com.example.trabajofinalprogramacion2.interfaces.ABCMLDAO;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
-public class AdministradorDAO {
+public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
     public boolean agregar(Administrador admin)
     {
@@ -39,5 +41,30 @@ public class AdministradorDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean alta(Administrador objeto) {
+        return false;
+    }
+
+    @Override
+    public boolean baja(Administrador objeto) {
+        return false;
+    }
+
+    @Override
+    public Administrador consulta(String dni) {
+        return null;
+    }
+
+    @Override
+    public boolean modificacion(Administrador objeto) {
+        return false;
+    }
+
+    @Override
+    public List<Administrador> listado() {
+        return List.of();
     }
 }
