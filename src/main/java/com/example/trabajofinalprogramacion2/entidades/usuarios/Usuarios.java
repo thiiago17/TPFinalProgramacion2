@@ -125,4 +125,9 @@ public abstract class Usuarios {
 
         return Period.between(a, hoy).getYears();
     }
+
+    public void mostrarMenu()
+    {
+
+    }
 }
