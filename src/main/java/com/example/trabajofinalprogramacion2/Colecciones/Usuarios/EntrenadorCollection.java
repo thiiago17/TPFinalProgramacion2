@@ -1,4 +1,4 @@
-package com.example.trabajofinalprogramacion2.basededatos.Entrenadores;
+package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
 import com.example.trabajofinalprogramacion2.entidades.usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.interfaces.ABCMLCollection;
@@ -20,7 +20,7 @@ public class EntrenadorCollection implements ABCMLCollection<Entrenador> {
 
     @Override
     public boolean agregar(Entrenador objeto) {
-        if (buscar(objeto.getDni())==null)
+        if (buscar(objeto.getId())==0)
         {
             listaEntrenadores.add(objeto);
             return true;
@@ -34,12 +34,12 @@ public class EntrenadorCollection implements ABCMLCollection<Entrenador> {
     }
 
     @Override
-    public boolean eliminar(String dni) {
+    public boolean eliminar(int id) {
         return false;
     }
 
     @Override
-    public Entrenador buscar(String dni) {
+    public Entrenador buscar(int id) {
         return null;
     }
 }

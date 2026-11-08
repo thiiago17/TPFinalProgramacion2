@@ -1,0 +1,307 @@
+package com.example.trabajofinalprogramacion2.basededatos.Administadores;
+
+import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.AdministradorCollection;
+import com.example.trabajofinalprogramacion2.entidades.usuarios.Administrador;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public class AdministradorService {
+    AdministradorDAO dao;
+    AdministradorCollection coleccion;
+
+    // CONSTRUCTOR
+
+    public AdministradorService() {
+
+        dao = new AdministradorDAO();
+        coleccion = new AdministradorCollection();
+
+        // Cargar los administradores de MySQL en Collection
+        List<Administrador> administradores = dao.listado();
+
+        for (Administrador admin : administradores) {
+            coleccion.agregar(admin);
+        }
+    }
+
+
+    // =========================
+    // ABCML
+    // =========================
+
+    // VER LISTADO
+    public List<Administrador> verListado() {
+        return coleccion.verListado();
+    }
+
+
+    // AGREGAR
+
+    public boolean agregar(Administrador admin) {
+
+        if (admin == null || coleccion.buscarPorDni(admin.getDni()) != null) {
+            return false;
+        }
+
+        Administrador nuevo = dao.agregar(admin);
+
+        if (nuevo != null) {
+            return coleccion.agregar(nuevo);
+        }
+
+        return false;
+    }
+
+
+    // MODIFICAR OBJETO COMPLETO
+    public boolean modificar(Administrador admin) {
+
+        if (admin == null || coleccion.buscar(admin.getId()) == null) {
+            return false;
+        }
+
+        if (dao.modificar(admin)) {
+            return coleccion.modificar(admin);
+        }
+
+        return false;
+    }
+
+
+    // ELIMINAR (BAJA LOGICA)
+
+    public boolean eliminar(int id) {
+
+        if (coleccion.buscar(id) == null) {
+            return false;
+        }
+
+        Administrador admin = dao.buscarDao(id);
+
+        if (dao.baja(admin)) {
+            return coleccion.eliminar(id);
+        }
+
+        return false;
+    }
+
+
+    // BUSCAR POR ID
+
+    public Administrador buscar(int id) {
+        return coleccion.buscar(id);
+    }
+
+
+    // =========================
+    // BUSQUEDAS ESPECIFICAS
+    // =========================
+
+    // BUSCAR POR DNI
+
+    public Administrador buscarPorDni(String dni) {
+        return coleccion.buscarPorDni(dni);
+    }
+
+
+    // BUSCAR POR NOMBRE
+
+    public List<Administrador> buscarPorNombre(String nombre) {
+        return coleccion.buscarPorNombre(nombre);
+    }
+
+
+    // BUSCAR POR APELLIDO
+
+    public List<Administrador> buscarPorApellido(String apellido) {
+        return coleccion.buscarPorApellido(apellido);
+    }
+
+
+    // BUSCAR POR EMAIL
+
+    public Administrador buscarPorEmail(String email) {
+        return coleccion.buscarPorEmail(email);
+    }
+
+
+    // =========================
+    // MODIFICACIONES INDIVIDUALES
+    // =========================
+
+    // METODO AUXILIAR PARA GUARDAR CAMBIOS
+
+    private boolean guardarModificacion(Administrador admin, Runnable restaurar) {
+
+        if (admin == null) {
+            return false;
+        }
+
+        if (dao.modificar(admin)) {
+            return true;
+        }
+
+        // Si falla MySQL, restauramos el valor anterior en memoria
+        restaurar.run();
+
+        return false;
+    }
+
+
+    // MODIFICAR NOMBRE
+
+    public boolean modificarNombre(int id, String nombre) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || nombre == null || nombre.isBlank()) {
+            return false;
+        }
+
+        String anterior = admin.getNombre();
+
+        Administrador modificado = coleccion.modificarNombre(id, nombre);
+
+        return guardarModificacion(modificado, () -> admin.setNombre(anterior));
+    }
+
+
+    // MODIFICAR APELLIDO
+
+    public boolean modificarApellido(int id, String apellido) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || apellido == null || apellido.isBlank()) {
+            return false;
+        }
+
+        String anterior = admin.getApellido();
+
+        Administrador modificado = coleccion.modificarApellido(id, apellido);
+
+        return guardarModificacion(modificado, () -> admin.setApellido(anterior));
+    }
+
+
+    // MODIFICAR DNI
+
+    public boolean modificarDni(int id, String dni) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || dni == null || dni.isBlank()) {
+            return false;
+        }
+
+        Administrador existente = coleccion.buscarPorDni(dni);
+
+        if (existente != null && existente.getId() != id) {
+            return false;
+        }
+
+        String anterior = admin.getDni();
+
+        Administrador modificado = coleccion.modificarDni(id, dni);
+
+        return guardarModificacion(modificado, () -> admin.setDni(anterior));
+    }
+
+
+    // MODIFICAR EMAIL
+
+    public boolean modificarEmail(int id, String email) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || email == null || email.isBlank()) {
+            return false;
+        }
+
+        Administrador existente = coleccion.buscarPorEmail(email);
+
+        if (existente != null && existente.getId() != id) {
+            return false;
+        }
+
+        String anterior = admin.getEmail();
+
+        Administrador modificado = coleccion.modificarEmail(id, email);
+
+        return guardarModificacion(modificado, () -> admin.setEmail(anterior));
+    }
+
+
+    // MODIFICAR PASSWORD
+
+    public boolean modificarPassword(int id, String password) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || password == null || password.isBlank()) {
+            return false;
+        }
+
+        String anterior = admin.getPassword();
+
+        Administrador modificado = coleccion.modificarPassword(id, password);
+
+        return guardarModificacion(modificado, () -> admin.setPassword(anterior));
+    }
+
+
+    // MODIFICAR FECHA DE NACIMIENTO
+
+    public boolean modificarFechaNacimiento(int id, LocalDate fecha) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || fecha == null) {
+            return false;
+        }
+
+        LocalDate anterior = admin.getFechaDeNacimiento();
+
+        Administrador modificado = coleccion.modificarFechaNacimiento(id, fecha);
+
+        return guardarModificacion(modificado, () -> admin.setFechaDeNacimiento(anterior));
+    }
+
+
+    // MODIFICAR FECHA DE INGRESO
+
+    public boolean modificarFechaIngreso(int id, LocalDate fecha) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null || fecha == null) {
+            return false;
+        }
+
+        LocalDate anterior = admin.getFechaIngreso();
+
+        Administrador modificado = coleccion.modificarFechaIngreso(id, fecha);
+
+        return guardarModificacion(modificado, () -> admin.setFechaIngreso(anterior));
+    }
+
+
+    // MODIFICAR ESTADO
+
+    public boolean modificarActivo(int id, boolean activo) {
+
+        Administrador admin = coleccion.buscar(id);
+
+        if (admin == null) {
+            return false;
+        }
+
+        boolean anterior = admin.isActivo();
+
+        Administrador modificado = coleccion.modificarActivo(id, activo);
+
+        return guardarModificacion(modificado, () -> admin.setActivo(anterior));
+    }
+
+}
