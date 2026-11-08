@@ -9,6 +9,7 @@ public class Gasto {
     private double monto;
     private TipoGasto tipoGasto;
     private LocalDate fecha;
+    private int idGimnasio;
 
     // CONSTRUCTORES
 
@@ -16,33 +17,37 @@ public class Gasto {
     }
 
     //con detalles
-    public Gasto(String detalles, double monto, TipoGasto gasto, LocalDate fecha) {
+    public Gasto(String detalles, double monto, TipoGasto gasto, LocalDate fecha, int idGimnasio) {
         this.detalles = detalles;
         this.monto = monto;
         this.tipoGasto = gasto;
         this.fecha = fecha;
+        this.idGimnasio = idGimnasio;
     }
 
-    public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha) {
+    public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
         this.id = id;
         this.detalles = detalles;
         this.monto = monto;
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
+        this.idGimnasio = idGimnasio;
     }
 
     //sin detalles
-    public Gasto(int id, double monto, TipoGasto tipoGasto, LocalDate fecha) {
+    public Gasto(int id, double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
         this.id = id;
         this.monto = monto;
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
+        this.idGimnasio = idGimnasio;
     }
 
-    public Gasto(double monto, TipoGasto tipoGasto, LocalDate fecha) {
+    public Gasto(double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
         this.monto = monto;
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
+        this.idGimnasio = idGimnasio;
     }
 // GETTERS
 
@@ -66,6 +71,9 @@ public class Gasto {
         return fecha;
     }
 
+    public int getIdGimnasio() {
+        return idGimnasio;
+    }
     // SETTERS
 
     public void setId(int id) {
@@ -88,6 +96,9 @@ public class Gasto {
         this.fecha = fecha;
     }
 
+    public void setIdGimnasio(int idGimnasio) {
+        this.idGimnasio = idGimnasio;
+    }
     //EQUALS, HASHCODE Y TOSTRING
 
     @Override
@@ -110,6 +121,7 @@ public class Gasto {
                 ", monto=" + monto +
                 ", tipoGasto=" + tipoGasto +
                 ", fecha=" + fecha +
+                ", idGimnasio=" + idGimnasio +
                 '}';
     }
 
