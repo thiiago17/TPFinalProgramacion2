@@ -20,7 +20,7 @@ public class EntrenadorCollection implements ABCMLCollection<Entrenador> {
 
     @Override
     public boolean agregar(Entrenador objeto) {
-        if (buscar(objeto.getId())==0)
+        if (buscar(objeto.getId())==null)
         {
             listaEntrenadores.add(objeto);
             return true;
