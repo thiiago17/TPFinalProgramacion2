@@ -1,0 +1,132 @@
+package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
+
+import java.time.LocalDate;
+import java.time.Period;
+
+public abstract class Usuarios {
+    private int id;
+    private String nombre;
+    private String apellido;
+    private String dni;
+    private String email;
+    private String password;
+    private LocalDate fechaDeNacimiento;
+    private boolean activo;
+
+    // CONSTRUCTORES
+
+    public Usuarios() {
+    }
+
+    public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento,  boolean activo) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.email = email;
+        this.password = password;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.activo = activo;
+    }
+
+    public Usuarios(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.email = email;
+        this.password = password;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.activo = activo;
+    }
+
+    // GETTERS
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {return nombre;}
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public LocalDate getFechaDeNacimiento() {
+        return fechaDeNacimiento;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    // SETTERS
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
+        this.fechaDeNacimiento = fechaDeNacimiento;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    // MOSTRAR
+
+    // METODOS
+
+    public String verEstadoTexto (){
+        if (this.activo){
+            return "Activo";
+        }else {
+            return "Inactivo";
+        }
+    }
+
+    public int calcularEdad()
+    {
+        LocalDate a = LocalDate.of(2007, 10, 25);
+        LocalDate hoy = LocalDate.now();
+
+        return Period.between(a, hoy).getYears();
+    }
+
+    public void mostrarMenu()
+    {
+
+    }
+}

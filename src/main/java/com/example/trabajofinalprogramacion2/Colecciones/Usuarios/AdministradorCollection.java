@@ -1,6 +1,6 @@
 package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
-import com.example.trabajofinalprogramacion2.entidades.usuarios.Administrador;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 
 import java.time.LocalDate;
 
