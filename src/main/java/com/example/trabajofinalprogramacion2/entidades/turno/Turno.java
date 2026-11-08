@@ -20,8 +20,11 @@ public class Turno {
         this.socio = socio;
         this.nutricionista = nutricionista;
         this.fechaTurno = fechaTurno;
-        this.estado = estado;
+        this.estado = true;
         this.precio = precio;
+        if (nutricionista != null) {
+            nutricionista.agregarTurno(this);
+        }
     }
 
     // GETTERS
