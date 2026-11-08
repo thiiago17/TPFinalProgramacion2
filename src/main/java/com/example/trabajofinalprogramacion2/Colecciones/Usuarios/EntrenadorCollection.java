@@ -1,12 +1,9 @@
 package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
-import com.example.trabajofinalprogramacion2.entidades.usuarios.Entrenador;
-import com.example.trabajofinalprogramacion2.entidades.usuarios.Socio;
-import com.example.trabajofinalprogramacion2.interfaces.ABCMLCollection;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
 
