@@ -13,12 +13,14 @@ public class Gimnasio {
     private String nombre;
     private List<Gasto> gastos;
     private List<Gasto> historialGastos;
+    private List<Sucursal> sucursales;
 
     // CONSTRUCTORES
 
     public Gimnasio() {
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
+        this.sucursales = new ArrayList<>();
     }
 
     public Gimnasio(int id, String nombre) { //para selects
@@ -26,12 +28,14 @@ public class Gimnasio {
         this.nombre = nombre;
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
+        this.sucursales = new ArrayList<>();
     }
 
     public Gimnasio(String nombre) { //para inserts (sin id)
         this.nombre = nombre;
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
+        this.sucursales = new ArrayList<>();
     }
 // GETTERS
 
@@ -89,10 +93,7 @@ public class Gimnasio {
     public String toString() {
         return "Gimnasio{" +
                 "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", gastos=" + gastos +
-                ", historialGastos=" + historialGastos +
-                '}';
+                ", nombre='" + nombre + '\'';
     }
 
     // MOSTRAR
@@ -143,4 +144,6 @@ public class Gimnasio {
     public double calcularTotalHistoricoPorTipo(TipoGasto tipo){
         return calcularTotalPorTipo(this.historialGastos, tipo);
     }
+
+    //Aca van los metodos de agregado/eliminacion de los listados propios de cada objeto Gimnasio
 }
