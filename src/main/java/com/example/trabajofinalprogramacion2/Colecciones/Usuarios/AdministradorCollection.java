@@ -10,7 +10,7 @@ public class AdministradorCollection extends UsuariosCollection<Administrador> {
 
     public Administrador modificarFechaIngreso(int id, LocalDate fechaIngreso) {
 
-        Administrador admin = (Administrador) buscar(id);
+        Administrador admin = buscar(id);
 
         if (admin == null || fechaIngreso == null) {
             return null;
