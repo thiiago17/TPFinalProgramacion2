@@ -1,11 +1,13 @@
 package com.example.trabajofinalprogramacion2.entidades.gastos;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Gasto {
+    private int id;
     private String detalles;
     private double monto;
-    private TipoGasto gasto;
+    private TipoGasto tipoGasto;
     private LocalDate fecha;
 
     // CONSTRUCTORES
@@ -13,14 +15,40 @@ public class Gasto {
     public Gasto() {
     }
 
+    //con detalles
     public Gasto(String detalles, double monto, TipoGasto gasto, LocalDate fecha) {
         this.detalles = detalles;
         this.monto = monto;
-        this.gasto = gasto;
+        this.tipoGasto = gasto;
         this.fecha = fecha;
     }
 
-    // GETTERS
+    public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha) {
+        this.id = id;
+        this.detalles = detalles;
+        this.monto = monto;
+        this.tipoGasto = tipoGasto;
+        this.fecha = fecha;
+    }
+
+    //sin detalles
+    public Gasto(int id, double monto, TipoGasto tipoGasto, LocalDate fecha) {
+        this.id = id;
+        this.monto = monto;
+        this.tipoGasto = tipoGasto;
+        this.fecha = fecha;
+    }
+
+    public Gasto(double monto, TipoGasto tipoGasto, LocalDate fecha) {
+        this.monto = monto;
+        this.tipoGasto = tipoGasto;
+        this.fecha = fecha;
+    }
+// GETTERS
+
+    public int getId() {
+        return id;
+    }
 
     public String getDetalles() {
         return detalles;
@@ -30,8 +58,8 @@ public class Gasto {
         return monto;
     }
 
-    public TipoGasto getGasto() {
-        return gasto;
+    public TipoGasto getTipoGasto() {
+        return tipoGasto;
     }
 
     public LocalDate getFecha() {
@@ -39,6 +67,10 @@ public class Gasto {
     }
 
     // SETTERS
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setDetalles(String detalles) {
         this.detalles = detalles;
@@ -48,12 +80,37 @@ public class Gasto {
         this.monto = monto;
     }
 
-    public void setGasto(TipoGasto gasto) {
-        this.gasto = gasto;
+    public void setTipoGasto(TipoGasto tipoGasto) {
+        this.tipoGasto = tipoGasto;
     }
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    //EQUALS, HASHCODE Y TOSTRING
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Gasto gasto = (Gasto) o;
+        return id == gasto.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Gasto{" +
+                "id=" + id +
+                ", detalles='" + detalles + '\'' +
+                ", monto=" + monto +
+                ", tipoGasto=" + tipoGasto +
+                ", fecha=" + fecha +
+                '}';
     }
 
     // MOSTRAR

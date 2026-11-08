@@ -1,10 +1,15 @@
 package com.example.trabajofinalprogramacion2.entidades.gimnasio;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ListadoNuloException;
 import com.example.trabajofinalprogramacion2.entidades.gastos.Gasto;
+import com.example.trabajofinalprogramacion2.entidades.gastos.TipoGasto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Gimnasio {
+    private int id;
     private String nombre;
     private List<Gasto> gastos;
     private List<Gasto> historialGastos;
@@ -12,15 +17,27 @@ public class Gimnasio {
     // CONSTRUCTORES
 
     public Gimnasio() {
+        this.gastos= new ArrayList<>();
+        this.historialGastos= new ArrayList<>();
     }
 
-    public Gimnasio(String nombre, List<Gasto> gastos, List<Gasto> historialGastos) {
+    public Gimnasio(int id, String nombre) { //para selects
+        this.id = id;
         this.nombre = nombre;
-        this.gastos = gastos;
-        this.historialGastos = historialGastos;
+        this.gastos= new ArrayList<>();
+        this.historialGastos= new ArrayList<>();
     }
 
-    // GETTERS
+    public Gimnasio(String nombre) { //para inserts (sin id)
+        this.nombre = nombre;
+        this.gastos= new ArrayList<>();
+        this.historialGastos= new ArrayList<>();
+    }
+// GETTERS
+
+    public int getId() {
+        return id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -34,7 +51,12 @@ public class Gimnasio {
         return historialGastos;
     }
 
+
     // SETTERS
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -48,7 +70,77 @@ public class Gimnasio {
         this.historialGastos = historialGastos;
     }
 
+    //EQUALS, HASHCODE Y TOSTRING
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Gimnasio gimnasio = (Gimnasio) o;
+        return id == gimnasio.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Gimnasio{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", gastos=" + gastos +
+                ", historialGastos=" + historialGastos +
+                '}';
+    }
+
     // MOSTRAR
 
     // METODOS
+
+    private double calcularTotal(List<Gasto> listaGastos){ //metodo privado, lo llama luego el metodo publico
+        if(listaGastos == null){
+            throw new ListadoNuloException("La lista de gastos es null");
+        }
+
+        double total=0.0;
+        for(Gasto gasto : listaGastos){
+            total=total+gasto.getMonto();
+        }
+
+
+        return total;
+    }
+
+    private double calcularTotalPorTipo(List<Gasto> listaGastos, TipoGasto tipo){ //metodo privado, lo llama luego el metodo publico
+        if(listaGastos == null){
+            throw new ListadoNuloException("La lista de gastos es null");
+        }
+
+        double total=0.0;
+        for(Gasto gasto : listaGastos){
+            if(gasto.getTipoGasto() == tipo){
+                total=total+gasto.getMonto();
+            }
+        }
+
+        return total;
+    }
+
+    public double calcularTotalMensual(){
+        return calcularTotal(this.gastos);
+    }
+
+    public double calcularTotalHistorico(){
+        return calcularTotal(this.historialGastos);
+    }
+
+    public double calcularTotalMensualPorTipo(TipoGasto tipo){
+        return calcularTotalPorTipo(this.gastos, tipo);
+    }
+
+    public double calcularTotalHistoricoPorTipo(TipoGasto tipo){
+        return calcularTotalPorTipo(this.historialGastos, tipo);
+    }
 }
