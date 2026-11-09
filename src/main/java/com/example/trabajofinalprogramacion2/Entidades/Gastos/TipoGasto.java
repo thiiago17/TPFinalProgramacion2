@@ -7,5 +7,6 @@ public enum TipoGasto {
     MANTENIMIENTO,
     INTERNET,
     EMPLEADOS,
-    ALQUILER
+    ALQUILER,
+    OTROS
 }

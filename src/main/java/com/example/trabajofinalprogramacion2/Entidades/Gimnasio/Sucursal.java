@@ -6,29 +6,33 @@ import java.util.List;
 import java.util.Map;
 
 public class Sucursal extends Gimnasio {
-    private Map<Maquina, Integer> maquinas;
+    private Map<Maquina, Integer> maquinas; //despues lo borro, esto va a la clase collection
     private String calle;
     private int altura;
     private String ciudad;
+    private int idGimnasio;
 
     // CONSTRUCTORES
 
     public Sucursal() {
     }
 
-    public Sucursal(String nombre, List<Gasto> gastos, List<Gasto> historialGastos, Map<Maquina, Integer> maquinas, String calle, int altura, String ciudad) {
-        super(nombre, gastos, historialGastos);
-        this.maquinas = maquinas;
+    public Sucursal(int id, String nombre, int estado, String calle, int altura, String ciudad, int idGimnasio) {
+        super(id, nombre, estado);
         this.calle = calle;
         this.altura = altura;
         this.ciudad = ciudad;
+        this.idGimnasio = idGimnasio;
     }
 
-    // GETTERS
-
-    public Map<Maquina, Integer> getMaquinas() {
-        return maquinas;
+    public Sucursal(String nombre, String calle, int altura, String ciudad, int idGimnasio) {
+        super(nombre);
+        this.calle = calle;
+        this.altura = altura;
+        this.ciudad = ciudad;
+        this.idGimnasio = idGimnasio;
     }
+// GETTERS
 
     public String getCalle() {
         return calle;
@@ -42,11 +46,11 @@ public class Sucursal extends Gimnasio {
         return ciudad;
     }
 
-    // MOSTRAR
-
-    public void setMaquinas(Map<Maquina, Integer> maquinas) {
-        this.maquinas = maquinas;
+    public int getIdGimnasio() {
+        return idGimnasio;
     }
+
+    // SETTERS
 
     public void setCalle(String calle) {
         this.calle = calle;
@@ -58,6 +62,22 @@ public class Sucursal extends Gimnasio {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
+    }
+
+    public void setIdGimnasio(int idGimnasio) {
+        this.idGimnasio = idGimnasio;
+    }
+
+    // EQUALS, HASHCODE Y TOSTRING
+
+    @Override
+    public String toString() {
+        return super.toString() + "Sucursal{" +
+                "calle='" + calle + '\'' +
+                ", altura=" + altura +
+                ", ciudad='" + ciudad + '\'' +
+                ", idGimnasio=" + idGimnasio +
+                '}';
     }
 
     // METODOS
