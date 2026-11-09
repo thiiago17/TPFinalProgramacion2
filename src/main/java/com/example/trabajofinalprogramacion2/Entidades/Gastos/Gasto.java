@@ -10,10 +10,12 @@ public class Gasto {
     private TipoGasto tipoGasto;
     private LocalDate fecha;
     private int idGimnasio;
+    private int estado;
 
     // CONSTRUCTORES
 
     public Gasto() {
+        this.estado=1;
     }
 
     //con detalles
@@ -23,6 +25,7 @@ public class Gasto {
         this.tipoGasto = gasto;
         this.fecha = fecha;
         this.idGimnasio = idGimnasio;
+        this.estado=1;
     }
 
     public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
@@ -32,6 +35,7 @@ public class Gasto {
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
         this.idGimnasio = idGimnasio;
+        this.estado=1;
     }
 
     //sin detalles
@@ -41,6 +45,7 @@ public class Gasto {
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
         this.idGimnasio = idGimnasio;
+        this.estado=1;
     }
 
     public Gasto(double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
@@ -48,6 +53,7 @@ public class Gasto {
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
         this.idGimnasio = idGimnasio;
+        this.estado=1;
     }
 // GETTERS
 
@@ -74,6 +80,10 @@ public class Gasto {
     public int getIdGimnasio() {
         return idGimnasio;
     }
+
+    public int getEstado() {
+        return estado;
+    }
     // SETTERS
 
     public void setId(int id) {
@@ -98,6 +108,10 @@ public class Gasto {
 
     public void setIdGimnasio(int idGimnasio) {
         this.idGimnasio = idGimnasio;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
     //EQUALS, HASHCODE Y TOSTRING
 

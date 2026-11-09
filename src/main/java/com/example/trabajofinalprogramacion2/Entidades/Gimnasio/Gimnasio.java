@@ -11,9 +11,10 @@ import java.util.Objects;
 public class Gimnasio {
     private int id;
     private String nombre;
-    private List<Gasto> gastos;
-    private List<Gasto> historialGastos;
-    private List<Sucursal> sucursales;
+    private List<Gasto> gastos; //despues lo borro, va a la collection
+    private List<Gasto> historialGastos; //despues lo borro, va a la collection
+    private List<Sucursal> sucursales; //despues lo borro, va a la collection
+    private int estado;
 
     // CONSTRUCTORES
 
@@ -21,21 +22,24 @@ public class Gimnasio {
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
         this.sucursales = new ArrayList<>();
+        this.estado = 1;
     }
 
-    public Gimnasio(int id, String nombre) { //para selects
+    public Gimnasio(int id, String nombre, int estado) { //para selects
         this.id = id;
         this.nombre = nombre;
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
         this.sucursales = new ArrayList<>();
+        this.estado = estado;
     }
 
-    public Gimnasio(String nombre) { //para inserts (sin id)
+    public Gimnasio(String nombre) { //para inserts (sin id, ni estado)
         this.nombre = nombre;
         this.gastos= new ArrayList<>();
         this.historialGastos= new ArrayList<>();
         this.sucursales = new ArrayList<>();
+        this.estado = 1;
     }
 // GETTERS
 
@@ -55,8 +59,10 @@ public class Gimnasio {
         return historialGastos;
     }
 
-
-    // SETTERS
+    public int getEstado() {
+        return estado;
+    }
+// SETTERS
 
     public void setId(int id) {
         this.id = id;
@@ -72,6 +78,10 @@ public class Gimnasio {
 
     public void setHistorialGastos(List<Gasto> historialGastos) {
         this.historialGastos = historialGastos;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 
     //EQUALS, HASHCODE Y TOSTRING
@@ -92,15 +102,17 @@ public class Gimnasio {
     @Override
     public String toString() {
         return "Gimnasio{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'';
+                "nombre='" + nombre + '\'' +
+                ", estado=" + estado +
+                ", id=" + id +
+                '}';
     }
 
     // MOSTRAR
 
     // METODOS
 
-    private double calcularTotal(List<Gasto> listaGastos){ //metodo privado, lo llama luego el metodo publico
+    private double calcularTotal(List<Gasto> listaGastos) throws ListadoNuloException{ //metodo privado, lo llama luego el metodo publico
         if(listaGastos == null){
             throw new ListadoNuloException("La lista de gastos es null");
         }
@@ -114,7 +126,7 @@ public class Gimnasio {
         return total;
     }
 
-    private double calcularTotalPorTipo(List<Gasto> listaGastos, TipoGasto tipo){ //metodo privado, lo llama luego el metodo publico
+    private double calcularTotalPorTipo(List<Gasto> listaGastos, TipoGasto tipo) throws ListadoNuloException{ //metodo privado, lo llama luego el metodo publico
         if(listaGastos == null){
             throw new ListadoNuloException("La lista de gastos es null");
         }
@@ -129,21 +141,22 @@ public class Gimnasio {
         return total;
     }
 
-    public double calcularTotalMensual(){
+    //estos metodos despues van a ir en collection
+    public double calcularTotalMensual() throws ListadoNuloException{
         return calcularTotal(this.gastos);
     }
 
-    public double calcularTotalHistorico(){
+    public double calcularTotalHistorico() throws ListadoNuloException{
         return calcularTotal(this.historialGastos);
     }
 
-    public double calcularTotalMensualPorTipo(TipoGasto tipo){
+    public double calcularTotalMensualPorTipo(TipoGasto tipo) throws ListadoNuloException{
         return calcularTotalPorTipo(this.gastos, tipo);
     }
 
-    public double calcularTotalHistoricoPorTipo(TipoGasto tipo){
+    public double calcularTotalHistoricoPorTipo(TipoGasto tipo) throws ListadoNuloException{
         return calcularTotalPorTipo(this.historialGastos, tipo);
     }
 
-    //Aca van los metodos de agregado/eliminacion de los listados propios de cada objeto Gimnasio
+
 }
