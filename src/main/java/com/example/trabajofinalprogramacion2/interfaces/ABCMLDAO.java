@@ -6,7 +6,7 @@ public interface ABCMLDAO<T> {
     T agregar(T objeto);
     boolean alta(T objeto);
     boolean baja(T objeto);
-    T consulta(T objeto);
-    boolean modificar(int clavePrimaria);
+    T consulta(int clavePrimaria);
+    boolean modificar(T objeto);
     List<T> listado();
 }
