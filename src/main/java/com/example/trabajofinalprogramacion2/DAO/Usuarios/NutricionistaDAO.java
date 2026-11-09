@@ -1,6 +1,7 @@
 package com.example.trabajofinalprogramacion2.DAO.Usuarios;
 
 import com.example.trabajofinalprogramacion2.DAO.ConexionBD;
+import com.example.trabajofinalprogramacion2.DAO.FechasBD;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.interfaces.ABCMLDAO;
 
@@ -12,7 +13,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public Nutricionista agregar(Nutricionista nutricionista) {
-        String sql = "INSERT INTO Nutricionista (dni, nombre, apellido, email, password, fecha_nacimiento, activo, salario, comision_por_consulta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO nutricionista (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, salario, comision_por_consulta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -22,7 +23,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
             ps.setString(3, nutricionista.getApellido());
             ps.setString(4, nutricionista.getEmail());
             ps.setString(5, nutricionista.getPassword());
-            ps.setDate(6, java.sql.Date.valueOf(nutricionista.getFechaDeNacimiento()));
+            FechasBD.setFecha(ps, 6, nutricionista.getFechaDeNacimiento());
             ps.setBoolean(7, nutricionista.isActivo());
             ps.setDouble(8, nutricionista.getSalario());
             ps.setDouble(9, nutricionista.getComisionPorConsulta());
@@ -45,7 +46,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public boolean alta(Nutricionista nutricionista) {
-        String sql="update Nutricionista set activo = true where id_nutricionista = ?";
+        String sql="update nutricionista set activo = true where id_nutricionista = ?";
 
         try(Connection conexion= ConexionBD.conectar();
             PreparedStatement ps= conexion.prepareStatement(sql))
@@ -69,7 +70,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public boolean baja(Nutricionista nutricionista) {
-        String sql = "UPDATE Nutricionista SET ACTIVO = false WHERE id_nutricionista = ?";
+        String sql = "UPDATE nutricionista SET ACTIVO = false WHERE id_nutricionista = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -85,7 +86,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public Nutricionista consulta(Nutricionista nutricionista) {
-        String sql = "SELECT * FROM Nutricionista WHERE id_nutricionista = ? OR dni = ?";
+        String sql = "SELECT * FROM nutricionista WHERE id_nutricionista = ? OR dni = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -106,7 +107,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public boolean modificar(Nutricionista nutricionista) {
-        String sql = "UPDATE Nutricionista SET nombre = ?, apellido = ?, dni = ?, email = ?, password = ?, fecha_nacimiento = ?, activo = ?, salario = ?, comision_por_consulta = ? WHERE id_nutricionista = ?";
+        String sql = "UPDATE nutricionista SET nombre = ?, apellido = ?, dni = ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, salario = ?, comision_por_consulta = ? WHERE id_nutricionista = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -116,7 +117,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
             ps.setString(3, nutricionista.getDni());
             ps.setString(4, nutricionista.getEmail());
             ps.setString(5, nutricionista.getPassword());
-            ps.setDate(6, java.sql.Date.valueOf(nutricionista.getFechaDeNacimiento()));
+            FechasBD.setFecha(ps, 6, nutricionista.getFechaDeNacimiento());
             ps.setBoolean(7, nutricionista.isActivo());
             ps.setDouble(8, nutricionista.getSalario());
             ps.setDouble(9, nutricionista.getComisionPorConsulta());
@@ -132,7 +133,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
     @Override
     public List<Nutricionista> listado() {
         List<Nutricionista> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Nutricionista";
+        String sql = "SELECT * FROM nutricionista";
 
         try (Connection conexion = ConexionBD.conectar();
              Statement s = conexion.createStatement();
@@ -155,9 +156,8 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
         n.setApellido(rs.getString("apellido"));
         n.setDni(rs.getString("dni"));
         n.setEmail(rs.getString("email"));
-        n.setPassword(rs.getString("password"));
-        Date fecha = rs.getDate("fecha_nacimiento");
-        n.setFechaDeNacimiento(fecha != null ? fecha.toLocalDate() : null);
+        n.setPassword(rs.getString("contrasenia"));
+        n.setFechaDeNacimiento(FechasBD.leerFecha(rs, "fechaDeNacimiento"));
         n.setActivo(rs.getBoolean("activo"));
         n.setSalario(rs.getDouble("salario"));
         n.setComisionPorConsulta(rs.getDouble("comision_por_consulta"));

@@ -32,19 +32,62 @@ public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
     }
 
 
+    // ALUMNOS =================================================================================
+
+    // AGREGAR SOCIO (no se repite: Socio no tiene equals, asi que se compara por id)
+
     public boolean agregarSocio(int idEntrenador, Socio socio) {
         Entrenador entrenador = buscar(idEntrenador);
 
-        if (entrenador == null || socio == null) {
+        if (entrenador == null || socio == null || tieneSocio(idEntrenador, socio.getId())) {
             return false;
         }
-
 
         if (entrenador.getAlumnosAsociados() == null) {
             entrenador.setAlumnosAsociados(new HashSet<>());
         }
 
         return entrenador.getAlumnosAsociados().add(socio);
+    }
+
+    // QUITAR SOCIO
+
+    public boolean quitarSocio(int idEntrenador, int idSocio) {
+        Entrenador entrenador = buscar(idEntrenador);
+
+        if (entrenador == null || entrenador.getAlumnosAsociados() == null) {
+            return false;
+        }
+
+        return entrenador.getAlumnosAsociados().removeIf(socio -> socio.getId() == idSocio);
+    }
+
+    // QUITAR TODOS LOS SOCIOS (cuando el entrenador se da de baja)
+
+    public void quitarTodosLosSocios(int idEntrenador) {
+        Entrenador entrenador = buscar(idEntrenador);
+
+        if (entrenador != null && entrenador.getAlumnosAsociados() != null) {
+            entrenador.getAlumnosAsociados().clear();
+        }
+    }
+
+    // TIENE SOCIO
+
+    public boolean tieneSocio(int idEntrenador, int idSocio) {
+        Entrenador entrenador = buscar(idEntrenador);
+
+        if (entrenador == null || entrenador.getAlumnosAsociados() == null) {
+            return false;
+        }
+
+        for (Socio socio : entrenador.getAlumnosAsociados()) {
+            if (socio.getId() == idSocio) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

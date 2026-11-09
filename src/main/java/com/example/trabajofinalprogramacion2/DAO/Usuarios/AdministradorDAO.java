@@ -1,6 +1,7 @@
 package com.example.trabajofinalprogramacion2.DAO.Usuarios;
 
 import com.example.trabajofinalprogramacion2.DAO.ConexionBD;
+import com.example.trabajofinalprogramacion2.DAO.FechasBD;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.interfaces.ABCMLDAO;
 
@@ -12,7 +13,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
     public Administrador agregar(Administrador admin)
     {
-        String sql="Insert into Administrador(nombre,apellido,dni,email,contrasenia,fechaDeNacimiento,activo,fechaIngreso) values (?,?,?,?,?,?,?,?)";
+        String sql="Insert into administrador(nombre,apellido,dni,email,contrasenia,fechaDeNacimiento,activo,fechaIngreso) values (?,?,?,?,?,?,?,?)";
 
         try(Connection conexion= ConexionBD.conectar();
             PreparedStatement ps= conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
@@ -22,9 +23,9 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
             ps.setString(3, admin.getDni());
             ps.setString(4, admin.getEmail());
             ps.setString(5, admin.getPassword());
-            ps.setDate(6, Date.valueOf(admin.getFechaDeNacimiento()));
+            FechasBD.setFecha(ps, 6, admin.getFechaDeNacimiento());
             ps.setBoolean(7, admin.isActivo());
-            ps.setDate(8, Date.valueOf(admin.getFechaIngreso()));
+            FechasBD.setFecha(ps, 8, admin.getFechaIngreso());
 
             if (ps.executeUpdate() > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -63,7 +64,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
     @Override
     public boolean alta(Administrador admin) {
-        String sql="update Administrador set activo = true where id_administrador = ?";
+        String sql="update administrador set activo = true where id_administrador = ?";
 
         try(Connection conexion= ConexionBD.conectar();
             PreparedStatement ps= conexion.prepareStatement(sql))
@@ -90,7 +91,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     @Override
     public boolean baja(Administrador admin) {
 
-        String sql = "UPDATE Administrador SET activo = false WHERE id_administrador = ?";
+        String sql = "UPDATE administrador SET activo = false WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -112,7 +113,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     @Override
     public Administrador consulta(Administrador admin) {
 
-        String sql = "SELECT * FROM Administrador WHERE id_administrador = ?";
+        String sql = "SELECT * FROM administrador WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -140,7 +141,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     @Override
     public boolean modificar(Administrador admin) {
 
-        String sql = "UPDATE Administrador SET nombre = ?, apellido = ?, dni = ?,  email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, fechaIngreso = ? WHERE id_administrador = ?";
+        String sql = "UPDATE administrador SET nombre = ?, apellido = ?, dni = ?,  email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, fechaIngreso = ? WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -150,9 +151,9 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
             ps.setString(3, admin.getDni());
             ps.setString(4, admin.getEmail());
             ps.setString(5, admin.getPassword());
-            ps.setDate(6, Date.valueOf(admin.getFechaDeNacimiento()));
+            FechasBD.setFecha(ps, 6, admin.getFechaDeNacimiento());
             ps.setBoolean(7, admin.isActivo());
-            ps.setDate(8, Date.valueOf(admin.getFechaIngreso()));
+            FechasBD.setFecha(ps, 8, admin.getFechaIngreso());
 
             ps.setInt(9, admin.getId());
 
@@ -173,7 +174,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
         List<Administrador> administradores = new ArrayList<>();
 
-        String sql = "SELECT * FROM Administrador";
+        String sql = "SELECT * FROM administrador";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql);
@@ -203,9 +204,9 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
         admin.setDni(rs.getString("dni"));
         admin.setEmail(rs.getString("email"));
         admin.setPassword(rs.getString("contrasenia"));
-        admin.setFechaDeNacimiento(rs.getDate("fechaDeNacimiento").toLocalDate());
+        admin.setFechaDeNacimiento(FechasBD.leerFecha(rs, "fechaDeNacimiento"));
         admin.setActivo(rs.getBoolean("activo"));
-        admin.setFechaIngreso(rs.getDate("fechaIngreso").toLocalDate());
+        admin.setFechaIngreso(FechasBD.leerFecha(rs, "fechaIngreso"));
         admin.setId(rs.getInt("id_administrador"));
 
         return admin;
@@ -215,7 +216,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
     public Administrador buscarDao(int id)
     {
-        String sql="select * from Administrador where id_administrador = ?";
+        String sql="select * from administrador where id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql))
