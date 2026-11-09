@@ -32,6 +32,21 @@ public class Sucursal extends Gimnasio {
         this.ciudad = ciudad;
         this.idGimnasio = idGimnasio;
     }
+
+    public Sucursal(String calle, int altura, String ciudad, int idGimnasio) {
+        this.calle = calle;
+        this.altura = altura;
+        this.ciudad = ciudad;
+        this.idGimnasio = idGimnasio;
+    }
+
+    public Sucursal(int id, int estado, String calle, int altura, String ciudad, int idGimnasio) {
+        super(id, estado);
+        this.calle = calle;
+        this.altura = altura;
+        this.ciudad = ciudad;
+        this.idGimnasio = idGimnasio;
+    }
 // GETTERS
 
     public String getCalle() {

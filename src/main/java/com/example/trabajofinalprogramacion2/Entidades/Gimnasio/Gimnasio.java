@@ -41,6 +41,12 @@ public class Gimnasio {
         this.sucursales = new ArrayList<>();
         this.estado = 1;
     }
+
+    public Gimnasio(int id, int estado) {
+        this.id = id;
+        this.estado = estado;
+    }
+
 // GETTERS
 
     public int getId() {
