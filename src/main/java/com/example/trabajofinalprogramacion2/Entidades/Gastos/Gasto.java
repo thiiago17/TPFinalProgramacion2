@@ -28,14 +28,14 @@ public class Gasto {
         this.estado=1;
     }
 
-    public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio) {
+    public Gasto(int id, String detalles, double monto, TipoGasto tipoGasto, LocalDate fecha, int idGimnasio, int estado) {
         this.id = id;
         this.detalles = detalles;
         this.monto = monto;
         this.tipoGasto = tipoGasto;
         this.fecha = fecha;
         this.idGimnasio = idGimnasio;
-        this.estado=1;
+        this.estado=estado;
     }
 
     //sin detalles

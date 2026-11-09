@@ -8,10 +8,12 @@ public class Maquina {
     private String descripcion;
     private double pesoLimite;
     private String grupoMuscular;
+    private int estado;
 
     // CONSTRUCTORES
 
     public Maquina() {
+        this.estado=1;
     }
 
     //con descripcion y nombre
@@ -20,29 +22,33 @@ public class Maquina {
         this.descripcion = descripcion;
         this.pesoLimite = pesoLimite;
         this.grupoMuscular = grupoMuscular;
+        this.estado=1;
     }
 
-    public Maquina(int id, String nombre, String descripcion, double pesoLimite, String grupoMuscular) {
+    public Maquina(int id, String nombre, String descripcion, double pesoLimite, String grupoMuscular, int estado) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.pesoLimite = pesoLimite;
         this.grupoMuscular = grupoMuscular;
+        this.estado= estado;
     }
 
     //sin descripcion y con nombre
 
-    public Maquina(int id, String nombre, double pesoLimite, String grupoMuscular) {
+    public Maquina(int id, String nombre, double pesoLimite, String grupoMuscular, int estado) {
         this.id = id;
         this.nombre = nombre;
         this.pesoLimite = pesoLimite;
         this.grupoMuscular = grupoMuscular;
+        this.estado=estado;
     }
 
     public Maquina(String nombre, double pesoLimite, String grupoMuscular) {
         this.nombre = nombre;
         this.pesoLimite = pesoLimite;
         this.grupoMuscular = grupoMuscular;
+        this.estado=1;
     }
 
 
@@ -68,6 +74,9 @@ public class Maquina {
         return grupoMuscular;
     }
 
+    public int getEstado() {
+        return estado;
+    }
     // SETTERS
 
     public void setId(int id) {
@@ -90,7 +99,9 @@ public class Maquina {
         this.grupoMuscular = grupoMuscular;
     }
 
-
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
     //EQUALS, HASHCODE Y TOSTRING
 
     @Override
@@ -113,10 +124,10 @@ public class Maquina {
                 ", descripcion='" + descripcion + '\'' +
                 ", pesoLimite=" + pesoLimite +
                 ", grupoMuscular='" + grupoMuscular + '\'' +
+                ", estado=" + estado +
                 '}';
     }
-
-    // MOSTRAR
+// MOSTRAR
 
     // METODOS
 }
