@@ -6,6 +6,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TurnosCollection {
 
     public boolean agregar(Turno turno) {
 
-        if (turno == null || turno.getFechaTurno() == null || turno.getPrecio() < 0) {
+        if (turno == null || !Turno.esHorarioValido(turno.getFechaTurno()) || turno.getPrecio() < 0) {
             return false;
         }
 
@@ -36,8 +37,8 @@ public class TurnosCollection {
             return false;
         }
 
-        // Un nutricionista no puede tener dos turnos en la misma fecha
-        if (existeTurno(turno.getNutricionista(), turno.getFechaTurno())) {
+        // Un nutricionista no puede tener dos turnos que se pisen (duran 30 minutos)
+        if (existeTurno(turno.getNutricionista(), turno.getFechaTurno(), turno)) {
             return false;
         }
 
@@ -93,9 +94,9 @@ public class TurnosCollection {
 
     // MODIFICAR FECHA
 
-    public Turno modificarFecha(Turno turno, LocalDate nuevaFecha) {
+    public Turno modificarFecha(Turno turno, LocalDateTime nuevaFecha) {
 
-        if (turno == null || nuevaFecha == null || !turnos.contains(turno)) {
+        if (turno == null || !Turno.esHorarioValido(nuevaFecha) || !turnos.contains(turno)) {
             return null;
         }
 
@@ -103,8 +104,8 @@ public class TurnosCollection {
             return turno;
         }
 
-        // Que el nutricionista no tenga ya otro turno en esa fecha
-        if (existeTurno(turno.getNutricionista(), nuevaFecha)) {
+        // Que el nutricionista no tenga otro turno que se pise con el nuevo horario
+        if (existeTurno(turno.getNutricionista(), nuevaFecha, turno)) {
             return null;
         }
 
@@ -140,7 +141,7 @@ public class TurnosCollection {
             return turno;
         }
 
-        if (existeTurno(nuevoNutricionista, turno.getFechaTurno())) {
+        if (existeTurno(nuevoNutricionista, turno.getFechaTurno(), turno)) {
             return null;
         }
 
@@ -205,12 +206,12 @@ public class TurnosCollection {
         }
 
         for (Turno turno : turnos) {
-            if (fecha.equals(turno.getFechaTurno())) {
+            if (turno.getFechaTurno() != null && fecha.equals(turno.getFechaTurno().toLocalDate())) {
                 encontrados.add(turno);
             }
         }
 
-        return encontrados;
+        return ordenarPorFecha(encontrados);
     }
 
     // ENTRE DOS FECHAS (inclusive)
@@ -225,7 +226,7 @@ public class TurnosCollection {
 
         for (Turno turno : turnos) {
 
-            LocalDate fecha = turno.getFechaTurno();
+            LocalDate fecha = turno.getFechaTurno() != null ? turno.getFechaTurno().toLocalDate() : null;
 
             if (fecha != null && !fecha.isBefore(desde) && !fecha.isAfter(hasta)) {
                 encontrados.add(turno);
@@ -277,15 +278,16 @@ public class TurnosCollection {
         return ordenarPorFecha(encontrados);
     }
 
-    private boolean existeTurno(Nutricionista nutricionista, LocalDate fecha) {
+    // True si el nutricionista ya tiene otro turno (distinto de "excluir") que se pisa con esa fecha y hora
+    private boolean existeTurno(Nutricionista nutricionista, LocalDateTime fecha, Turno excluir) {
 
         if (nutricionista == null || fecha == null) {
             return false;
         }
 
         for (Turno turno : turnos) {
-            if (mismoUsuario(turno.getNutricionista(), nutricionista)
-                    && fecha.equals(turno.getFechaTurno())) {
+            if (turno != excluir && mismoUsuario(turno.getNutricionista(), nutricionista)
+                    && Turno.seSuperponen(fecha, turno.getFechaTurno())) {
                 return true;
             }
         }

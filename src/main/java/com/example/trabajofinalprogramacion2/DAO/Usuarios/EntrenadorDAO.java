@@ -1,6 +1,7 @@
 package com.example.trabajofinalprogramacion2.DAO.Usuarios;
 
 import com.example.trabajofinalprogramacion2.DAO.ConexionBD;
+import com.example.trabajofinalprogramacion2.DAO.FechasBD;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.interfaces.ABCMLDAO;
 
@@ -13,7 +14,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
     @Override
     public Entrenador agregar(Entrenador entrenador) {
-        String sql = "INSERT INTO entrenador (dni, nombre, apellido, email, password, fecha_nacimiento, activo, especialidad, salario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO entrenador (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, especialidad, salario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,10 +24,10 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
             pstmt.setString(3, entrenador.getApellido());
             pstmt.setString(4, entrenador.getEmail());
             pstmt.setString(5, entrenador.getPassword());
-            pstmt.setDate(6, java.sql.Date.valueOf(entrenador.getFechaDeNacimiento()));
+            FechasBD.setFecha(pstmt, 6, entrenador.getFechaDeNacimiento());
             pstmt.setBoolean(7, entrenador.isActivo());
             pstmt.setString(8, entrenador.getEspecialidad());
-            pstmt.setDouble(9, entrenador.getSalario());
+            setSalario(pstmt, 9, entrenador.getSalario());
 
             int filasAfectadas = pstmt.executeUpdate();
 
@@ -46,12 +47,23 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
     @Override
     public boolean alta(Entrenador entrenador) {
-        return agregar(entrenador)!=null;
+        String sql = "UPDATE entrenador SET activo = true WHERE id_entrenador = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, entrenador.getId());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al dar de alta entrenador: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean baja(Entrenador entrenador) {
-        String sql = "DELETE FROM entrenador WHERE id = ? ";
+        String sql = "UPDATE entrenador SET activo = false WHERE id_entrenador = ?";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -61,14 +73,14 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Error al dar de baja (eliminar) entrenador: " + e.getMessage());
+            System.out.println("Error al dar de baja entrenador: " + e.getMessage());
             return false;
         }
     }
 
     @Override
     public Entrenador consulta(Entrenador objeto) {
-        String sql = "SELECT * FROM entrenador WHERE id = ? OR dni = ?";
+        String sql = "SELECT * FROM entrenador WHERE id_entrenador = ? OR dni = ?";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -78,18 +90,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Entrenador e = new Entrenador();
-                    e.setId(rs.getInt("id"));
-                    e.setNombre(rs.getString("nombre"));
-                    e.setApellido(rs.getString("apellido"));
-                    e.setDni(rs.getString("dni"));
-                    e.setEmail(rs.getString("email"));
-                    e.setPassword(rs.getString("password"));
-                    e.setFechaDeNacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
-                    e.setActivo(rs.getBoolean("activo"));
-                    e.setEspecialidad(rs.getString("especialidad"));
-                    e.setSalario(rs.getDouble("salario"));
-                    return e;
+                    return mapearEntrenador(rs);
                 }
             }
         } catch (SQLException e) {
@@ -100,7 +101,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
     @Override
     public boolean modificar(Entrenador entrenador) {
-        String sql = "UPDATE entrenador SET nombre = ?, apellido = ?, dni= ?, email = ?, password = ?, fecha_nacimiento = ?, activo = ?, especialidad = ?, salario = ? WHERE id = ?";
+        String sql = "UPDATE entrenador SET nombre = ?, apellido = ?, dni= ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, especialidad = ?, salario = ? WHERE id_entrenador = ?";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -110,10 +111,10 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
             pstmt.setString(3,entrenador.getDni());
             pstmt.setString(4, entrenador.getEmail());
             pstmt.setString(5, entrenador.getPassword());
-            pstmt.setDate(6, java.sql.Date.valueOf(entrenador.getFechaDeNacimiento()));
+            FechasBD.setFecha(pstmt, 6, entrenador.getFechaDeNacimiento());
             pstmt.setBoolean(7, entrenador.isActivo());
             pstmt.setString(8, entrenador.getEspecialidad());
-            pstmt.setDouble(9, entrenador.getSalario());
+            setSalario(pstmt, 9, entrenador.getSalario());
             pstmt.setInt(10, entrenador.getId());
 
 
@@ -134,23 +135,116 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Entrenador e = new Entrenador();
-                e.setId(rs.getInt("id"));
-                e.setNombre(rs.getString("nombre"));
-                e.setApellido(rs.getString("apellido"));
-                e.setDni(rs.getString("dni"));
-                e.setEmail(rs.getString("email"));
-                e.setPassword(rs.getString("password"));
-                e.setFechaDeNacimiento(rs.getDate("fecha_nacimiento").toLocalDate());
-                e.setActivo(rs.getBoolean("activo"));
-                e.setEspecialidad(rs.getString("especialidad"));
-                e.setSalario(rs.getDouble("salario"));
-
-                lista.add(e);
+                lista.add(mapearEntrenador(rs));
             }
         } catch (SQLException e) {
             System.out.println("Error al listar entrenadores: " + e.getMessage());
         }
         return lista;
+    }
+
+    // ALUMNOS (tabla entrenador_socio) =================================================================================
+
+    // VINCULAR un socio con un entrenador
+
+    public boolean vincularSocio(int idEntrenador, int idSocio) {
+        String sql = "INSERT INTO entrenador_socio (id_entrenador, id_socio) VALUES (?, ?)";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEntrenador);
+            pstmt.setInt(2, idSocio);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al vincular socio con entrenador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // DESVINCULAR un socio de un entrenador
+
+    public boolean desvincularSocio(int idEntrenador, int idSocio) {
+        String sql = "DELETE FROM entrenador_socio WHERE id_entrenador = ? AND id_socio = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEntrenador);
+            pstmt.setInt(2, idSocio);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al desvincular socio del entrenador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // DESVINCULAR TODOS los socios de un entrenador (se usa al darlo de baja).
+    // Devuelve true aunque no tuviera socios: lo importante es que no haya fallado
+
+    public boolean desvincularTodosLosSocios(int idEntrenador) {
+        String sql = "DELETE FROM entrenador_socio WHERE id_entrenador = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEntrenador);
+            pstmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al desvincular los socios del entrenador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // LISTAR los ids de los socios de un entrenador
+
+    public List<Integer> listarIdsSocios(int idEntrenador) {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT id_socio FROM entrenador_socio WHERE id_entrenador = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idEntrenador);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("id_socio"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar los socios del entrenador: " + e.getMessage());
+        }
+        return ids;
+    }
+
+    // Arma un Entrenador a partir de la fila actual del ResultSet
+    private Entrenador mapearEntrenador(ResultSet rs) throws SQLException {
+        Entrenador e = new Entrenador();
+        e.setId(rs.getInt("id_entrenador"));
+        e.setNombre(rs.getString("nombre"));
+        e.setApellido(rs.getString("apellido"));
+        e.setDni(rs.getString("dni"));
+        e.setEmail(rs.getString("email"));
+        e.setPassword(rs.getString("contrasenia"));
+        e.setFechaDeNacimiento(FechasBD.leerFecha(rs, "fechaDeNacimiento"));
+        e.setActivo(rs.getBoolean("activo"));
+        e.setEspecialidad(rs.getString("especialidad"));
+        double salario = rs.getDouble("salario");
+        e.setSalario(rs.wasNull() ? null : salario);
+        return e;
+    }
+
+    // El salario es Double y puede ser null: en ese caso se guarda NULL en la BD
+    private void setSalario(PreparedStatement pstmt, int posicion, Double salario) throws SQLException {
+        if (salario == null) {
+            pstmt.setNull(posicion, Types.DOUBLE);
+        } else {
+            pstmt.setDouble(posicion, salario);
+        }
     }
 }

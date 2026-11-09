@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Tabla esperada:
-// Turno(id_turno PK autoincremental, id_socio NULL, id_nutricionista, fechaTurno DATE, estado BOOLEAN, precio DOUBLE)
+// turno(id_turno PK autoincremental, id_socio NULL, id_nutricionista, fecha_turno DATETIME, estado BOOLEAN, precio DECIMAL)
 // estado = true -> turno disponible | estado = false -> turno reservado
 
 public class TurnosDao implements ABCMLDAO<Turno> {
@@ -20,7 +20,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
     @Override
     public Turno agregar(Turno turno) {
 
-        String sql = "INSERT INTO Turno (id_socio, id_nutricionista, fecha_turno, estado, precio) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO turno (id_socio, id_nutricionista, fecha_turno, estado, precio) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -52,12 +52,12 @@ public class TurnosDao implements ABCMLDAO<Turno> {
         return agregar(turno) != null;
     }
 
-    // BAJA (el turno no tiene "activo", asi que la baja lo elimina)
+    // BAJA (el turno no tiene "activo", asi que la baja lo borra de la BD)
 
     @Override
     public boolean baja(Turno turno) {
 
-        String sql = "UPDATE Turno SET estado=false WHERE id_turno = ?";
+        String sql = "DELETE FROM turno WHERE id_turno = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
     @Override
     public Turno consulta(Turno turno) {
 
-        String sql = "SELECT * FROM Turno WHERE id_turno = ?";
+        String sql = "SELECT * FROM turno WHERE id_turno = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -105,7 +105,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
     @Override
     public boolean modificar(Turno turno) {
 
-        String sql = "UPDATE Turno SET id_socio = ?, id_nutricionista = ?, fechaTurno = ?, estado = ?, precio = ? WHERE id_turno = ?";
+        String sql = "UPDATE turno SET id_socio = ?, id_nutricionista = ?, fecha_turno = ?, estado = ?, precio = ? WHERE id_turno = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -126,34 +126,34 @@ public class TurnosDao implements ABCMLDAO<Turno> {
 
     @Override
     public List<Turno> listado() {
-        return listar("SELECT * FROM Turno ORDER BY fechaTurno", null);
+        return listar("SELECT * FROM turno ORDER BY fecha_turno", null);
     }
 
     // LISTADOS FILTRADOS =================================================================================
 
     // Todos los turnos de un nutricionista
     public List<Turno> listadoPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM Turno WHERE id_nutricionista = ? ORDER BY fechaTurno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? ORDER BY fecha_turno", idNutricionista);
     }
 
     // Solo los turnos disponibles (no tomados) de un nutricionista
     public List<Turno> listadoDisponiblesPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM Turno WHERE id_nutricionista = ? AND estado = true ORDER BY fechaTurno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = true ORDER BY fecha_turno", idNutricionista);
     }
 
     // Solo los turnos reservados de un nutricionista
     public List<Turno> listadoReservadosPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM Turno WHERE id_nutricionista = ? AND estado = false ORDER BY fechaTurno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = false ORDER BY fecha_turno", idNutricionista);
     }
 
     // Turnos reservados por un socio
     public List<Turno> listadoPorSocio(int idSocio) {
-        return listar("SELECT * FROM Turno WHERE id_socio = ? ORDER BY fechaTurno", idSocio);
+        return listar("SELECT * FROM turno WHERE id_socio = ? ORDER BY fecha_turno", idSocio);
     }
 
     // Todos los turnos disponibles
     public List<Turno> listadoDisponibles() {
-        return listar("SELECT * FROM Turno WHERE estado = true ORDER BY fechaTurno", null);
+        return listar("SELECT * FROM turno WHERE estado = true ORDER BY fecha_turno", null);
     }
 
     // RESERVAR / CANCELAR =================================================================================
@@ -165,7 +165,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             return false;
         }
 
-        String sql = "UPDATE Turno SET id_socio = ?, estado = false WHERE id_turno = ? AND estado = true";
+        String sql = "UPDATE turno SET id_socio = ?, estado = false WHERE id_turno = ? AND estado = true";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -192,7 +192,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             return false;
         }
 
-        String sql = "UPDATE Turno SET id_socio = NULL, estado = true WHERE id_turno = ? AND estado = false";
+        String sql = "UPDATE turno SET id_socio = NULL, estado = true WHERE id_turno = ? AND estado = false";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -255,7 +255,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             ps.setNull(2, Types.INTEGER);
         }
 
-        ps.setDate(3, turno.getFechaTurno() != null ? Date.valueOf(turno.getFechaTurno()) : null);
+        FechasBD.setFechaHora(ps, 3, turno.getFechaTurno());
         ps.setBoolean(4, turno.isEstado());
         ps.setDouble(5, turno.getPrecio());
     }
@@ -283,8 +283,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             turno.setNutricionista(nutricionista);
         }
 
-        Date fecha = rs.getDate("fechaTurno");
-        turno.setFechaTurno(fecha != null ? fecha.toLocalDate() : null);
+        turno.setFechaTurno(FechasBD.leerFechaHora(rs, "fecha_turno"));
         turno.setEstado(rs.getBoolean("estado"));
         turno.setPrecio(rs.getDouble("precio"));
 

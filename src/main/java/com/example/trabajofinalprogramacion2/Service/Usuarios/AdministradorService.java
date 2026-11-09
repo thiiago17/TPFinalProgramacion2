@@ -18,11 +18,14 @@ public class AdministradorService {
         dao = new AdministradorDAO();
         coleccion = new AdministradorCollection();
 
-        // Cargar los administradores de MySQL en Collection
+        // Cargar los administradores activos de MySQL en Collection
+        // (los dados de baja quedan en la BD y se recuperan con alta)
         List<Administrador> administradores = dao.listado();
 
         for (Administrador admin : administradores) {
-            coleccion.agregar(admin);
+            if (admin.isActivo()) {
+                coleccion.agregar(admin);
+            }
         }
     }
 
@@ -32,6 +35,7 @@ public class AdministradorService {
     // =========================
 
     // VER LISTADO
+
     public List<Administrador> verListado() {
         return coleccion.verListado();
     }
@@ -41,8 +45,14 @@ public class AdministradorService {
 
     public boolean agregar(Administrador admin) {
 
-        if (admin == null || coleccion.buscarPorDni(admin.getDni()) != null) {
+        if (admin == null || admin.getFechaDeNacimiento() == null
+                || coleccion.buscarPorDni(admin.getDni()) != null) {
             return false;
+        }
+
+        // Si no se indico fecha de ingreso, se toma la fecha de hoy
+        if (admin.getFechaIngreso() == null) {
+            admin.setFechaIngreso(LocalDate.now());
         }
 
         Administrador nuevo = dao.agregar(admin);
@@ -56,6 +66,7 @@ public class AdministradorService {
 
 
     // MODIFICAR OBJETO COMPLETO
+
     public boolean modificar(Administrador admin) {
 
         if (admin == null || coleccion.buscar(admin.getId()) == null) {
@@ -85,6 +96,34 @@ public class AdministradorService {
         }
 
         return false;
+    }
+
+
+    // DAR DE ALTA (REACTIVAR UN ADMINISTRADOR DADO DE BAJA)
+
+    public boolean alta(int id) {
+
+        Administrador admin = dao.buscarDao(id);
+
+        if (admin == null) {
+            return false;
+        }
+
+        if (!dao.alta(admin)) {
+            return false;
+        }
+
+        admin.setActivo(true);
+
+        // Si ya estaba en memoria lo actualizamos, si no lo agregamos
+        Administrador enMemoria = coleccion.buscar(id);
+
+        if (enMemoria != null) {
+            enMemoria.setActivo(true);
+            return true;
+        }
+
+        return coleccion.agregar(admin);
     }
 
 
