@@ -21,22 +21,22 @@ public class Turno {
     private Socio socio;
     private Nutricionista nutricionista;
     private LocalDateTime fechaTurno;
-    private boolean estado;
+    private EstadoTurno estado;
     private double precio;
 
     // CONSTRUCTORES
 
     // Constructor vacio (lo usa el DAO para armar el turno desde la base)
     public Turno() {
-        this.estado = true;
+        this.estado = EstadoTurno.DISPONIBLE;
     }
 
-    // El estado se calcula solo: sin socio el turno esta disponible (true), con socio esta reservado (false)
+    // El estado se calcula solo: sin socio el turno esta disponible, con socio esta reservado
     public Turno(Socio socio, Nutricionista nutricionista, LocalDateTime fechaTurno, double precio) {
         this.socio = socio;
         this.nutricionista = nutricionista;
         this.fechaTurno = fechaTurno;
-        this.estado = (socio == null);
+        this.estado = (socio == null) ? EstadoTurno.DISPONIBLE : EstadoTurno.RESERVADO;
         this.precio = precio;
         // No se agrega a la lista del nutricionista aca: lo hace TurnosCollection.agregar
         // solo si el turno es valido (horario y sin superposicion)
@@ -60,8 +60,20 @@ public class Turno {
         return fechaTurno;
     }
 
-    public boolean isEstado() {
+    public EstadoTurno getEstado() {
         return estado;
+    }
+
+    public boolean estaDisponible() {
+        return estado == EstadoTurno.DISPONIBLE;
+    }
+
+    public boolean estaReservado() {
+        return estado == EstadoTurno.RESERVADO;
+    }
+
+    public boolean estaDadoDeBaja() {
+        return estado == EstadoTurno.DADO_DE_BAJA;
     }
 
     public double getPrecio() {
@@ -86,7 +98,7 @@ public class Turno {
         this.fechaTurno = fechaTurno;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(EstadoTurno estado) {
         this.estado = estado;
     }
 
@@ -140,12 +152,16 @@ public class Turno {
             return "Error: el socio no puede ser nulo.";
         }
 
-        if (!estado) {
+        if (estaDadoDeBaja()) {
+            return "El turno se encuentra dado de baja.";
+        }
+
+        if (estaReservado()) {
             return "El turno ya se encuentra reservado.";
         }
 
         this.socio = socio;
-        this.estado = false;
+        this.estado = EstadoTurno.RESERVADO;
 
         return "Turno reservado correctamente.";
     }
@@ -155,13 +171,13 @@ public class Turno {
     public String cancelarTurno()
     {
 
-        if (estado)
+        if (!estaReservado())
         {
-            return "El turno ya se encuentra disponible.";
+            return "El turno no se encuentra reservado.";
         }
 
         this.socio = null;
-        this.estado = true;
+        this.estado = EstadoTurno.DISPONIBLE;
 
         return "Turno cancelado correctamente.";
     }
@@ -174,7 +190,7 @@ public class Turno {
 
         for (Turno turno : turnos) {
 
-            if (turno.isEstado()) {
+            if (turno.estaDisponible()) {
 
                 resultado.append("Fecha: ")
                         .append(turno.getFechaTurno())

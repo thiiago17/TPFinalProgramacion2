@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 
@@ -39,44 +40,22 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
         return nutricionista;
     }
 
+    // MODIFICAR SUCURSAL
+
+    public Nutricionista modificarSucursal(int id, Sucursal sucursal) {
+
+        Nutricionista nutricionista = buscar(id);
+
+        if (nutricionista == null || sucursal == null) {
+            return null;
+        }
+
+        nutricionista.setSucursalAsignada(sucursal);
+
+        return nutricionista;
+    }
+
     // TURNOS =================================================================================
-
-    // AGREGAR TURNO
-
-    public boolean agregarTurno(int idNutricionista, Turno turno) {
-
-        Nutricionista nutricionista = buscar(idNutricionista);
-
-        if (nutricionista == null || turno == null) {
-            return false;
-        }
-
-        if (nutricionista.getTurnos() == null) {
-            nutricionista.setTurnos(new ArrayList<>());
-        }
-
-        if (nutricionista.getTurnos().contains(turno)) {
-            return false;
-        }
-
-        nutricionista.agregarTurno(turno);
-
-        return true;
-    }
-
-    // ELIMINAR TURNO
-
-    public boolean eliminarTurno(int idNutricionista, Turno turno) {
-
-        Nutricionista nutricionista = buscar(idNutricionista);
-
-        if (nutricionista == null || turno == null || nutricionista.getTurnos() == null) {
-            return false;
-        }
-
-        return nutricionista.getTurnos().remove(turno);
-    }
-
 
     // VER TODOS LOS TURNOS DEL NUTRICIONISTA
 
@@ -114,8 +93,7 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
 
         for (Turno turno : nutricionista.getTurnos()) {
 
-            // estado == true significa que el turno esta disponible (no tomado)
-            if (turno != null && turno.isEstado()) {
+            if (turno != null && turno.estaDisponible()) {
                 disponibles.add(turno);
             }
         }
@@ -140,8 +118,7 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
 
         for (Turno turno : nutricionista.getTurnos()) {
 
-            // estado == true significa que el turno esta disponible (no tomado)
-            if (turno != null && !turno.isEstado()) {
+            if (turno != null && turno.estaReservado()) {
                 ocupados.add(turno);
             }
         }

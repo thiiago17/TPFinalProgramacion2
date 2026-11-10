@@ -90,8 +90,33 @@ public class SucursalDAO implements ABCMLDAO<Sucursal> {
     }
 
     @Override
-    public Sucursal consulta(Sucursal sucursal) { //ESTE METODO NO TIENE MUCHO SENTIDO, DEBERIA SER CON EL ID, HAY Q MODIFICAR LA INTERFAZ
-        //
+    public Sucursal consulta(int clavePrimaria) {
+        String sql="SELECT * FROM Sucursal WHERE id_sucursal= ?";
+
+        try(Connection con=ConexionBD.conectar();
+            PreparedStatement ps=con.prepareStatement(sql)){
+
+            ps.setInt(1,clavePrimaria);
+
+            try(ResultSet rs= ps.executeQuery()){
+
+                if(rs.next()){
+                    return new Sucursal(
+                            rs.getInt("id_sucursal"),
+                            rs.getInt("estado"),
+                            rs.getString("calle"),
+                            rs.getInt("altura"),
+                            rs.getString("ciudad"),
+                            rs.getInt("id_gimnasio")
+                    );
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+
         return null;
     }
 

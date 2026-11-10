@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.DAO;
 
+import com.example.trabajofinalprogramacion2.Entidades.Turno.EstadoTurno;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Tabla esperada:
-// turno(id_turno PK autoincremental, id_socio NULL, id_nutricionista, fecha_turno DATETIME, estado BOOLEAN, precio DECIMAL)
-// estado = true -> turno disponible | estado = false -> turno reservado
+// turno(id_turno PK autoincremental, id_socio NULL, id_nutricionista, fecha_turno DATETIME, estado TINYINT, precio DECIMAL)
+// estado: 0 -> dado de baja | 1 -> reservado | 2 -> disponible (ver EstadoTurno)
 
 public class TurnosDao implements ABCMLDAO<Turno> {
 
@@ -45,26 +46,54 @@ public class TurnosDao implements ABCMLDAO<Turno> {
         return null;
     }
 
-    // ALTA
+    // ALTA (reactiva un turno dado de baja: vuelve a reservado si tiene socio, si no a disponible)
 
     @Override
     public boolean alta(Turno turno) {
-        return agregar(turno) != null;
-    }
 
-    // BAJA (el turno no tiene "activo", asi que la baja lo borra de la BD)
-
-    @Override
-    public boolean baja(Turno turno) {
-
-        String sql = "DELETE FROM turno WHERE id_turno = ?";
+        String sql = "UPDATE turno SET estado = CASE WHEN id_socio IS NULL THEN ? ELSE ? END WHERE id_turno = ? AND estado = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(1, turno.getId());
+            ps.setInt(1, EstadoTurno.DISPONIBLE.getCodigo());
+            ps.setInt(2, EstadoTurno.RESERVADO.getCodigo());
+            ps.setInt(3, turno.getId());
+            ps.setInt(4, EstadoTurno.DADO_DE_BAJA.getCodigo());
 
-            return ps.executeUpdate() > 0;
+            if (ps.executeUpdate() > 0) {
+                turno.setEstado(turno.getSocio() == null ? EstadoTurno.DISPONIBLE : EstadoTurno.RESERVADO);
+                return true;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al dar de alta el turno: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // BAJA LOGICA (estado = 0, el turno queda en la BD)
+
+    @Override
+    public boolean baja(Turno turno) {
+
+        String sql = "UPDATE turno SET estado = ? WHERE id_turno = ? AND estado <> ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, EstadoTurno.DADO_DE_BAJA.getCodigo());
+            ps.setInt(2, turno.getId());
+            ps.setInt(3, EstadoTurno.DADO_DE_BAJA.getCodigo());
+
+            if (ps.executeUpdate() > 0) {
+                turno.setEstado(EstadoTurno.DADO_DE_BAJA);
+                return true;
+            }
+
+            return false;
 
         } catch (SQLException e) {
             System.out.println("Error al dar de baja el turno: " + e.getMessage());
@@ -76,14 +105,14 @@ public class TurnosDao implements ABCMLDAO<Turno> {
     // CONSULTA
 
     @Override
-    public Turno consulta(Turno turno) {
+    public Turno consulta(int clavePrimaria) {
 
         String sql = "SELECT * FROM turno WHERE id_turno = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(1, turno.getId());
+            ps.setInt(1, clavePrimaria);
 
             try (ResultSet rs = ps.executeQuery()) {
 
@@ -122,7 +151,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
         }
     }
 
-    // LISTADO (ordenado por fecha)
+    // LISTADO (todos, incluidos los dados de baja, ordenado por fecha)
 
     @Override
     public List<Turno> listado() {
@@ -130,30 +159,41 @@ public class TurnosDao implements ABCMLDAO<Turno> {
     }
 
     // LISTADOS FILTRADOS =================================================================================
+    // Los codigos de estado van fijos en el SQL: 0 = baja, 1 = reservado, 2 = disponible
 
-    // Todos los turnos de un nutricionista
+    // Turnos activos (disponibles o reservados)
+    public List<Turno> listadoActivos() {
+        return listar("SELECT * FROM turno WHERE estado <> 0 ORDER BY fecha_turno", null);
+    }
+
+    // Turnos dados de baja
+    public List<Turno> listadoDadosDeBaja() {
+        return listar("SELECT * FROM turno WHERE estado = 0 ORDER BY fecha_turno", null);
+    }
+
+    // Turnos activos de un nutricionista
     public List<Turno> listadoPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM turno WHERE id_nutricionista = ? ORDER BY fecha_turno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado <> 0 ORDER BY fecha_turno", idNutricionista);
     }
 
     // Solo los turnos disponibles (no tomados) de un nutricionista
     public List<Turno> listadoDisponiblesPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = true ORDER BY fecha_turno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = 2 ORDER BY fecha_turno", idNutricionista);
     }
 
     // Solo los turnos reservados de un nutricionista
     public List<Turno> listadoReservadosPorNutricionista(int idNutricionista) {
-        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = false ORDER BY fecha_turno", idNutricionista);
+        return listar("SELECT * FROM turno WHERE id_nutricionista = ? AND estado = 1 ORDER BY fecha_turno", idNutricionista);
     }
 
     // Turnos reservados por un socio
     public List<Turno> listadoPorSocio(int idSocio) {
-        return listar("SELECT * FROM turno WHERE id_socio = ? ORDER BY fecha_turno", idSocio);
+        return listar("SELECT * FROM turno WHERE id_socio = ? AND estado = 1 ORDER BY fecha_turno", idSocio);
     }
 
     // Todos los turnos disponibles
     public List<Turno> listadoDisponibles() {
-        return listar("SELECT * FROM turno WHERE estado = true ORDER BY fecha_turno", null);
+        return listar("SELECT * FROM turno WHERE estado = 2 ORDER BY fecha_turno", null);
     }
 
     // RESERVAR / CANCELAR =================================================================================
@@ -165,7 +205,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             return false;
         }
 
-        String sql = "UPDATE turno SET id_socio = ?, estado = false WHERE id_turno = ? AND estado = true";
+        String sql = "UPDATE turno SET id_socio = ?, estado = 1 WHERE id_turno = ? AND estado = 2";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -192,7 +232,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
             return false;
         }
 
-        String sql = "UPDATE turno SET id_socio = NULL, estado = true WHERE id_turno = ? AND estado = false";
+        String sql = "UPDATE turno SET id_socio = NULL, estado = 2 WHERE id_turno = ? AND estado = 1";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -256,7 +296,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
         }
 
         FechasBD.setFechaHora(ps, 3, turno.getFechaTurno());
-        ps.setBoolean(4, turno.isEstado());
+        ps.setInt(4, turno.getEstado().getCodigo());
         ps.setDouble(5, turno.getPrecio());
     }
 
@@ -284,7 +324,7 @@ public class TurnosDao implements ABCMLDAO<Turno> {
         }
 
         turno.setFechaTurno(FechasBD.leerFechaHora(rs, "fecha_turno"));
-        turno.setEstado(rs.getBoolean("estado"));
+        turno.setEstado(EstadoTurno.desdeCodigo(rs.getInt("estado")));
         turno.setPrecio(rs.getDouble("precio"));
 
         return turno;

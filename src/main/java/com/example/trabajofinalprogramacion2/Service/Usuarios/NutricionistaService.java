@@ -3,6 +3,7 @@ package com.example.trabajofinalprogramacion2.Service.Usuarios;
 import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.NutricionistaCollection;
 import com.example.trabajofinalprogramacion2.DAO.Usuarios.NutricionistaDAO;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 
 import java.time.LocalDate;
@@ -99,10 +100,7 @@ public class NutricionistaService {
 
     public boolean alta(int id) {
 
-        Nutricionista buscado = new Nutricionista();
-        buscado.setId(id);
-
-        Nutricionista nutricionista = dao.consulta(buscado);
+        Nutricionista nutricionista = dao.consulta(id);
 
         if (nutricionista == null) {
             return false;
@@ -126,15 +124,22 @@ public class NutricionistaService {
     }
 
 
-    // CONSULTA EN BASE DE DATOS (POR ID O DNI)
+    // CONSULTA EN BASE DE DATOS (POR ID)
 
-    public Nutricionista consultar(Nutricionista nutricionista) {
+    public Nutricionista consultar(int id) {
+        return dao.consulta(id);
+    }
 
-        if (nutricionista == null) {
+
+    // CONSULTA EN BASE DE DATOS (POR DNI)
+
+    public Nutricionista consultarPorDni(String dni) {
+
+        if (dni == null || dni.isBlank()) {
             return null;
         }
 
-        return dao.consulta(nutricionista);
+        return dao.consultaPorDni(dni);
     }
 
 
@@ -353,6 +358,24 @@ public class NutricionistaService {
         Nutricionista modificado = coleccion.modificarSalario(id, salario);
 
         return guardarModificacion(modificado, () -> nutricionista.setSalario(anterior));
+    }
+
+
+    // MODIFICAR SUCURSAL (trabaja en una sola; si la sucursal no existe falla la FK y se restaura)
+
+    public boolean modificarSucursal(int id, Sucursal sucursal) {
+
+        Nutricionista nutricionista = coleccion.buscar(id);
+
+        if (nutricionista == null || sucursal == null || sucursal.getId() <= 0) {
+            return false;
+        }
+
+        Sucursal anterior = nutricionista.getSucursalAsignada();
+
+        Nutricionista modificado = coleccion.modificarSucursal(id, sucursal);
+
+        return guardarModificacion(modificado, () -> nutricionista.setSucursalAsignada(anterior));
     }
 
 

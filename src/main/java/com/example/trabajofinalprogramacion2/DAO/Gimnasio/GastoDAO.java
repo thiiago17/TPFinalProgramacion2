@@ -92,8 +92,34 @@ public class GastoDAO implements ABCMLDAO<Gasto> {
     }
 
     @Override
-    public Gasto consulta(Gasto gasto) { //ESTE METODO NO TIENE MUCHO SENTIDO, DEBERIA SER CON EL ID, HAY Q MODIFICAR LA INTERFAZ
-        //
+    public Gasto consulta(int clavePrimaria) {
+        String sql="SELECT * FROM Gasto WHERE id_gasto= ?";
+
+        try(Connection con=ConexionBD.conectar();
+            PreparedStatement ps=con.prepareStatement(sql)){
+
+            ps.setInt(1,clavePrimaria);
+
+            try(ResultSet rs= ps.executeQuery()){
+
+                if(rs.next()){
+                    return new Gasto(
+                            rs.getInt("id_gasto"),
+                            rs.getString("detalles"),
+                            rs.getDouble("monto"),
+                            TipoGasto.valueOf(rs.getString("gasto")),
+                            rs.getDate("fecha").toLocalDate(),
+                            rs.getInt("id_gimnasio"),
+                            rs.getInt("estado")
+                    );
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+
         return null;
     }
 
