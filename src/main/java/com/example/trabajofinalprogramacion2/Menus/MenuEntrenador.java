@@ -53,10 +53,7 @@ public class MenuEntrenador {
                             : "No tiene sucursal asignada.");
                     break;
                 case 5:
-                    MenuPerfil.mostrar(
-                            () -> Formato.entrenador(entrenador),
-                            password -> entrenadorService.modificarPassword(entrenador.getId(), password),
-                            email -> entrenadorService.modificarEmail(entrenador.getId(), email));
+                    MenuPerfil.mostrar(entrenador, entrenadorService);
                     break;
             }
 
@@ -77,9 +74,9 @@ public class MenuEntrenador {
         }
 
         // Por ahora los socios vienen solo con su id (los carga EntrenadorService desde entrenador_socio).
-        // Cuando este SocioService se pueden mostrar con Formato.usuario(socio)
+        // Cuando este SocioService vienen completos y se muestran con su toString
         for (Socio socio : alumnos) {
-            System.out.println(socio.getNombre() != null ? Formato.usuario(socio) : "Socio #" + socio.getId());
+            System.out.println(socio.getNombre() != null ? socio.toString() : "Socio #" + socio.getId());
         }
     }
 }

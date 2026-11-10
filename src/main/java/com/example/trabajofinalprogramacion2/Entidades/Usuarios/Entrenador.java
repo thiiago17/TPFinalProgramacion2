@@ -79,25 +79,12 @@ public class Entrenador extends Usuarios {
     }
 
     @Override
-    public void mostrarMenu() {
-        System.out.println("\n--- MENÚ ENTRENADOR: " + getNombre() + " "+getApellido() +"---");
-        System.out.println("Especialidad: " + (especialidad != null ? especialidad : "No especificada"));
-        System.out.println("1. Ver alumnos asociados");
-        System.out.println("2. Asignar rutina / socio");
-        System.out.println("3. Ver perfil");
-        System.out.println("4. Cerrar sesión");
-
-    }
-
-    @Override
     public String toString() {
-        return super.toString() + ", Entrenador{" +
-                ": "+getNombre()+" "+getApellido()+
-                "especialidad='" + especialidad + '\'' +
-                ", salario=" + salario +
-                ", alumnosAsociados=" + (alumnosAsociados != null ? alumnosAsociados.size() : 0) +
-                ", sucursalAsignada=" + (sucursalAsignada != null ? sucursalAsignada.toString() : "Ninguna") +
-                '}';
+        return super.toString()
+                + " | Especialidad: " + (especialidad != null ? especialidad : "-")
+                + " | Salario: $" + salario
+                + " | Alumnos: " + (alumnosAsociados != null ? alumnosAsociados.size() : 0)
+                + " | Sucursal: " + (sucursalAsignada != null ? "#" + sucursalAsignada.getId() : "sin asignar");
     }
 
 
