@@ -2,6 +2,7 @@ package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Objects;
 
 public abstract class Usuarios {
     private int id;
@@ -146,5 +147,26 @@ public abstract class Usuarios {
     public void mostrarMenu()
     {
 
+    }
+
+    // EQUALS / HASHCODE (por id)
+    // Se compara tambien la clase porque cada tipo de usuario tiene su propia tabla,
+    // asi que un Socio y un Nutricionista pueden tener el mismo id
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Usuarios otro = (Usuarios) o;
+        return id == otro.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClass(), id);
     }
 }

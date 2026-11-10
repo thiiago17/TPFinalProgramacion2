@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ public class Nutricionista extends Usuarios{
     private List<Turno> turnos = new ArrayList<>();
     private double salario;
     private double comisionPorConsulta;
+    private Sucursal sucursalAsignada;
 
     // CONSTRUCTORES
 
@@ -58,6 +60,16 @@ public class Nutricionista extends Usuarios{
         this.comisionPorConsulta = comisionPorConsulta;
     }
 
+    // Trabaja en una sola sucursal (en la BD: nutricionista.id_sucursal)
+
+    public Sucursal getSucursalAsignada() {
+        return sucursalAsignada;
+    }
+
+    public void setSucursalAsignada(Sucursal sucursalAsignada) {
+        this.sucursalAsignada = sucursalAsignada;
+    }
+
     // MOSTRAR
 
     // METODOS
@@ -68,7 +80,7 @@ public class Nutricionista extends Usuarios{
         int consultasReservadas = 0;
 
         for (Turno turno : turnos) {
-            if (!turno.isEstado()) {
+            if (turno.estaReservado()) {
                 consultasReservadas++;
             }
         }

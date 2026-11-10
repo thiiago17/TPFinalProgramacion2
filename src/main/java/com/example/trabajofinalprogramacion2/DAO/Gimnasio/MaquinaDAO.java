@@ -91,8 +91,33 @@ public class MaquinaDAO implements ABCMLDAO<Maquina> {
     }
 
     @Override
-    public Maquina consulta(Maquina maquina) { //ESTE METODO NO TIENE MUCHO SENTIDO, DEBERIA SER CON EL ID, HAY Q MODIFICAR LA INTERFAZ
-        //
+    public Maquina consulta(int clavePrimaria) {
+        String sql="SELECT * FROM Maquina WHERE id_maquina= ?";
+
+        try(Connection con=ConexionBD.conectar();
+            PreparedStatement ps=con.prepareStatement(sql)){
+
+            ps.setInt(1,clavePrimaria);
+
+            try(ResultSet rs= ps.executeQuery()){
+
+                if(rs.next()){
+                    return new Maquina(
+                            rs.getInt("id_maquina"),
+                            rs.getString("nombre"),
+                            rs.getString("descripcion"),
+                            rs.getDouble("pesoLimite"),
+                            rs.getString("grupoMuscular"),
+                            rs.getInt("estado")
+                    );
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+
         return null;
     }
 

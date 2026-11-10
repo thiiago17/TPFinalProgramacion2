@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 
@@ -28,6 +29,18 @@ public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
         }
 
         entrenador.setSalario(salario);
+        return entrenador;
+    }
+
+
+    public Entrenador modificarSucursal(int id, Sucursal sucursal) {
+        Entrenador entrenador = buscar(id);
+
+        if (entrenador == null || sucursal == null) {
+            return null;
+        }
+
+        entrenador.setSucursalAsignada(sucursal);
         return entrenador;
     }
 

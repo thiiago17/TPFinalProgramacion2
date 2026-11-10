@@ -5,6 +5,7 @@ import com.example.trabajofinalprogramacion2.DAO.Usuarios.AdministradorDAO;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdministradorService {
@@ -45,7 +46,8 @@ public class AdministradorService {
 
     public boolean agregar(Administrador admin) {
 
-        if (admin == null || admin.getFechaDeNacimiento() == null
+        // El del sistema no lleva gimnasio, el de gimnasio tiene que tener uno
+        if (admin == null || admin.getFechaDeNacimiento() == null || !admin.tieneGimnasioValido()
                 || coleccion.buscarPorDni(admin.getDni()) != null) {
             return false;
         }
@@ -69,7 +71,7 @@ public class AdministradorService {
 
     public boolean modificar(Administrador admin) {
 
-        if (admin == null || coleccion.buscar(admin.getId()) == null) {
+        if (admin == null || !admin.tieneGimnasioValido() || coleccion.buscar(admin.getId()) == null) {
             return false;
         }
 
@@ -89,7 +91,7 @@ public class AdministradorService {
             return false;
         }
 
-        Administrador admin = dao.buscarDao(id);
+        Administrador admin = dao.consulta(id);
 
         if (dao.baja(admin)) {
             return coleccion.eliminar(id);
@@ -103,7 +105,7 @@ public class AdministradorService {
 
     public boolean alta(int id) {
 
-        Administrador admin = dao.buscarDao(id);
+        Administrador admin = dao.consulta(id);
 
         if (admin == null) {
             return false;
@@ -163,6 +165,22 @@ public class AdministradorService {
 
     public Administrador buscarPorEmail(String email) {
         return coleccion.buscarPorEmail(email);
+    }
+
+
+    // ADMINISTRADORES DE UN GIMNASIO (normalmente uno, a veces dos)
+
+    public List<Administrador> buscarPorGimnasio(int idGimnasio) {
+
+        List<Administrador> encontrados = new ArrayList<>();
+
+        for (Administrador admin : coleccion.verListado()) {
+            if (!admin.isEsAdminSistema() && admin.getIdGimnasio() != null && admin.getIdGimnasio() == idGimnasio) {
+                encontrados.add(admin);
+            }
+        }
+
+        return encontrados;
     }
 
 
