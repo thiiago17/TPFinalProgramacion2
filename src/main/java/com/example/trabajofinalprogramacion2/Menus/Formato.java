@@ -67,7 +67,23 @@ public final class Formato {
                 + socio;
     }
 
+    // Elige el formato segun el tipo real del usuario (instanceof + casteo)
+    public static String describir(Usuarios u) {
+        if (u instanceof Administrador) {
+            return administrador((Administrador) u);
+        }
+        if (u instanceof Entrenador) {
+            return entrenador((Entrenador) u);
+        }
+        if (u instanceof Nutricionista) {
+            return nutricionista((Nutricionista) u);
+        }
+        return usuario(u);
+    }
+
     // LISTAS
+    // "List<? extends Usuarios>" acepta una List<Entrenador>, List<Nutricionista>, etc.
+    // (una List<Entrenador> no se puede pasar donde se pide una List<Usuarios>)
 
     public static void mostrarUsuarios(List<? extends Usuarios> lista, String mensajeVacia) {
         if (lista == null || lista.isEmpty()) {
@@ -75,15 +91,7 @@ public final class Formato {
             return;
         }
         for (Usuarios u : lista) {
-            if (u instanceof Administrador) {
-                System.out.println(administrador((Administrador) u));
-            } else if (u instanceof Entrenador) {
-                System.out.println(entrenador((Entrenador) u));
-            } else if (u instanceof Nutricionista) {
-                System.out.println(nutricionista((Nutricionista) u));
-            } else {
-                System.out.println(usuario(u));
-            }
+            System.out.println(describir(u));
         }
     }
 

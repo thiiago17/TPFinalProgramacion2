@@ -19,14 +19,15 @@ public abstract class Usuarios {
     public Usuarios() {
     }
 
+    // Usa los setters (igual que el constructor con id) para que los datos se validen tambien al crear
     public Usuarios(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento,  boolean activo) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-        this.password = password;
-        this.fechaDeNacimiento = fechaDeNacimiento;
-        this.activo = activo;
+        setNombre(nombre);
+        setApellido(apellido);
+        setDni(dni);
+        setEmail(email);
+        setPassword(password);
+        setFechaDeNacimiento(fechaDeNacimiento);
+        setActivo(activo);
     }
 
     public Usuarios(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo) {

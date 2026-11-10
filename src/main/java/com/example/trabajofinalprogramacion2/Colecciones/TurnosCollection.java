@@ -9,7 +9,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 // Coleccion "duenia" de los turnos: el alta y la baja de un turno se hacen aca,
@@ -305,10 +305,10 @@ public class TurnosCollection {
         return a == b || (a.getId() != 0 && a.getId() == b.getId());
     }
 
+    // Ordena por fecha usando el compareTo de Turno
     private List<Turno> ordenarPorFecha(List<Turno> lista) {
 
-        lista.sort(Comparator.comparing(Turno::getFechaTurno,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        Collections.sort(lista);
 
         return lista;
     }

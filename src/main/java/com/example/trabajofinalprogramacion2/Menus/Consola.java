@@ -4,9 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.Scanner;
-import java.util.function.BooleanSupplier;
 
 // Lectura de datos por teclado con validacion.
 // Todos los metodos leen la linea entera (nextLine), asi no quedan "enters" colgados en el buffer.
@@ -112,30 +110,6 @@ public final class Consola {
         }
     }
 
-    // Ejecuta la carga hasta que no tire IllegalArgumentException
-    // (los setters de las entidades validan y tiran esa excepcion)
-    public static void repetirHastaValido(Runnable carga) {
-        while (true) {
-            try {
-                carga.run();
-                return;
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    // Ejecuta una accion de un service y si un setter tira IllegalArgumentException
-    // muestra el motivo y devuelve false, en vez de cortar el programa
-    public static boolean intentar(BooleanSupplier accion) {
-        try {
-            return accion.getAsBoolean();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
     // MOSTRAR
 
     public static void titulo(String texto) {
@@ -149,15 +123,5 @@ public final class Consola {
     public static void pausa() {
         System.out.print("\nPresione Enter para continuar...");
         scanner.nextLine();
-    }
-
-    public static <T> void mostrarLista(List<T> lista, String mensajeVacia) {
-        if (lista == null || lista.isEmpty()) {
-            System.out.println(mensajeVacia);
-            return;
-        }
-        for (T elemento : lista) {
-            System.out.println(elemento);
-        }
     }
 }

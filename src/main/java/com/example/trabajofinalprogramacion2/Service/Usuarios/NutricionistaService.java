@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Service.Usuarios;
 
+import com.example.trabajofinalprogramacion2.interfaces.GestionPerfil;
 import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.NutricionistaCollection;
 import com.example.trabajofinalprogramacion2.DAO.Usuarios.NutricionistaDAO;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
@@ -9,7 +10,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import java.time.LocalDate;
 import java.util.List;
 
-public class NutricionistaService {
+public class NutricionistaService implements GestionPerfil {
     NutricionistaDAO dao;
     NutricionistaCollection coleccion;
 
@@ -187,21 +188,16 @@ public class NutricionistaService {
     // =========================
 
     // METODO AUXILIAR PARA GUARDAR CAMBIOS
+    // Guarda en MySQL el objeto ya modificado en memoria. Si devuelve false, cada metodo
+    // "modificarX" vuelve a poner el valor anterior para que memoria y BD no queden distintas.
 
-    private boolean guardarModificacion(Nutricionista nutricionista, Runnable restaurar) {
+    private boolean guardarModificacion(Nutricionista nutricionista) {
 
         if (nutricionista == null) {
             return false;
         }
 
-        if (dao.modificar(nutricionista)) {
-            return true;
-        }
-
-        // Si falla MySQL, restauramos el valor anterior en memoria
-        restaurar.run();
-
-        return false;
+        return dao.modificar(nutricionista);
     }
 
 
@@ -219,7 +215,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarNombre(id, nombre);
 
-        return guardarModificacion(modificado, () -> nutricionista.setNombre(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setNombre(anterior);
+        return false;
     }
 
 
@@ -237,7 +239,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarApellido(id, apellido);
 
-        return guardarModificacion(modificado, () -> nutricionista.setApellido(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setApellido(anterior);
+        return false;
     }
 
 
@@ -261,7 +269,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarDni(id, dni);
 
-        return guardarModificacion(modificado, () -> nutricionista.setDni(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setDni(anterior);
+        return false;
     }
 
 
@@ -285,7 +299,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarEmail(id, email);
 
-        return guardarModificacion(modificado, () -> nutricionista.setEmail(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setEmail(anterior);
+        return false;
     }
 
 
@@ -303,7 +323,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarPassword(id, password);
 
-        return guardarModificacion(modificado, () -> nutricionista.setPassword(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setPassword(anterior);
+        return false;
     }
 
 
@@ -321,7 +347,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarFechaNacimiento(id, fecha);
 
-        return guardarModificacion(modificado, () -> nutricionista.setFechaDeNacimiento(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setFechaDeNacimiento(anterior);
+        return false;
     }
 
 
@@ -339,7 +371,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarActivo(id, activo);
 
-        return guardarModificacion(modificado, () -> nutricionista.setActivo(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setActivo(anterior);
+        return false;
     }
 
 
@@ -357,7 +395,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarSalario(id, salario);
 
-        return guardarModificacion(modificado, () -> nutricionista.setSalario(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setSalario(anterior);
+        return false;
     }
 
 
@@ -375,7 +419,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarSucursal(id, sucursal);
 
-        return guardarModificacion(modificado, () -> nutricionista.setSucursalAsignada(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setSucursalAsignada(anterior);
+        return false;
     }
 
 
@@ -393,7 +443,13 @@ public class NutricionistaService {
 
         Nutricionista modificado = coleccion.modificarComisionPorConsulta(id, comisionPorConsulta);
 
-        return guardarModificacion(modificado, () -> nutricionista.setComisionPorConsulta(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        nutricionista.setComisionPorConsulta(anterior);
+        return false;
     }
 
 

@@ -197,9 +197,6 @@ public class MenuAdministradorSistema {
     // PERFIL =================================================================================
 
     private void menuPerfil() {
-        MenuPerfil.mostrar(
-                () -> Formato.administrador(admin),
-                password -> administradorService.modificarPassword(admin.getId(), password),
-                email -> administradorService.modificarEmail(admin.getId(), email));
+        MenuPerfil.mostrar(admin, administradorService);
     }
 }

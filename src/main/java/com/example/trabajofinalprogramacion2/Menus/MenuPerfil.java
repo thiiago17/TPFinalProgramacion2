@@ -1,23 +1,25 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.interfaces.GestionPerfil;
 
 // Submenu "Mi perfil", comun a todos los usuarios.
-// Cada menu le pasa como mostrar sus datos y que metodo de su service usar para cada cambio.
+// Recibe el usuario y SU service. Como todos los services de usuarios implementan GestionPerfil,
+// este menu sirve para cualquiera (polimorfismo): llama a modificarPassword / modificarEmail
+// y cada service hace su propia version.
 
 public final class MenuPerfil {
 
     private MenuPerfil() {
     }
 
-    public static void mostrar(Supplier<String> datos, Predicate<String> cambiarPassword, Predicate<String> cambiarEmail) {
+    public static void mostrar(Usuarios usuario, GestionPerfil service) {
 
         int opcion;
 
         do {
             Consola.titulo("MI PERFIL");
-            System.out.println(datos.get());
+            System.out.println(Formato.describir(usuario));
             System.out.println("\n1. Cambiar contraseña");
             System.out.println("2. Cambiar email");
             System.out.println("0. Volver");
@@ -26,17 +28,40 @@ public final class MenuPerfil {
 
             switch (opcion) {
                 case 1:
-                    String password = FormularioUsuario.leerPasswordNueva();
-                    Consola.resultado(Consola.intentar(() -> cambiarPassword.test(password)),
-                            "Contraseña actualizada.", "No se pudo actualizar la contraseña.");
+                    cambiarPassword(usuario, service);
                     break;
                 case 2:
-                    String email = Consola.leerTexto("Nuevo email: ");
-                    Consola.resultado(Consola.intentar(() -> cambiarEmail.test(email)),
-                            "Email actualizado.", "No se pudo actualizar el email (¿ya lo usa otro usuario?).");
+                    cambiarEmail(usuario, service);
                     break;
             }
 
         } while (opcion != 0);
+    }
+
+    private static void cambiarPassword(Usuarios usuario, GestionPerfil service) {
+
+        String password = FormularioUsuario.leerPasswordNueva();
+
+        if (service.modificarPassword(usuario.getId(), password)) {
+            System.out.println("Contraseña actualizada.");
+        } else {
+            System.out.println("No se pudo actualizar la contraseña.");
+        }
+    }
+
+    private static void cambiarEmail(Usuarios usuario, GestionPerfil service) {
+
+        String email = Consola.leerTexto("Nuevo email: ");
+
+        // setEmail tira IllegalArgumentException si el email no es valido (por ejemplo, sin @)
+        try {
+            if (service.modificarEmail(usuario.getId(), email)) {
+                System.out.println("Email actualizado.");
+            } else {
+                System.out.println("No se pudo actualizar el email (¿ya lo usa otro usuario?).");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -309,15 +309,17 @@ public class TurnosDao implements ABCMLDAO<Turno> {
 
         turno.setId(rs.getInt("id_turno"));
 
+        // Si la columna esta en NULL, getInt devuelve 0. Como los ids empiezan en 1,
+        // un id mayor a 0 significa que el turno tiene socio / nutricionista
         int idSocio = rs.getInt("id_socio");
-        if (!rs.wasNull()) {
+        if (idSocio > 0) {
             Socio socio = new Socio();
             socio.setId(idSocio);
             turno.setSocio(socio);
         }
 
         int idNutricionista = rs.getInt("id_nutricionista");
-        if (!rs.wasNull()) {
+        if (idNutricionista > 0) {
             Nutricionista nutricionista = new Nutricionista();
             nutricionista.setId(idNutricionista);
             turno.setNutricionista(nutricionista);

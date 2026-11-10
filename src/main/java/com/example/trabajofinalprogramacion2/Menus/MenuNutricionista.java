@@ -58,10 +58,7 @@ public class MenuNutricionista {
                     System.out.println("Extra por comisión (turnos reservados): $" + nutricionista.calcularExtraPorComision());
                     break;
                 case 7:
-                    MenuPerfil.mostrar(
-                            () -> Formato.nutricionista(nutricionista),
-                            password -> nutricionistaService.modificarPassword(nutricionista.getId(), password),
-                            email -> nutricionistaService.modificarEmail(nutricionista.getId(), email));
+                    MenuPerfil.mostrar(nutricionista, nutricionistaService);
                     break;
             }
 
