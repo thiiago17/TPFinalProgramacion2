@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 // del gimnasio del admin (admin.getIdGimnasio()), hoy se listan todos.
 
 public class MenuAdministrador {
+
     private final Administrador admin;
     private final AdministradorService administradorService;
     private final EntrenadorService entrenadorService;
