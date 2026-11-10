@@ -14,6 +14,7 @@ import java.util.List;
 public class TurnosService {
     TurnosDao dao;
     TurnosCollection coleccion;
+    NutricionistaService nutricionistaService;
 
     // CONSTRUCTORES
 
@@ -22,28 +23,16 @@ public class TurnosService {
         this(null);
     }
 
-    // Carga los turnos y los vincula a los nutricionistas reales de NutricionistaService,
-    // asi la lista de turnos de cada nutricionista queda cargada (verTurnos, etc.)
+    // Carga los turnos activos (no los dados de baja) y los vincula a los nutricionistas
+    // reales de NutricionistaService, asi la lista de turnos de cada nutricionista queda cargada
     public TurnosService(NutricionistaService nutricionistaService) {
 
         dao = new TurnosDao();
         coleccion = new TurnosCollection();
+        this.nutricionistaService = nutricionistaService;
 
-        // El DAO arma el nutricionista solo con su id: si tenemos el service,
-        // lo reemplazamos por el objeto completo que ya esta en memoria
-        List<Turno> turnos = dao.listado();
-
-        for (Turno turno : turnos) {
-
-            if (nutricionistaService != null && turno.getNutricionista() != null) {
-
-                Nutricionista real = nutricionistaService.buscar(turno.getNutricionista().getId());
-
-                if (real != null) {
-                    turno.setNutricionista(real);
-                }
-            }
-
+        for (Turno turno : dao.listadoActivos()) {
+            vincularNutricionista(turno);
             coleccion.agregar(turno);
         }
     }
@@ -96,14 +85,14 @@ public class TurnosService {
     }
 
 
-    // ELIMINAR (BORRA EL TURNO DE LA BD)
-    // Solo se pueden eliminar turnos disponibles, para no borrar la reserva de un socio
+    // ELIMINAR (BAJA LOGICA: estado = 0 en la BD y se saca de memoria)
+    // Solo se pueden dar de baja turnos disponibles, para no dejar a un socio sin su reserva
 
     public boolean eliminar(int id) {
 
         Turno turno = buscar(id);
 
-        if (turno == null || !turno.isEstado()) {
+        if (turno == null || !turno.estaDisponible()) {
             return false;
         }
 
@@ -112,6 +101,46 @@ public class TurnosService {
         }
 
         return false;
+    }
+
+
+    // DAR DE ALTA (REACTIVAR UN TURNO DADO DE BAJA)
+    // No se reactiva si mientras tanto se cargo otro turno del mismo nutricionista que se pisa con este
+
+    public boolean alta(int id) {
+
+        Turno turno = dao.consulta(id);
+
+        if (turno == null || !turno.estaDadoDeBaja()) {
+            return false;
+        }
+
+        vincularNutricionista(turno);
+
+        if (!Turno.esHorarioValido(turno.getFechaTurno())
+                || nutricionistaOcupado(turno.getNutricionista(), turno.getFechaTurno(), turno)) {
+            return false;
+        }
+
+        if (!dao.alta(turno)) {
+            return false;
+        }
+
+        return coleccion.agregar(turno);
+    }
+
+
+    // VER TURNOS DADOS DE BAJA (solo estan en la BD)
+
+    public List<Turno> verDadosDeBaja() {
+
+        List<Turno> turnos = dao.listadoDadosDeBaja();
+
+        for (Turno turno : turnos) {
+            vincularNutricionista(turno);
+        }
+
+        return turnos;
     }
 
 
@@ -132,11 +161,7 @@ public class TurnosService {
     // CONSULTA EN BASE DE DATOS (POR ID)
 
     public Turno consultar(int id) {
-
-        Turno buscado = new Turno();
-        buscado.setId(id);
-
-        return dao.consulta(buscado);
+        return dao.consulta(id);
     }
 
 
@@ -151,7 +176,7 @@ public class TurnosService {
 
         Turno turno = buscar(idTurno);
 
-        if (turno == null || socio == null || !turno.isEstado()) {
+        if (turno == null || socio == null || !turno.estaDisponible()) {
             return false;
         }
 
@@ -165,7 +190,7 @@ public class TurnosService {
 
         Turno turno = buscar(idTurno);
 
-        if (turno == null || turno.isEstado()) {
+        if (turno == null || !turno.estaReservado()) {
             return false;
         }
 
@@ -317,6 +342,21 @@ public class TurnosService {
     // =========================
     // METODOS AUXILIARES
     // =========================
+
+    // El DAO arma el nutricionista solo con su id: si tenemos el service,
+    // lo reemplazamos por el objeto completo que ya esta en memoria
+    private void vincularNutricionista(Turno turno) {
+
+        if (nutricionistaService == null || turno.getNutricionista() == null) {
+            return;
+        }
+
+        Nutricionista real = nutricionistaService.buscar(turno.getNutricionista().getId());
+
+        if (real != null) {
+            turno.setNutricionista(real);
+        }
+    }
 
     // True si el nutricionista ya tiene otro turno que se pisa con esa fecha y hora (duran 30 minutos)
     private boolean nutricionistaOcupado(Nutricionista nutricionista, LocalDateTime fecha, Turno excluir) {
