@@ -52,14 +52,23 @@ public class Socio extends Usuarios {
     // SETTERS
 
     public void setPesoActual(Double pesoActual) {
+        if (pesoActual == null || pesoActual <= 20.0 || pesoActual > 300.0) {
+            throw new IllegalArgumentException("El peso debe ser un valor lógico (entre 20 kg y 300 kg).");
+        }
         this.pesoActual = pesoActual;
     }
 
     public void setAltura(Double altura) {
+        if (altura == null || altura < 0.50 || altura > 2.50) {
+            throw new IllegalArgumentException("La altura debe ser un valor lógico (entre 0.50 m y 2.50 m).");
+        }
         this.altura = altura;
     }
 
     public void setFechaAlta(LocalDate fechaAlta) {
+        if (fechaAlta != null && fechaAlta.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha de alta no puede ser en el futuro.");
+        }
         this.fechaAlta = fechaAlta;
     }
 

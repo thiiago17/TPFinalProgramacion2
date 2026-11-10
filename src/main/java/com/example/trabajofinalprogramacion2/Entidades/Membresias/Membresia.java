@@ -1,6 +1,7 @@
 package com.example.trabajofinalprogramacion2.Entidades.Membresias;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Membresia {
     private LocalDate fechaInicio;
@@ -35,15 +36,25 @@ public class Membresia {
 
     // SETTERS
 
+
     public void setFechaInicio(LocalDate fechaInicio) {
+        if (fechaInicio == null) {
+            throw new IllegalArgumentException("La fecha de inicio no puede ser nula.");
+        }
         this.fechaInicio = fechaInicio;
     }
 
     public void setFechaVencimiento(LocalDate fechaVencimiento) {
+        if (fechaVencimiento == null) {
+            throw new IllegalArgumentException("La fecha de vencimiento no puede ser nula.");
+        }
         this.fechaVencimiento = fechaVencimiento;
     }
 
     public void setPlan(Plan plan) {
+        if (plan == null) {
+            throw new IllegalArgumentException("El plan seleccionado no puede ser nulo.");
+        }
         this.plan = plan;
     }
 
@@ -52,34 +63,22 @@ public class Membresia {
     // METODOS
 
     public boolean isVencida(){
-        if (fechaVencimiento==null){
-            return true;
-        }
         return LocalDate.now().isAfter(fechaVencimiento);
     }
 
     public String verPlanActual(){
-        if (plan==null){
-            return "Sin plan asignado";
-        }
-
         return "Plan actual: "+plan.name();
     }
 
     //Metodo abonar cuota
 
     public String abonarCuota(){
-        if (this.plan==null){
-            return "No se puede abonar, primero debe elegir un plan";
-        }
-
         if (isVencida()){
             this.fechaInicio=LocalDate.now();
             this.fechaVencimiento=LocalDate.now().plusMonths(1);
         }else {
             return "Usted esta al dia con la cuota";
         }
-
         return "Cuota abonada con éxito.\n" +
                 "Plan: " + this.plan.name() + "\n" +
                 "Monto: $" + this.plan.getPrecio() + "\n" +
@@ -105,6 +104,18 @@ public class Membresia {
         if (this.fechaInicio==null){
             this.fechaInicio=LocalDate.now();
         }
+    }
+
+    public String verDiasRestantes (){
+        LocalDate hoy= LocalDate.now();
+
+        if (isVencida()){
+            return "La membresia esta vencida.";
+        }
+
+        java.time.Period diasFaltantes= java.time.Period.between(hoy,this.fechaVencimiento);
+
+        return "Faltan " + diasFaltantes.getDays() + " días para que venza la membresía.";
     }
 
     @Override
