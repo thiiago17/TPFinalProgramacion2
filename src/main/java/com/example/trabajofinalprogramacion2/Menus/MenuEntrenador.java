@@ -26,10 +26,11 @@ public class MenuEntrenador {
             System.out.println("2. Agregar alumno");
             System.out.println("3. Quitar alumno");
             System.out.println("4. Ver mi sucursal");
-            System.out.println("5. Mi perfil");
+            System.out.println("5. Ver sueldo anual y antigüedad");
+            System.out.println("6. Mi perfil");
             System.out.println("0. Cerrar sesión");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 6);
 
             switch (opcion) {
                 case 1:
@@ -54,11 +55,15 @@ public class MenuEntrenador {
                             : "No tiene sucursal asignada.");
                     break;
                 case 5:
+                    System.out.println("Sueldo anual: $" + entrenador.calcularSueldoAnual());
+                    System.out.println("Antigüedad: " + (int) entrenador.calcularAniosAntiguedad() + " años");
+                    break;
+                case 6:
                     MenuPerfil.mostrar(entrenador, entrenadorService);
                     break;
             }
 
-            if (opcion != 0 && opcion != 5) {
+            if (opcion != 0 && opcion != 6) {
                 Consola.pausa();
             }
 

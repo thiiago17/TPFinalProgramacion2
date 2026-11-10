@@ -53,6 +53,11 @@ public class NutricionistaService implements GestionPerfil {
             return false;
         }
 
+        // Si no se indico fecha de ingreso, se toma la fecha de hoy (igual que en AdministradorService)
+        if (nutricionista.getFechaIngreso() == null) {
+            nutricionista.setFechaIngreso(LocalDate.now());
+        }
+
         Nutricionista nuevo = dao.agregar(nutricionista);
 
         if (nuevo != null) {

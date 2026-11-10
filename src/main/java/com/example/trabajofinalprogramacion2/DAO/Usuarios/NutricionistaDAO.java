@@ -14,7 +14,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public Nutricionista agregar(Nutricionista nutricionista) {
-        String sql = "INSERT INTO nutricionista (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, salario, comision_por_consulta, id_sucursal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO nutricionista (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, salario, comision_por_consulta, id_sucursal, fechaIngreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -29,6 +29,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
             ps.setDouble(8, nutricionista.getSalario());
             ps.setDouble(9, nutricionista.getComisionPorConsulta());
             setSucursal(ps, 10, nutricionista.getSucursalAsignada());
+            FechasBD.setFecha(ps, 11, nutricionista.getFechaIngreso());
 
             int filasAfectadas = ps.executeUpdate();
 
@@ -129,7 +130,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
 
     @Override
     public boolean modificar(Nutricionista nutricionista) {
-        String sql = "UPDATE nutricionista SET nombre = ?, apellido = ?, dni = ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, salario = ?, comision_por_consulta = ?, id_sucursal = ? WHERE id_nutricionista = ?";
+        String sql = "UPDATE nutricionista SET nombre = ?, apellido = ?, dni = ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, salario = ?, comision_por_consulta = ?, id_sucursal = ?, fechaIngreso = ? WHERE id_nutricionista = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -144,7 +145,8 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
             ps.setDouble(8, nutricionista.getSalario());
             ps.setDouble(9, nutricionista.getComisionPorConsulta());
             setSucursal(ps, 10, nutricionista.getSucursalAsignada());
-            ps.setInt(11, nutricionista.getId());
+            FechasBD.setFecha(ps, 11, nutricionista.getFechaIngreso());
+            ps.setInt(12, nutricionista.getId());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -184,6 +186,7 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
         n.setActivo(rs.getBoolean("activo"));
         n.setSalario(rs.getDouble("salario"));
         n.setComisionPorConsulta(rs.getDouble("comision_por_consulta"));
+        n.setFechaIngreso(FechasBD.leerFecha(rs, "fechaIngreso"));
 
         // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO.
         // Si la columna esta en NULL, getInt devuelve 0 (los ids empiezan en 1)

@@ -15,7 +15,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
     @Override
     public Entrenador agregar(Entrenador entrenador) {
-        String sql = "INSERT INTO entrenador (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, especialidad, salario, id_sucursal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO entrenador (dni, nombre, apellido, email, contrasenia, fechaDeNacimiento, activo, especialidad, salario, id_sucursal, fechaIngreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -30,6 +30,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
             pstmt.setString(8, entrenador.getEspecialidad());
             setSalario(pstmt, 9, entrenador.getSalario());
             setSucursal(pstmt, 10, entrenador.getSucursalAsignada());
+            FechasBD.setFecha(pstmt, 11, entrenador.getFechaIngreso());
 
             int filasAfectadas = pstmt.executeUpdate();
 
@@ -123,7 +124,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
 
     @Override
     public boolean modificar(Entrenador entrenador) {
-        String sql = "UPDATE entrenador SET nombre = ?, apellido = ?, dni= ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, especialidad = ?, salario = ?, id_sucursal = ? WHERE id_entrenador = ?";
+        String sql = "UPDATE entrenador SET nombre = ?, apellido = ?, dni= ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, especialidad = ?, salario = ?, id_sucursal = ?, fechaIngreso = ? WHERE id_entrenador = ?";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -138,7 +139,8 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
             pstmt.setString(8, entrenador.getEspecialidad());
             setSalario(pstmt, 9, entrenador.getSalario());
             setSucursal(pstmt, 10, entrenador.getSucursalAsignada());
-            pstmt.setInt(11, entrenador.getId());
+            FechasBD.setFecha(pstmt, 11, entrenador.getFechaIngreso());
+            pstmt.setInt(12, entrenador.getId());
 
 
             return pstmt.executeUpdate() > 0;
@@ -278,6 +280,7 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
         e.setEspecialidad(rs.getString("especialidad"));
         // Si el salario esta en NULL, getDouble devuelve 0
         e.setSalario(rs.getDouble("salario"));
+        e.setFechaIngreso(FechasBD.leerFecha(rs, "fechaIngreso"));
 
         // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO.
         // Si la columna esta en NULL, getInt devuelve 0 (los ids empiezan en 1)

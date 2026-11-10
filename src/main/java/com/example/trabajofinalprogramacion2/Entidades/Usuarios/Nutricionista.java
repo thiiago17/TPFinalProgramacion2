@@ -2,16 +2,20 @@ package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+import com.example.trabajofinalprogramacion2.interfaces.Empleado;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Nutricionista extends Usuarios{
+public class Nutricionista extends Usuarios implements Empleado {
     private List<Turno> turnos = new ArrayList<>();
     private double salario;
     private double comisionPorConsulta;
     private Sucursal sucursalAsignada;
+    private LocalDate fechaIngreso;
 
     // CONSTRUCTORES
 
@@ -68,6 +72,36 @@ public class Nutricionista extends Usuarios{
 
     public void setSucursalAsignada(Sucursal sucursalAsignada) {
         this.sucursalAsignada = sucursalAsignada;
+    }
+
+    // FECHA DE INGRESO (puede venir en NULL de la BD para los cargados antes de agregar la columna)
+
+    public LocalDate getFechaIngreso() {
+        return fechaIngreso;
+    }
+
+    public void setFechaIngreso(LocalDate fechaIngreso) {
+        if (fechaIngreso != null && fechaIngreso.isAfter(LocalDate.now())) {
+            throw new ValorNoValidoException("La fecha de ingreso no puede ser en el futuro.");
+        }
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    // INTERFAZ EMPLEADO
+
+    // Años completos desde que ingreso. Sin fecha de ingreso devuelve 0
+    @Override
+    public double calcularAniosAntiguedad() {
+        if (fechaIngreso == null) {
+            return 0;
+        }
+        return Period.between(fechaIngreso, LocalDate.now()).getYears();
+    }
+
+    // Salario mensual x 12 + la comision de los turnos que tiene reservados
+    @Override
+    public double calcularSueldoAnual() {
+        return salario * 12 + calcularExtraPorComision();
     }
 
     // MOSTRAR

@@ -94,6 +94,11 @@ public class EntrenadorService implements GestionPerfil {
             return false;
         }
 
+        // Si no se indico fecha de ingreso, se toma la fecha de hoy (igual que en AdministradorService)
+        if (entrenador.getFechaIngreso() == null) {
+            entrenador.setFechaIngreso(LocalDate.now());
+        }
+
         Entrenador nuevo = dao.agregar(entrenador);
 
         if (nuevo != null) {

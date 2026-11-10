@@ -30,7 +30,7 @@ public class MenuNutricionista {
             System.out.println("3. Ver mis turnos reservados");
             System.out.println("4. Crear turno");
             System.out.println("5. Dar de baja un turno (solo disponibles)");
-            System.out.println("6. Ver extra por comisión");
+            System.out.println("6. Ver comisión, sueldo anual y antigüedad");
             System.out.println("7. Mi perfil");
             System.out.println("0. Cerrar sesión");
 
@@ -56,6 +56,8 @@ public class MenuNutricionista {
                     break;
                 case 6:
                     System.out.println("Extra por comisión (turnos reservados): $" + nutricionista.calcularExtraPorComision());
+                    System.out.println("Sueldo anual (salario x 12 + comisión): $" + nutricionista.calcularSueldoAnual());
+                    System.out.println("Antigüedad: " + (int) nutricionista.calcularAniosAntiguedad() + " años");
                     break;
                 case 7:
                     MenuPerfil.mostrar(nutricionista, nutricionistaService);
