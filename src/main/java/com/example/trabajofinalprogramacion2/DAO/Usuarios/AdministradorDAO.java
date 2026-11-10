@@ -214,8 +214,13 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
         admin.setId(rs.getInt("id_administrador"));
         admin.setEsAdminSistema(rs.getBoolean("es_admin_sistema"));
 
+        // Si la columna esta en NULL (admin del sistema), getInt devuelve 0: en ese caso queda sin gimnasio
         int idGimnasio = rs.getInt("id_gimnasio");
-        admin.setIdGimnasio(rs.wasNull() ? null : idGimnasio);
+        if (idGimnasio > 0) {
+            admin.setIdGimnasio(idGimnasio);
+        } else {
+            admin.setIdGimnasio(null);
+        }
 
         return admin;
     }

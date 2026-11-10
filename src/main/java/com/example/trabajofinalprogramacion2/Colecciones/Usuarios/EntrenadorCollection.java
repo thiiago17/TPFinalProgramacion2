@@ -72,7 +72,22 @@ public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
             return false;
         }
 
-        return entrenador.getAlumnosAsociados().removeIf(socio -> socio.getId() == idSocio);
+        // Primero se busca el socio con ese id y despues se lo saca
+        // (no se puede sacar elementos de un Set mientras se lo recorre con for-each)
+        Socio encontrado = null;
+
+        for (Socio socio : entrenador.getAlumnosAsociados()) {
+            if (socio.getId() == idSocio) {
+                encontrado = socio;
+                break;
+            }
+        }
+
+        if (encontrado == null) {
+            return false;
+        }
+
+        return entrenador.getAlumnosAsociados().remove(encontrado);
     }
 
     // QUITAR TODOS LOS SOCIOS (cuando el entrenador se da de baja)

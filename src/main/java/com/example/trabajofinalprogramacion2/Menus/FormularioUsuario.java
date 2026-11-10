@@ -4,24 +4,104 @@ import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 
 // Carga por teclado los datos que tienen todos los usuarios.
-// Cada dato se vuelve a pedir hasta que el setter lo acepte (los setters validan).
+// Los setters de Usuarios validan y tiran IllegalArgumentException si el dato no sirve:
+// cada dato se pide dentro de un while hasta que el setter lo acepte.
 
 public final class FormularioUsuario {
 
     private FormularioUsuario() {
     }
 
+    // Sirve para cualquier hijo de Usuarios (Entrenador, Nutricionista, Administrador, Socio)
     public static void cargarDatosBasicos(Usuarios u) {
-        Consola.repetirHastaValido(() -> u.setNombre(Consola.leerTexto("Nombre: ")));
-        Consola.repetirHastaValido(() -> u.setApellido(Consola.leerTexto("Apellido: ")));
-        Consola.repetirHastaValido(() -> u.setDni(Consola.leerTexto("DNI: ")));
-        Consola.repetirHastaValido(() -> u.setEmail(Consola.leerTexto("Email: ")));
-        Consola.repetirHastaValido(() -> u.setPassword(Consola.leerTexto("Contraseña (mínimo 4 caracteres y un número): ")));
-        Consola.repetirHastaValido(() -> u.setFechaDeNacimiento(Consola.leerFecha("Fecha de nacimiento")));
+        pedirNombre(u);
+        pedirApellido(u);
+        pedirDni(u);
+        pedirEmail(u);
+        pedirPassword(u);
+        pedirFechaDeNacimiento(u);
         u.setActivo(true);
     }
 
-    // Pide una contraseña nueva hasta que sea valida (sin modificar al usuario)
+    private static void pedirNombre(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setNombre(Consola.leerTexto("Nombre: "));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void pedirApellido(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setApellido(Consola.leerTexto("Apellido: "));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void pedirDni(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setDni(Consola.leerTexto("DNI: "));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void pedirEmail(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setEmail(Consola.leerTexto("Email: "));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void pedirPassword(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setPassword(Consola.leerTexto("Contraseña (mínimo 4 caracteres y un número): "));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void pedirFechaDeNacimiento(Usuarios u) {
+        boolean valido = false;
+
+        while (!valido) {
+            try {
+                u.setFechaDeNacimiento(Consola.leerFecha("Fecha de nacimiento"));
+                valido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    // Pide una contraseña nueva hasta que cumpla las mismas reglas que setPassword
     public static String leerPasswordNueva() {
         while (true) {
             String password = Consola.leerTexto("Nueva contraseña (mínimo 4 caracteres y un número): ");

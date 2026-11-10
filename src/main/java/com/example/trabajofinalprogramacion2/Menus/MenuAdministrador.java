@@ -75,10 +75,7 @@ public class MenuAdministrador {
                     menuGastos();
                     break;
                 case 8:
-                    MenuPerfil.mostrar(
-                            () -> Formato.administrador(admin),
-                            password -> administradorService.modificarPassword(admin.getId(), password),
-                            email -> administradorService.modificarEmail(admin.getId(), email));
+                    MenuPerfil.mostrar(admin, administradorService);
                     break;
             }
 

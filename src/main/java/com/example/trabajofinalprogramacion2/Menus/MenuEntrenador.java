@@ -53,10 +53,7 @@ public class MenuEntrenador {
                             : "No tiene sucursal asignada.");
                     break;
                 case 5:
-                    MenuPerfil.mostrar(
-                            () -> Formato.entrenador(entrenador),
-                            password -> entrenadorService.modificarPassword(entrenador.getId(), password),
-                            email -> entrenadorService.modificarEmail(entrenador.getId(), email));
+                    MenuPerfil.mostrar(entrenador, entrenadorService);
                     break;
             }
 

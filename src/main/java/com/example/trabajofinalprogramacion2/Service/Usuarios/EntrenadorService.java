@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Service.Usuarios;
 
+import com.example.trabajofinalprogramacion2.interfaces.GestionPerfil;
 import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.EntrenadorCollection;
 import com.example.trabajofinalprogramacion2.DAO.Usuarios.EntrenadorDAO;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntrenadorService {
+public class EntrenadorService implements GestionPerfil {
     EntrenadorDAO dao;
     EntrenadorCollection coleccion;
 
@@ -208,21 +209,16 @@ public class EntrenadorService {
     // =========================
 
     // METODO AUXILIAR PARA GUARDAR CAMBIOS
+    // Guarda en MySQL el objeto ya modificado en memoria. Si devuelve false, cada metodo
+    // "modificarX" vuelve a poner el valor anterior para que memoria y BD no queden distintas.
 
-    private boolean guardarModificacion(Entrenador entrenador, Runnable restaurar) {
+    private boolean guardarModificacion(Entrenador entrenador) {
 
         if (entrenador == null) {
             return false;
         }
 
-        if (dao.modificar(entrenador)) {
-            return true;
-        }
-
-        // Si falla MySQL, restauramos el valor anterior en memoria
-        restaurar.run();
-
-        return false;
+        return dao.modificar(entrenador);
     }
 
 
@@ -240,7 +236,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarNombre(id, nombre);
 
-        return guardarModificacion(modificado, () -> entrenador.setNombre(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setNombre(anterior);
+        return false;
     }
 
 
@@ -258,7 +260,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarApellido(id, apellido);
 
-        return guardarModificacion(modificado, () -> entrenador.setApellido(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setApellido(anterior);
+        return false;
     }
 
 
@@ -282,7 +290,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarDni(id, dni);
 
-        return guardarModificacion(modificado, () -> entrenador.setDni(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setDni(anterior);
+        return false;
     }
 
 
@@ -306,7 +320,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarEmail(id, email);
 
-        return guardarModificacion(modificado, () -> entrenador.setEmail(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setEmail(anterior);
+        return false;
     }
 
 
@@ -324,7 +344,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarPassword(id, password);
 
-        return guardarModificacion(modificado, () -> entrenador.setPassword(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setPassword(anterior);
+        return false;
     }
 
 
@@ -342,7 +368,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarFechaNacimiento(id, fecha);
 
-        return guardarModificacion(modificado, () -> entrenador.setFechaDeNacimiento(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setFechaDeNacimiento(anterior);
+        return false;
     }
 
 
@@ -361,7 +393,9 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarActivo(id, activo);
 
-        if (!guardarModificacion(modificado, () -> entrenador.setActivo(anterior))) {
+        if (!guardarModificacion(modificado)) {
+            // Si fallo MySQL, se vuelve al valor anterior en memoria
+            entrenador.setActivo(anterior);
             return false;
         }
 
@@ -388,7 +422,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarEspecialidad(id, especialidad);
 
-        return guardarModificacion(modificado, () -> entrenador.setEspecialidad(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setEspecialidad(anterior);
+        return false;
     }
 
 
@@ -406,7 +446,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarSalario(id, salario);
 
-        return guardarModificacion(modificado, () -> entrenador.setSalario(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setSalario(anterior);
+        return false;
     }
 
 
@@ -424,7 +470,13 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarSucursal(id, sucursal);
 
-        return guardarModificacion(modificado, () -> entrenador.setSucursalAsignada(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        entrenador.setSucursalAsignada(anterior);
+        return false;
     }
 
 

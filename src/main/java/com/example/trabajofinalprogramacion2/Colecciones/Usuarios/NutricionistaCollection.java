@@ -5,7 +5,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
@@ -67,14 +67,16 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
             return new ArrayList<>();
         }
 
-        List<Turno> turnos = new ArrayList<>(nutricionista.getTurnos());
+        List<Turno> turnos = new ArrayList<>();
 
-        turnos.removeIf(turno -> turno == null);
+        for (Turno turno : nutricionista.getTurnos()) {
+            if (turno != null) {
+                turnos.add(turno);
+            }
+        }
 
-        turnos.sort(Comparator.comparing(
-                Turno::getFechaTurno,
-                Comparator.nullsLast(Comparator.naturalOrder())
-        ));
+        // Ordena por fecha usando el compareTo de Turno
+        Collections.sort(turnos);
 
         return turnos;
     }
@@ -98,8 +100,7 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
             }
         }
 
-        disponibles.sort(Comparator.comparing(Turno::getFechaTurno,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        Collections.sort(disponibles);
 
         return disponibles;
     }
@@ -123,8 +124,7 @@ public class NutricionistaCollection extends UsuariosCollection<Nutricionista> {
             }
         }
 
-        ocupados.sort(Comparator.comparing(Turno::getFechaTurno,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        Collections.sort(ocupados);
 
         return ocupados;
     }

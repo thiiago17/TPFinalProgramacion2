@@ -11,8 +11,8 @@ public class MenuSocio {
 
     private final Socio socio;
     private final TurnosService turnosService;
-    // private final SocioService socioService;       -> cuando este hecho
-    // private final SucursalService sucursalService; -> cuando este hecho
+    // private final SocioService socioService;        cuando este hecho descomenta
+    // private final SucursalService sucursalService;  lo mismo que arriba
 
     public MenuSocio(Socio socio, TurnosService turnosService) {
         this.socio = socio;
@@ -71,9 +71,8 @@ public class MenuSocio {
                     System.out.printf("IMC: %.2f - %s%n", socio.calcularIMC(), socio.verEstadoIMC());
                     break;
                 case 9:
-                    // aca iria MenuPerfil.mostrar(() -> Formato.usuario(socio),
-                    //         password -> socioService.modificarPassword(socio.getId(), password),
-                    //         email -> socioService.modificarEmail(socio.getId(), email));
+                    // aca iria MenuPerfil.mostrar(socio, socioService);
+                    // (SocioService tiene que implementar GestionPerfil, como los otros services)
                     System.out.println(Formato.usuario(socio));
                     break;
             }
