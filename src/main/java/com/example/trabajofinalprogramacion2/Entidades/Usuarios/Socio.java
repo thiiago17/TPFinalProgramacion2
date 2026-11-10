@@ -1,6 +1,8 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
+import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
 
 import java.time.LocalDate;
 
@@ -9,6 +11,7 @@ public class Socio extends Usuarios {
     private Double altura;
     private LocalDate fechaAlta;
     private Membresia membresia;
+    private Sucursal sucursalAsignada;
 
     // CONSTRUCTORES
 
@@ -76,6 +79,14 @@ public class Socio extends Usuarios {
         this.membresia = membresia;
     }
 
+    public Sucursal getSucursalAsignada() {
+        return sucursalAsignada;
+    }
+
+    public void setSucursalAsignada(Sucursal sucursalAsignada) {
+        this.sucursalAsignada = sucursalAsignada;
+    }
+
     // MOSTRAR
 
     // METODOS
@@ -104,6 +115,29 @@ public class Socio extends Usuarios {
         }else {
             return "Obesidad mórbida / Grado III";
         }
+    }
+
+    // SUCURSAL
+    // Todo socio tiene una sucursal asignada (donde se inscribio), que tambien marca a que gimnasio pertenece.
+    // BASICO y LIBRE -> solo pueden ir a su sucursal asignada
+    // PRO            -> pueden ir a cualquier sucursal activa de ese mismo gimnasio
+    // Sin membresia o con la cuota vencida no puede ingresar a ninguna
+
+    public boolean puedeIngresarA(Sucursal sucursal) {
+
+        if (sucursal == null || sucursalAsignada == null || sucursal.getEstado() == 0) {
+            return false;
+        }
+
+        if (membresia == null || membresia.getPlan() == null || membresia.isVencida()) {
+            return false;
+        }
+
+        if (membresia.getPlan() == Plan.PRO) {
+            return sucursal.getIdGimnasio() == sucursalAsignada.getIdGimnasio();
+        }
+
+        return sucursal.getId() == sucursalAsignada.getId();
     }
 
 }

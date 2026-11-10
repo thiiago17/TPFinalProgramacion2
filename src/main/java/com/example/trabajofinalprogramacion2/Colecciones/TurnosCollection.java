@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Colecciones;
 
+import com.example.trabajofinalprogramacion2.Entidades.Turno.EstadoTurno;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
@@ -13,6 +14,7 @@ import java.util.List;
 
 // Coleccion "duenia" de los turnos: el alta y la baja de un turno se hacen aca,
 // y se mantiene sincronizada la lista de turnos de cada Nutricionista.
+// En memoria solo estan los turnos activos (disponibles o reservados): los dados de baja quedan solo en la BD.
 
 public class TurnosCollection {
 
@@ -238,14 +240,12 @@ public class TurnosCollection {
 
     // POR ESTADO
 
-    // estado == true -> disponible
     public List<Turno> verDisponibles() {
-        return filtrarPorEstado(true);
+        return filtrarPorEstado(EstadoTurno.DISPONIBLE);
     }
 
-    // estado == false -> reservado
     public List<Turno> verReservados() {
-        return filtrarPorEstado(false);
+        return filtrarPorEstado(EstadoTurno.RESERVADO);
     }
 
     // POR PRECIO MAXIMO
@@ -265,12 +265,12 @@ public class TurnosCollection {
 
     // METODOS AUXILIARES =================================================================================
 
-    private List<Turno> filtrarPorEstado(boolean estado) {
+    private List<Turno> filtrarPorEstado(EstadoTurno estado) {
 
         List<Turno> encontrados = new ArrayList<>();
 
         for (Turno turno : turnos) {
-            if (turno.isEstado() == estado) {
+            if (turno.getEstado() == estado) {
                 encontrados.add(turno);
             }
         }

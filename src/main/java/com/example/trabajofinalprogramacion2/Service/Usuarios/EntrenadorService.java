@@ -2,6 +2,7 @@ package com.example.trabajofinalprogramacion2.Service.Usuarios;
 
 import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.EntrenadorCollection;
 import com.example.trabajofinalprogramacion2.DAO.Usuarios.EntrenadorDAO;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 
@@ -119,10 +120,7 @@ public class EntrenadorService {
 
     public boolean alta(int id) {
 
-        Entrenador buscado = new Entrenador();
-        buscado.setId(id);
-
-        Entrenador entrenador = dao.consulta(buscado);
+        Entrenador entrenador = dao.consulta(id);
 
         // Si no existe o ya esta activo, no hay nada que reactivar
         if (entrenador == null || entrenador.isActivo()) {
@@ -147,15 +145,22 @@ public class EntrenadorService {
     }
 
 
-    // CONSULTA EN BASE DE DATOS (POR ID O DNI)
+    // CONSULTA EN BASE DE DATOS (POR ID)
 
-    public Entrenador consultar(Entrenador entrenador) {
+    public Entrenador consultar(int id) {
+        return dao.consulta(id);
+    }
 
-        if (entrenador == null) {
+
+    // CONSULTA EN BASE DE DATOS (POR DNI)
+
+    public Entrenador consultarPorDni(String dni) {
+
+        if (dni == null || dni.isBlank()) {
             return null;
         }
 
-        return dao.consulta(entrenador);
+        return dao.consultaPorDni(dni);
     }
 
 
@@ -342,6 +347,7 @@ public class EntrenadorService {
 
 
     // MODIFICAR ESTADO
+    // Si se da de baja (activo = false) pierde a todos sus alumnos, en la BD y en memoria
 
     public boolean modificarActivo(int id, boolean activo) {
 
@@ -355,7 +361,16 @@ public class EntrenadorService {
 
         Entrenador modificado = coleccion.modificarActivo(id, activo);
 
-        return guardarModificacion(modificado, () -> entrenador.setActivo(anterior));
+        if (!guardarModificacion(modificado, () -> entrenador.setActivo(anterior))) {
+            return false;
+        }
+
+        if (!activo) {
+            dao.desvincularTodosLosSocios(id);
+            coleccion.quitarTodosLosSocios(id);
+        }
+
+        return true;
     }
 
 
@@ -392,6 +407,24 @@ public class EntrenadorService {
         Entrenador modificado = coleccion.modificarSalario(id, salario);
 
         return guardarModificacion(modificado, () -> entrenador.setSalario(anterior));
+    }
+
+
+    // MODIFICAR SUCURSAL (trabaja en una sola; si la sucursal no existe falla la FK y se restaura)
+
+    public boolean modificarSucursal(int id, Sucursal sucursal) {
+
+        Entrenador entrenador = coleccion.buscar(id);
+
+        if (entrenador == null || sucursal == null || sucursal.getId() <= 0) {
+            return false;
+        }
+
+        Sucursal anterior = entrenador.getSucursalAsignada();
+
+        Entrenador modificado = coleccion.modificarSucursal(id, sucursal);
+
+        return guardarModificacion(modificado, () -> entrenador.setSucursalAsignada(anterior));
     }
 
 

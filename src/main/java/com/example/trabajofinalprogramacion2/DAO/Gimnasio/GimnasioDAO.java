@@ -87,22 +87,19 @@ public class GimnasioDAO implements ABCMLDAO<Gimnasio> {
     }
 
     @Override
-    public Gimnasio consulta(Gimnasio gimnasio) { //ESTE METODO NO TIENE MUCHO SENTIDO, DEBERIA SER CON EL ID, HAY Q MODIFICAR LA INTERFAZ
+    public Gimnasio consulta(int clavePrimaria) {
         String sql="SELECT * FROM Gimnasio WHERE id_gimnasio= ?";
 
         try(Connection con=ConexionBD.conectar();
             PreparedStatement ps=con.prepareStatement(sql)){
 
-            ps.setInt(1,gimnasio.getId());
+            ps.setInt(1,clavePrimaria);
 
-            ResultSet rs= ps.executeQuery();
+            try(ResultSet rs= ps.executeQuery()){
 
-            if(rs.next()){
-                Gimnasio gymConsultado= new Gimnasio();
-
-                gymConsultado.setNombre(rs.getString("nombre"));
-
-                return gymConsultado;
+                if(rs.next()){
+                    return new Gimnasio(rs.getInt("id_gimnasio"), rs.getString("nombre"), rs.getInt("estado"));
+                }
             }
 
         }catch (SQLException e){

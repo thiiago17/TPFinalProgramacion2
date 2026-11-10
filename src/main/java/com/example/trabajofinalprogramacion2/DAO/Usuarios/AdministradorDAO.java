@@ -13,7 +13,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
 
     public Administrador agregar(Administrador admin)
     {
-        String sql="Insert into administrador(nombre,apellido,dni,email,contrasenia,fechaDeNacimiento,activo,fechaIngreso) values (?,?,?,?,?,?,?,?)";
+        String sql="Insert into administrador(nombre,apellido,dni,email,contrasenia,fechaDeNacimiento,activo,fechaIngreso,es_admin_sistema,id_gimnasio) values (?,?,?,?,?,?,?,?,?,?)";
 
         try(Connection conexion= ConexionBD.conectar();
             PreparedStatement ps= conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
@@ -26,6 +26,8 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
             FechasBD.setFecha(ps, 6, admin.getFechaDeNacimiento());
             ps.setBoolean(7, admin.isActivo());
             FechasBD.setFecha(ps, 8, admin.getFechaIngreso());
+            ps.setBoolean(9, admin.isEsAdminSistema());
+            setIdGimnasio(ps, 10, admin.getIdGimnasio());
 
             if (ps.executeUpdate() > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -111,14 +113,14 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     // CONSULTA
 
     @Override
-    public Administrador consulta(Administrador admin) {
+    public Administrador consulta(int clavePrimaria) {
 
         String sql = "SELECT * FROM administrador WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(1, admin.getId());
+            ps.setInt(1, clavePrimaria);
 
             try (ResultSet rs = ps.executeQuery()) {
 
@@ -141,7 +143,7 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     @Override
     public boolean modificar(Administrador admin) {
 
-        String sql = "UPDATE administrador SET nombre = ?, apellido = ?, dni = ?,  email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, fechaIngreso = ? WHERE id_administrador = ?";
+        String sql = "UPDATE administrador SET nombre = ?, apellido = ?, dni = ?,  email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, fechaIngreso = ?, es_admin_sistema = ?, id_gimnasio = ? WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
@@ -154,8 +156,10 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
             FechasBD.setFecha(ps, 6, admin.getFechaDeNacimiento());
             ps.setBoolean(7, admin.isActivo());
             FechasBD.setFecha(ps, 8, admin.getFechaIngreso());
+            ps.setBoolean(9, admin.isEsAdminSistema());
+            setIdGimnasio(ps, 10, admin.getIdGimnasio());
 
-            ps.setInt(9, admin.getId());
+            ps.setInt(11, admin.getId());
 
             return ps.executeUpdate() > 0;
 
@@ -208,34 +212,20 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
         admin.setActivo(rs.getBoolean("activo"));
         admin.setFechaIngreso(FechasBD.leerFecha(rs, "fechaIngreso"));
         admin.setId(rs.getInt("id_administrador"));
+        admin.setEsAdminSistema(rs.getBoolean("es_admin_sistema"));
+
+        int idGimnasio = rs.getInt("id_gimnasio");
+        admin.setIdGimnasio(rs.wasNull() ? null : idGimnasio);
 
         return admin;
     }
 
-    // BUSCAR EN DAO
-
-    public Administrador buscarDao(int id)
-    {
-        String sql="select * from administrador where id_administrador = ?";
-
-        try (Connection conexion = ConexionBD.conectar();
-             PreparedStatement ps = conexion.prepareStatement(sql))
-        {
-            ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-
-                if (rs.next()) {
-                    return mapearAdministrador(rs);
-                }
-            }
-
-            return null;
-
-        } catch (SQLException e) {
-            System.out.println("Error al buscar administrador: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+    // El gimnasio puede ser null (administrador del sistema): en ese caso se guarda NULL en la BD
+    private void setIdGimnasio(PreparedStatement ps, int posicion, Integer idGimnasio) throws SQLException {
+        if (idGimnasio == null) {
+            ps.setNull(posicion, Types.INTEGER);
+        } else {
+            ps.setInt(posicion, idGimnasio);
         }
     }
 }
