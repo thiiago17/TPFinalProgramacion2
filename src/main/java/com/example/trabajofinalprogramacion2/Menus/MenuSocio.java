@@ -40,7 +40,7 @@ public class MenuSocio {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarTurnos(turnosService.verDisponibles(), "No hay turnos disponibles.");
+                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles.");
                     break;
                 case 2: {
                     int id = Consola.leerEntero("ID del turno a reservar: ");
@@ -49,7 +49,7 @@ public class MenuSocio {
                     break;
                 }
                 case 3:
-                    Formato.mostrarTurnos(turnosService.buscarPorSocio(socio), "No tiene turnos reservados.");
+                    Consola.mostrarLista(turnosService.buscarPorSocio(socio), "No tiene turnos reservados.");
                     break;
                 case 4:
                     cancelarTurno();
@@ -73,7 +73,7 @@ public class MenuSocio {
                 case 9:
                     // aca iria MenuPerfil.mostrar(socio, socioService);
                     // (SocioService tiene que implementar GestionPerfil, como los otros services)
-                    System.out.println(Formato.usuario(socio));
+                    System.out.println(socio);
                     break;
             }
 

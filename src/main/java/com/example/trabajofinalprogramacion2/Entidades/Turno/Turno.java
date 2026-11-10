@@ -7,6 +7,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 // Implementa Comparable para que las listas de turnos se puedan ordenar por fecha con Collections.sort(lista)
@@ -109,6 +110,37 @@ public class Turno implements Comparable<Turno> {
     }
 
     // MOSTRAR
+
+    private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    @Override
+    public String toString() {
+        String fecha = "-";
+        if (fechaTurno != null) {
+            fecha = fechaTurno.format(FORMATO_FECHA_HORA);
+        }
+
+        // Si el nutricionista no se vinculo con el objeto completo, solo tenemos su id
+        String textoNutricionista = "-";
+        if (nutricionista != null) {
+            if (nutricionista.getNombre() != null) {
+                textoNutricionista = nutricionista.getNombre() + " " + nutricionista.getApellido();
+            } else {
+                textoNutricionista = "#" + nutricionista.getId();
+            }
+        }
+
+        String textoSocio = "";
+        if (socio != null) {
+            textoSocio = " | Socio #" + socio.getId();
+        }
+
+        return "Turno #" + id + " | " + fecha
+                + " | Nutricionista: " + textoNutricionista
+                + " | $" + precio
+                + " | " + estado
+                + textoSocio;
+    }
 
     // METODOS
 
