@@ -111,14 +111,14 @@ public class AdministradorDAO implements ABCMLDAO<Administrador> {
     // CONSULTA
 
     @Override
-    public Administrador consulta(Administrador admin) {
+    public Administrador consulta(int clavePrimaria) {
 
         String sql = "SELECT * FROM administrador WHERE id_administrador = ?";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(1, admin.getId());
+            ps.setInt(1, clavePrimaria);
 
             try (ResultSet rs = ps.executeQuery()) {
 

@@ -85,14 +85,14 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
     }
 
     @Override
-    public Nutricionista consulta(Nutricionista nutricionista) {
-        String sql = "SELECT * FROM nutricionista WHERE id_nutricionista = ? OR dni = ?";
+    public Nutricionista consulta(int clavePrimaria) {
+        String sql = "SELECT * FROM nutricionista WHERE id_nutricionista = ? ";
 
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(1, nutricionista.getId());
-            ps.setString(2, nutricionista.getDni());
+            ps.setInt(1, clavePrimaria);
+
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
