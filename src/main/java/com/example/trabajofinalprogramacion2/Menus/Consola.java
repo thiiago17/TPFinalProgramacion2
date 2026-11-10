@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
 // Lectura de datos por teclado con validacion.
@@ -123,5 +124,18 @@ public final class Consola {
     public static void pausa() {
         System.out.print("\nPresione Enter para continuar...");
         scanner.nextLine();
+    }
+
+    // Muestra una lista, un elemento por linea (println llama al toString de cada uno).
+    // <T> hace que sirva para cualquier lista: de entrenadores, de turnos, etc.
+    // (igual que el <T> de UsuariosCollection<T>)
+    public static <T> void mostrarLista(List<T> lista, String mensajeVacia) {
+        if (lista == null || lista.isEmpty()) {
+            System.out.println(mensajeVacia);
+            return;
+        }
+        for (T elemento : lista) {
+            System.out.println(elemento);
+        }
     }
 }

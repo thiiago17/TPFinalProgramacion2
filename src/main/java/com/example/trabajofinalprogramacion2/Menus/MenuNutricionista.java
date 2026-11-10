@@ -38,14 +38,14 @@ public class MenuNutricionista {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarTurnos(nutricionistaService.verTurnos(nutricionista.getId()), "No tiene turnos.");
+                    Consola.mostrarLista(nutricionistaService.verTurnos(nutricionista.getId()), "No tiene turnos.");
                     break;
                 case 2:
-                    Formato.mostrarTurnos(nutricionistaService.verTurnosDisponibles(nutricionista.getId()),
+                    Consola.mostrarLista(nutricionistaService.verTurnosDisponibles(nutricionista.getId()),
                             "No tiene turnos disponibles.");
                     break;
                 case 3:
-                    Formato.mostrarTurnos(nutricionistaService.verTurnosOcupados(nutricionista.getId()),
+                    Consola.mostrarLista(nutricionistaService.verTurnosOcupados(nutricionista.getId()),
                             "No tiene turnos reservados.");
                     break;
                 case 4:

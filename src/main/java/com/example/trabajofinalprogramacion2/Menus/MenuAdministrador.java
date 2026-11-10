@@ -103,7 +103,7 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarUsuarios(entrenadorService.verListado(), "No hay entrenadores.");
+                    Consola.mostrarLista(entrenadorService.verListado(), "No hay entrenadores.");
                     break;
                 case 2:
                     agregarEntrenador();
@@ -185,7 +185,7 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarUsuarios(nutricionistaService.verListado(), "No hay nutricionistas.");
+                    Consola.mostrarLista(nutricionistaService.verListado(), "No hay nutricionistas.");
                     break;
                 case 2:
                     agregarNutricionista();
@@ -269,13 +269,13 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarTurnos(turnosService.verListado(), "No hay turnos.");
+                    Consola.mostrarLista(turnosService.verListado(), "No hay turnos.");
                     break;
                 case 2:
-                    Formato.mostrarTurnos(turnosService.verDisponibles(), "No hay turnos disponibles.");
+                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles.");
                     break;
                 case 3:
-                    Formato.mostrarTurnos(turnosService.verReservados(), "No hay turnos reservados.");
+                    Consola.mostrarLista(turnosService.verReservados(), "No hay turnos reservados.");
                     break;
                 case 4:
                     crearTurno();
@@ -302,7 +302,7 @@ public class MenuAdministrador {
                     break;
                 }
                 case 8:
-                    Formato.mostrarTurnos(turnosService.verDadosDeBaja(), "No hay turnos dados de baja.");
+                    Consola.mostrarLista(turnosService.verDadosDeBaja(), "No hay turnos dados de baja.");
                     break;
                 case 9: {
                     int id = Consola.leerEntero("ID del turno: ");

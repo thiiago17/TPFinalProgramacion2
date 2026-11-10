@@ -19,7 +19,7 @@ public final class MenuPerfil {
 
         do {
             Consola.titulo("MI PERFIL");
-            System.out.println(Formato.describir(usuario));
+            System.out.println(usuario);   // llama al toString del tipo real (polimorfismo)
             System.out.println("\n1. Cambiar contraseña");
             System.out.println("2. Cambiar email");
             System.out.println("0. Volver");

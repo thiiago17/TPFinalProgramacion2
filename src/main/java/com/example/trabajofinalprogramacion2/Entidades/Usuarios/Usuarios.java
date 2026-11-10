@@ -128,6 +128,21 @@ public abstract class Usuarios {
     }
 
     // MOSTRAR
+    // Datos comunes a todos los usuarios. Cada hijo lo sobreescribe y agrega lo suyo con super.toString()
+
+    @Override
+    public String toString() {
+        String edad = "-";
+        if (fechaDeNacimiento != null) {
+            edad = calcularEdad() + " años";
+        }
+
+        return "#" + id + " | " + nombre + " " + apellido
+                + " | DNI: " + dni
+                + " | Email: " + email
+                + " | Edad: " + edad
+                + " | " + verEstadoTexto();
+    }
 
     // METODOS
 
@@ -143,11 +158,6 @@ public abstract class Usuarios {
     {
         LocalDate hoy = LocalDate.now();
         return Period.between(this.fechaDeNacimiento, hoy).getYears();
-    }
-
-    public void mostrarMenu()
-    {
-
     }
 
     // EQUALS / HASHCODE (por id)

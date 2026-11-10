@@ -91,6 +91,20 @@ public class Socio extends Usuarios {
 
     // MOSTRAR
 
+    @Override
+    public String toString() {
+        String plan = "sin plan";
+        if (membresia != null && membresia.getPlan() != null) {
+            plan = membresia.getPlan().name();
+        }
+
+        return super.toString()
+                + " | Peso: " + pesoActual + " kg"
+                + " | Altura: " + altura + " m"
+                + " | Plan: " + plan
+                + " | Sucursal: " + (sucursalAsignada != null ? "#" + sucursalAsignada.getId() : "sin asignar");
+    }
+
     // METODOS
     public double calcularIMC() {
         if (pesoActual==null || altura==null || pesoActual<=0 || altura<=0){
