@@ -108,11 +108,11 @@ public class MenuAdministradorSistema {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarUsuarios(administradorService.verListado(), "No hay administradores.");
+                    Consola.mostrarLista(administradorService.verListado(), "No hay administradores.");
                     break;
                 case 2:
                     int idGimnasio = Consola.leerEntero("ID del gimnasio: ");
-                    Formato.mostrarUsuarios(administradorService.buscarPorGimnasio(idGimnasio),
+                    Consola.mostrarLista(administradorService.buscarPorGimnasio(idGimnasio),
                             "Ese gimnasio no tiene administradores.");
                     break;
                 case 3:
@@ -197,9 +197,6 @@ public class MenuAdministradorSistema {
     // PERFIL =================================================================================
 
     private void menuPerfil() {
-        MenuPerfil.mostrar(
-                () -> Formato.administrador(admin),
-                password -> administradorService.modificarPassword(admin.getId(), password),
-                email -> administradorService.modificarEmail(admin.getId(), email));
+        MenuPerfil.mostrar(admin, administradorService);
     }
 }

@@ -256,21 +256,16 @@ public class TurnosService {
     // =========================
 
     // METODO AUXILIAR PARA GUARDAR CAMBIOS
+    // Guarda en MySQL el objeto ya modificado en memoria. Si devuelve false, cada metodo
+    // "modificarX" vuelve a poner el valor anterior para que memoria y BD no queden distintas.
 
-    private boolean guardarModificacion(Turno turno, Runnable restaurar) {
+    private boolean guardarModificacion(Turno turno) {
 
         if (turno == null) {
             return false;
         }
 
-        if (dao.modificar(turno)) {
-            return true;
-        }
-
-        // Si falla MySQL, restauramos el valor anterior en memoria
-        restaurar.run();
-
-        return false;
+                return dao.modificar(turno);
     }
 
 
@@ -288,7 +283,13 @@ public class TurnosService {
 
         Turno modificado = coleccion.modificarFecha(turno, nuevaFecha);
 
-        return guardarModificacion(modificado, () -> turno.setFechaTurno(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        turno.setFechaTurno(anterior);
+        return false;
     }
 
 
@@ -306,7 +307,13 @@ public class TurnosService {
 
         Turno modificado = coleccion.modificarPrecio(turno, precio);
 
-        return guardarModificacion(modificado, () -> turno.setPrecio(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        turno.setPrecio(anterior);
+        return false;
     }
 
 
@@ -324,18 +331,26 @@ public class TurnosService {
 
         Turno modificado = coleccion.modificarNutricionista(turno, nuevoNutricionista);
 
-        return guardarModificacion(modificado, () -> {
+        // La coleccion no lo cambio (por ejemplo, el nuevo nutricionista ya tiene un turno a esa hora)
+        if (modificado == null) {
+            return false;
+        }
 
-            // Devolvemos el turno a la lista del nutricionista anterior
-            if (anterior != null) {
-                coleccion.modificarNutricionista(turno, anterior);
-            } else {
-                if (nuevoNutricionista.getTurnos() != null) {
-                    nuevoNutricionista.getTurnos().remove(turno);
-                }
-                turno.setNutricionista(null);
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, devolvemos el turno a la lista del nutricionista anterior
+        if (anterior != null) {
+            coleccion.modificarNutricionista(turno, anterior);
+        } else {
+            if (nuevoNutricionista.getTurnos() != null) {
+                nuevoNutricionista.getTurnos().remove(turno);
             }
-        });
+            turno.setNutricionista(null);
+        }
+
+        return false;
     }
 
 

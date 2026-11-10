@@ -11,8 +11,8 @@ public class MenuSocio {
 
     private final Socio socio;
     private final TurnosService turnosService;
-    // private final SocioService socioService;       -> cuando este hecho
-    // private final SucursalService sucursalService; -> cuando este hecho
+    // private final SocioService socioService;        cuando este hecho descomenta
+    // private final SucursalService sucursalService;  lo mismo que arriba
 
     public MenuSocio(Socio socio, TurnosService turnosService) {
         this.socio = socio;
@@ -40,7 +40,7 @@ public class MenuSocio {
 
             switch (opcion) {
                 case 1:
-                    Formato.mostrarTurnos(turnosService.verDisponibles(), "No hay turnos disponibles.");
+                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles.");
                     break;
                 case 2: {
                     int id = Consola.leerEntero("ID del turno a reservar: ");
@@ -49,7 +49,7 @@ public class MenuSocio {
                     break;
                 }
                 case 3:
-                    Formato.mostrarTurnos(turnosService.buscarPorSocio(socio), "No tiene turnos reservados.");
+                    Consola.mostrarLista(turnosService.buscarPorSocio(socio), "No tiene turnos reservados.");
                     break;
                 case 4:
                     cancelarTurno();
@@ -71,10 +71,9 @@ public class MenuSocio {
                     System.out.printf("IMC: %.2f - %s%n", socio.calcularIMC(), socio.verEstadoIMC());
                     break;
                 case 9:
-                    // aca iria MenuPerfil.mostrar(() -> Formato.usuario(socio),
-                    //         password -> socioService.modificarPassword(socio.getId(), password),
-                    //         email -> socioService.modificarEmail(socio.getId(), email));
-                    System.out.println(Formato.usuario(socio));
+                    // aca iria MenuPerfil.mostrar(socio, socioService);
+                    // (SocioService tiene que implementar GestionPerfil, como los otros services)
+                    System.out.println(socio);
                     break;
             }
 

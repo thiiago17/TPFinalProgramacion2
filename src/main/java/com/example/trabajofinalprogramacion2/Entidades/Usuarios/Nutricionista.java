@@ -72,6 +72,14 @@ public class Nutricionista extends Usuarios{
 
     // MOSTRAR
 
+    @Override
+    public String toString() {
+        return super.toString()
+                + " | Salario: $" + salario
+                + " | Comisión: $" + comisionPorConsulta
+                + " | Sucursal: " + (sucursalAsignada != null ? "#" + sucursalAsignada.getId() : "sin asignar");
+    }
+
     // METODOS
 
     public double calcularExtraPorComision()

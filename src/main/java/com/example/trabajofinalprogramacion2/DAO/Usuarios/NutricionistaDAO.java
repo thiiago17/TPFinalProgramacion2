@@ -185,9 +185,10 @@ public class NutricionistaDAO implements ABCMLDAO<Nutricionista> {
         n.setSalario(rs.getDouble("salario"));
         n.setComisionPorConsulta(rs.getDouble("comision_por_consulta"));
 
-        // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO
+        // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO.
+        // Si la columna esta en NULL, getInt devuelve 0 (los ids empiezan en 1)
         int idSucursal = rs.getInt("id_sucursal");
-        if (!rs.wasNull()) {
+        if (idSucursal > 0) {
             Sucursal sucursal = new Sucursal();
             sucursal.setId(idSucursal);
             n.setSucursalAsignada(sucursal);

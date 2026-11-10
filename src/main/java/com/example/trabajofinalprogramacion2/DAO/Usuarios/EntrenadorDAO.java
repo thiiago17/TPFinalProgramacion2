@@ -257,12 +257,13 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
         e.setFechaDeNacimiento(FechasBD.leerFecha(rs, "fechaDeNacimiento"));
         e.setActivo(rs.getBoolean("activo"));
         e.setEspecialidad(rs.getString("especialidad"));
-        double salario = rs.getDouble("salario");
-        e.setSalario(rs.wasNull() ? null : salario);
+        // Si el salario esta en NULL, getDouble devuelve 0
+        e.setSalario(rs.getDouble("salario"));
 
-        // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO
+        // La sucursal viene solo con su id: si se necesitan los datos completos hay que buscarla con su DAO.
+        // Si la columna esta en NULL, getInt devuelve 0 (los ids empiezan en 1)
         int idSucursal = rs.getInt("id_sucursal");
-        if (!rs.wasNull()) {
+        if (idSucursal > 0) {
             Sucursal sucursal = new Sucursal();
             sucursal.setId(idSucursal);
             e.setSucursalAsignada(sucursal);

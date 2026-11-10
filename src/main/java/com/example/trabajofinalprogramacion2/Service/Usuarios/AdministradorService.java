@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Service.Usuarios;
 
+import com.example.trabajofinalprogramacion2.interfaces.GestionPerfil;
 import com.example.trabajofinalprogramacion2.Colecciones.Usuarios.AdministradorCollection;
 import com.example.trabajofinalprogramacion2.DAO.Usuarios.AdministradorDAO;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdministradorService {
+public class AdministradorService implements GestionPerfil {
     AdministradorDAO dao;
     AdministradorCollection coleccion;
 
@@ -189,21 +190,16 @@ public class AdministradorService {
     // =========================
 
     // METODO AUXILIAR PARA GUARDAR CAMBIOS
+    // Guarda en MySQL el objeto ya modificado en memoria. Si devuelve false, cada metodo
+    // "modificarX" vuelve a poner el valor anterior para que memoria y BD no queden distintas.
 
-    private boolean guardarModificacion(Administrador admin, Runnable restaurar) {
+    private boolean guardarModificacion(Administrador admin) {
 
         if (admin == null) {
             return false;
         }
 
-        if (dao.modificar(admin)) {
-            return true;
-        }
-
-        // Si falla MySQL, restauramos el valor anterior en memoria
-        restaurar.run();
-
-        return false;
+        return dao.modificar(admin);
     }
 
 
@@ -221,7 +217,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarNombre(id, nombre);
 
-        return guardarModificacion(modificado, () -> admin.setNombre(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setNombre(anterior);
+        return false;
     }
 
 
@@ -239,7 +241,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarApellido(id, apellido);
 
-        return guardarModificacion(modificado, () -> admin.setApellido(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setApellido(anterior);
+        return false;
     }
 
 
@@ -263,7 +271,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarDni(id, dni);
 
-        return guardarModificacion(modificado, () -> admin.setDni(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setDni(anterior);
+        return false;
     }
 
 
@@ -287,7 +301,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarEmail(id, email);
 
-        return guardarModificacion(modificado, () -> admin.setEmail(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setEmail(anterior);
+        return false;
     }
 
 
@@ -305,7 +325,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarPassword(id, password);
 
-        return guardarModificacion(modificado, () -> admin.setPassword(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setPassword(anterior);
+        return false;
     }
 
 
@@ -323,7 +349,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarFechaNacimiento(id, fecha);
 
-        return guardarModificacion(modificado, () -> admin.setFechaDeNacimiento(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setFechaDeNacimiento(anterior);
+        return false;
     }
 
 
@@ -341,7 +373,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarFechaIngreso(id, fecha);
 
-        return guardarModificacion(modificado, () -> admin.setFechaIngreso(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setFechaIngreso(anterior);
+        return false;
     }
 
 
@@ -359,7 +397,13 @@ public class AdministradorService {
 
         Administrador modificado = coleccion.modificarActivo(id, activo);
 
-        return guardarModificacion(modificado, () -> admin.setActivo(anterior));
+        if (guardarModificacion(modificado)) {
+            return true;
+        }
+
+        // Si fallo MySQL, se vuelve al valor anterior en memoria
+        admin.setActivo(anterior);
+        return false;
     }
 
 }

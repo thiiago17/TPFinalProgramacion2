@@ -7,9 +7,12 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class Turno {
+// Implementa Comparable para que las listas de turnos se puedan ordenar por fecha con Collections.sort(lista)
+
+public class Turno implements Comparable<Turno> {
 
     // Horario de atencion: de 10:00 a 19:00, cada turno dura 30 minutos.
     // El ultimo turno empieza a las 18:30 para terminar a las 19:00.
@@ -108,6 +111,37 @@ public class Turno {
 
     // MOSTRAR
 
+    private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    @Override
+    public String toString() {
+        String fecha = "-";
+        if (fechaTurno != null) {
+            fecha = fechaTurno.format(FORMATO_FECHA_HORA);
+        }
+
+        // Si el nutricionista no se vinculo con el objeto completo, solo tenemos su id
+        String textoNutricionista = "-";
+        if (nutricionista != null) {
+            if (nutricionista.getNombre() != null) {
+                textoNutricionista = nutricionista.getNombre() + " " + nutricionista.getApellido();
+            } else {
+                textoNutricionista = "#" + nutricionista.getId();
+            }
+        }
+
+        String textoSocio = "";
+        if (socio != null) {
+            textoSocio = " | Socio #" + socio.getId();
+        }
+
+        return "Turno #" + id + " | " + fecha
+                + " | Nutricionista: " + textoNutricionista
+                + " | $" + precio
+                + " | " + estado
+                + textoSocio;
+    }
+
     // METODOS
 
     // True si el turno empieza en un horario fijo (cada 30 minutos) y termina dentro del horario de atencion
@@ -204,6 +238,25 @@ public class Turno {
         }
 
         return resultado.toString();
+    }
+
+    // COMPARAR (ordena por fecha y hora; los turnos sin fecha van al final)
+    // Devuelve negativo si este turno va antes que el otro, positivo si va despues y 0 si es la misma fecha
+
+    @Override
+    public int compareTo(Turno otro) {
+
+        if (this.fechaTurno == null && otro.fechaTurno == null) {
+            return 0;
+        }
+        if (this.fechaTurno == null) {
+            return 1;
+        }
+        if (otro.fechaTurno == null) {
+            return -1;
+        }
+
+        return this.fechaTurno.compareTo(otro.fechaTurno);
     }
 
     // Consultar turnos de un usuario

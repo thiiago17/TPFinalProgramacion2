@@ -56,6 +56,14 @@ public class Administrador extends Usuarios {
 
     // MOSTRAR
 
+    @Override
+    public String toString() {
+        if (esAdminSistema) {
+            return super.toString() + " | Admin del sistema";
+        }
+        return super.toString() + " | Gimnasio #" + idGimnasio;
+    }
+
     // METODOS
 
     // True si el tipo de administrador y el gimnasio son coherentes:
