@@ -6,6 +6,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.NutricionistaService;
+import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,24 +16,33 @@ public class TurnosService {
     TurnosDao dao;
     TurnosCollection coleccion;
     NutricionistaService nutricionistaService;
+    SocioService socioService;
 
     // CONSTRUCTORES
 
-    // Carga los turnos sin vincularlos a los nutricionistas de NutricionistaService
+    // Carga los turnos sin vincularlos a los nutricionistas ni a los socios reales
     public TurnosService() {
-        this(null);
+        this(null, null);
+    }
+
+    // Vincula solo los nutricionistas (los socios quedan solo con su id)
+    public TurnosService(NutricionistaService nutricionistaService) {
+        this(nutricionistaService, null);
     }
 
     // Carga los turnos activos (no los dados de baja) y los vincula a los nutricionistas
-    // reales de NutricionistaService, asi la lista de turnos de cada nutricionista queda cargada
-    public TurnosService(NutricionistaService nutricionistaService) {
+    // reales de NutricionistaService (asi la lista de turnos de cada nutricionista queda cargada)
+    // y a los socios reales de SocioService
+    public TurnosService(NutricionistaService nutricionistaService, SocioService socioService) {
 
         dao = new TurnosDao();
         coleccion = new TurnosCollection();
         this.nutricionistaService = nutricionistaService;
+        this.socioService = socioService;
 
         for (Turno turno : dao.listadoActivos()) {
             vincularNutricionista(turno);
+            vincularSocio(turno);
             coleccion.agregar(turno);
         }
     }
@@ -116,6 +126,7 @@ public class TurnosService {
         }
 
         vincularNutricionista(turno);
+        vincularSocio(turno);
 
         if (!Turno.esHorarioValido(turno.getFechaTurno())
                 || nutricionistaOcupado(turno.getNutricionista(), turno.getFechaTurno(), turno)) {
@@ -138,6 +149,7 @@ public class TurnosService {
 
         for (Turno turno : turnos) {
             vincularNutricionista(turno);
+            vincularSocio(turno);
         }
 
         return turnos;
@@ -195,6 +207,23 @@ public class TurnosService {
         }
 
         return dao.cancelar(turno);
+    }
+
+
+    // CANCELAR TODOS LOS TURNOS RESERVADOS DE UN SOCIO (se usa cuando el socio se da de baja)
+    // Los turnos vuelven a quedar disponibles para otro socio. Devuelve cuantos se cancelaron
+
+    public int cancelarTurnosDeSocio(Socio socio) {
+
+        int cancelados = 0;
+
+        for (Turno turno : coleccion.buscarPorSocio(socio)) {
+            if (turno.estaReservado() && dao.cancelar(turno)) {
+                cancelados++;
+            }
+        }
+
+        return cancelados;
     }
 
 
@@ -370,6 +399,21 @@ public class TurnosService {
 
         if (real != null) {
             turno.setNutricionista(real);
+        }
+    }
+
+    // El DAO arma el Socio del turno solo con su id: se reemplaza por el socio real de SocioService.
+    // Si no esta (socio dado de baja) queda el de solo id: la reserva sigue existiendo en la BD
+    private void vincularSocio(Turno turno) {
+
+        if (socioService == null || turno.getSocio() == null) {
+            return;
+        }
+
+        Socio real = socioService.buscar(turno.getSocio().getId());
+
+        if (real != null) {
+            turno.setSocio(real);
         }
     }
 

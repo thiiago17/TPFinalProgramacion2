@@ -1,14 +1,19 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
+import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.NutricionistaService;
+import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 // Menu del administrador de un gimnasio: maneja el dia a dia de SU gimnasio
@@ -23,15 +28,17 @@ public class MenuAdministrador {
     private final EntrenadorService entrenadorService;
     private final NutricionistaService nutricionistaService;
     private final TurnosService turnosService;
+    private final SocioService socioService;
 
     public MenuAdministrador(Administrador admin, AdministradorService administradorService,
                              EntrenadorService entrenadorService, NutricionistaService nutricionistaService,
-                             TurnosService turnosService) {
+                             TurnosService turnosService, SocioService socioService) {
         this.admin = admin;
         this.administradorService = administradorService;
         this.entrenadorService = entrenadorService;
         this.nutricionistaService = nutricionistaService;
         this.turnosService = turnosService;
+        this.socioService = socioService;
     }
 
     public void mostrar() {
@@ -339,7 +346,7 @@ public class MenuAdministrador {
                 "No se pudo crear (horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno, precio >= 0).");
     }
 
-    // SOCIOS (pendiente: SocioService) =================================================================================
+    // SOCIOS =================================================================================
 
     private void menuSocios() {
 
@@ -353,7 +360,7 @@ public class MenuAdministrador {
             System.out.println("4. Asignar sucursal");
             System.out.println("5. Registrar pago de cuota");
             System.out.println("6. Asignar entrenador");
-            System.out.println("7. Dar de baja");
+            System.out.println("7. Dar de baja (pierde entrenador y turnos reservados)");
             System.out.println("8. Reactivar socio");
             System.out.println("0. Volver");
 
@@ -361,36 +368,98 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    // aca iria socioService.verListado();
+                    Consola.mostrarLista(socioService.verListado(), "No hay socios.");
                     break;
                 case 2:
-                    // aca iria agregarSocio(); -> FormularioUsuario.cargarDatosBasicos + plan + sucursal + socioService.agregar(socio)
+                    agregarSocio();
                     break;
-                case 3:
-                    // aca iria socioService.modificarPlan(id, plan);
+                case 3: {
+                    int id = Consola.leerEntero("ID del socio: ");
+                    Plan plan = FormularioUsuario.leerPlan();
+                    Consola.resultado(socioService.cambiarPlanMembresia(id, plan),
+                            "Plan actualizado.", "No se encontró un socio activo con ese ID.");
                     break;
-                case 4:
-                    // aca iria socioService.modificarSucursal(id, sucursal);
+                }
+                case 4: {
+                    int id = Consola.leerEntero("ID del socio: ");
+                    Consola.resultado(socioService.modificarSucursal(id, FormularioUsuario.leerSucursal()),
+                            "Sucursal asignada.", "No se pudo asignar (¿existen el socio y la sucursal?).");
                     break;
-                case 5:
-                    // aca iria socioService.abonarCuota(id);
+                }
+                case 5: {
+                    int id = Consola.leerEntero("ID del socio: ");
+                    System.out.println(socioService.abonarCuota(id));
                     break;
-                case 6:
-                    // aca iria entrenadorService.agregarSocio(idEntrenador, socioService.buscar(idSocio));
+                }
+                case 6: {
+                    int idSocio = Consola.leerEntero("ID del socio: ");
+                    int idEntrenador = Consola.leerEntero("ID del entrenador: ");
+                    Consola.resultado(entrenadorService.agregarSocio(idEntrenador, idSocio),
+                            "Entrenador asignado.",
+                            "No se pudo: el socio o el entrenador no existen / están de baja, o ya estaban vinculados.");
                     break;
+                }
                 case 7:
-                    // aca iria socioService.eliminar(id);
+                    darDeBajaSocio();
                     break;
-                case 8:
-                    // aca iria socioService.alta(id);
+                case 8: {
+                    int id = Consola.leerEntero("ID del socio: ");
+                    Consola.resultado(socioService.alta(id),
+                            "Socio reactivado.", "No se encontró un socio con ese ID.");
                     break;
+                }
             }
 
             if (opcion != 0) {
-                System.out.println("(Pendiente: falta SocioService)");
+                Consola.pausa();
             }
 
         } while (opcion != 0);
+    }
+
+    // El socio nuevo paga el primer mes al inscribirse: la membresia arranca hoy y vence en un mes
+    private void agregarSocio() {
+
+        Socio nuevo = new Socio();
+        FormularioUsuario.cargarDatosBasicos(nuevo);
+        FormularioUsuario.pedirPesoYAltura(nuevo);
+        nuevo.setFechaAlta(LocalDate.now());
+
+        Plan plan = FormularioUsuario.leerPlan();
+        nuevo.setMembresia(new Membresia(LocalDate.now(), LocalDate.now().plusMonths(1), plan));
+
+        nuevo.setSucursalAsignada(FormularioUsuario.leerSucursal());
+
+        Consola.resultado(socioService.agregar(nuevo),
+                "Socio agregado con ID " + nuevo.getId() + ". Primer mes abonado: $" + plan.getPrecio(),
+                "No se pudo agregar (¿DNI repetido o sucursal inexistente?).");
+    }
+
+    // Al darse de baja el socio pierde su entrenador y se le cancelan los turnos reservados
+    // (vuelven a quedar disponibles). Se hace desde aca porque SocioService no conoce a los otros services
+    private void darDeBajaSocio() {
+
+        int id = Consola.leerEntero("ID del socio: ");
+        Socio socio = socioService.buscar(id);
+
+        if (socio == null) {
+            System.out.println("No se encontró un socio activo con ese ID.");
+            return;
+        }
+
+        if (!Consola.confirmar("¿Seguro? El socio va a perder su entrenador y sus turnos reservados")) {
+            return;
+        }
+
+        if (!socioService.eliminar(id)) {
+            System.out.println("No se pudo dar de baja al socio.");
+            return;
+        }
+
+        entrenadorService.quitarSocioDeTodos(id);
+        int cancelados = turnosService.cancelarTurnosDeSocio(socio);
+
+        System.out.println("Socio dado de baja. Turnos cancelados: " + cancelados + ".");
     }
 
     // SUCURSALES (pendiente: SucursalService) =================================================================================

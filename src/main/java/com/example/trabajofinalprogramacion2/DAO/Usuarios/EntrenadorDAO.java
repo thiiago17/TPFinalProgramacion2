@@ -223,6 +223,25 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
         }
     }
 
+    // DESVINCULAR un socio de TODOS sus entrenadores (se usa cuando el socio se da de baja).
+    // Devuelve true aunque no tuviera entrenador: lo importante es que no haya fallado
+
+    public boolean desvincularSocioDeTodos(int idSocio) {
+        String sql = "DELETE FROM entrenador_socio WHERE id_socio = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idSocio);
+            pstmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al desvincular el socio de sus entrenadores: " + e.getMessage());
+            return false;
+        }
+    }
+
     // LISTAR los ids de los socios de un entrenador
 
     public List<Integer> listarIdsSocios(int idEntrenador) {

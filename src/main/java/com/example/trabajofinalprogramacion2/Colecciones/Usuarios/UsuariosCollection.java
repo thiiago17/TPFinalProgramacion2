@@ -1,6 +1,8 @@
 package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.interfaces.ABCMLCollection;
 
 import java.time.LocalDate;
@@ -16,22 +18,21 @@ public class UsuariosCollection<T extends Usuarios> implements ABCMLCollection<T
     }
 
     @Override
-    public boolean eliminar(int id) {
+    public boolean eliminar(int id) throws ObjetoNuloException {
 
         T usuario = buscar(id);
 
-        if (usuario != null) {
-            usuarios.remove(usuario);
-            return true;
+        if (usuario == null) {
+            throw new ObjetoNuloException("No existe el usuario que se intenta eliminar");
         }
 
-        return false;
+        return usuarios.remove(usuario);
     }
 
     @Override
-    public boolean agregar(T usuario) {
+    public boolean agregar(T usuario) throws ObjetoNuloException {
         if (usuario == null) {
-            return false;
+            throw new ObjetoNuloException("No se puede agregar un usuario nulo");
         }
 
         usuarios.add(usuario);
@@ -43,22 +44,22 @@ public class UsuariosCollection<T extends Usuarios> implements ABCMLCollection<T
     // ENTERO
 
     @Override
-    public boolean modificar(T usuario) {
+    public boolean modificar(T usuario) throws ObjetoNuloException {
 
         if (usuario == null) {
-            return false;
+            throw new ObjetoNuloException("El usuario recibido para modificar es nulo");
         }
 
         for (int i = 0; i < usuarios.size(); i++) {
 
-            if (usuarios.get(i).getDni().equals(usuario.getDni()))
+            if (usuarios.get(i).getId() == usuario.getId())
             {
                 usuarios.set(i, usuario);
                 return true;
             }
         }
 
-        return false;
+        throw new ObjetoNuloException("No existe el usuario que se intenta modificar");
     }
 
     // MODIFICAR DNI
@@ -199,13 +200,13 @@ public class UsuariosCollection<T extends Usuarios> implements ABCMLCollection<T
 
     // BUSCAR POR NOMBRE
 
-    public List<T> buscarPorNombre(String nombre) {
-
-        List<T> encontrados = new ArrayList<>();
+    public List<T> buscarPorNombre(String nombre) throws ValorNoValidoException {
 
         if (nombre == null) {
-            return encontrados;
+            throw new ValorNoValidoException("El nombre a buscar no puede ser nulo");
         }
+
+        List<T> encontrados = new ArrayList<>();
 
         for (T usuario : usuarios) {
 
@@ -220,13 +221,13 @@ public class UsuariosCollection<T extends Usuarios> implements ABCMLCollection<T
 
     // BUSCAR POR APELLIDO
 
-    public List<T> buscarPorApellido(String apellido) {
-
-        List<T> encontrados = new ArrayList<>();
+    public List<T> buscarPorApellido(String apellido) throws ValorNoValidoException {
 
         if (apellido == null) {
-            return encontrados;
+            throw new ValorNoValidoException("El apellido a buscar no puede ser nulo");
         }
+
+        List<T> encontrados = new ArrayList<>();
 
         for (T usuario : usuarios) {
 

@@ -1,5 +1,7 @@
 package com.example.trabajofinalprogramacion2.Entidades.Membresias;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import java.time.LocalDate;
 
 public class Membresia {
@@ -38,21 +40,21 @@ public class Membresia {
 
     public void setFechaInicio(LocalDate fechaInicio) {
         if (fechaInicio == null) {
-            throw new IllegalArgumentException("La fecha de inicio no puede ser nula.");
+            throw new ValorNoValidoException("La fecha de inicio no puede ser nula.");
         }
         this.fechaInicio = fechaInicio;
     }
 
     public void setFechaVencimiento(LocalDate fechaVencimiento) {
         if (fechaVencimiento == null) {
-            throw new IllegalArgumentException("La fecha de vencimiento no puede ser nula.");
+            throw new ValorNoValidoException("La fecha de vencimiento no puede ser nula.");
         }
         this.fechaVencimiento = fechaVencimiento;
     }
 
     public void setPlan(Plan plan) {
         if (plan == null) {
-            throw new IllegalArgumentException("El plan seleccionado no puede ser nulo.");
+            throw new ObjetoNuloException("El plan seleccionado no puede ser nulo.");
         }
         this.plan = plan;
     }
@@ -61,7 +63,11 @@ public class Membresia {
 
     // METODOS
 
+    // Sin fecha de vencimiento (membresia recien creada sin pagar) se considera vencida
     public boolean isVencida(){
+        if (fechaVencimiento == null) {
+            return true;
+        }
         return LocalDate.now().isAfter(fechaVencimiento);
     }
 
@@ -101,7 +107,7 @@ public class Membresia {
 
     public void elegirPlan (Plan nuevoPlan){
         if (nuevoPlan==null){
-            throw new IllegalArgumentException("El plan seleccionado no puede estar vacio");
+            throw new ObjetoNuloException("El plan seleccionado no puede estar vacio");
         }
         this.plan=nuevoPlan;
 
@@ -117,9 +123,10 @@ public class Membresia {
             return "La membresia esta vencida.";
         }
 
-        java.time.Period periodo = java.time.Period.between(hoy, this.fechaVencimiento);
+        // ChronoUnit.DAYS cuenta el total de dias (Period.getDays solo daba los dias sueltos, sin los meses)
+        long dias = java.time.temporal.ChronoUnit.DAYS.between(hoy, this.fechaVencimiento);
 
-        return "Faltan " + periodo.getDays() + " días para que venza la membresía.";
+        return "Faltan " + dias + " días para que venza la membresía.";
     }
 
 

@@ -5,6 +5,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,9 +30,13 @@ public class TurnosCollection {
 
     // ALTA =================================================================================
 
-    public boolean agregar(Turno turno) {
+    public boolean agregar(Turno turno) throws ObjetoNuloException {
 
-        if (turno == null || !Turno.esHorarioValido(turno.getFechaTurno()) || turno.getPrecio() < 0) {
+        if (turno == null) {
+            throw new ObjetoNuloException("No se puede agregar un turno nulo");
+        }
+
+        if (!Turno.esHorarioValido(turno.getFechaTurno()) || turno.getPrecio() < 0) {
             return false;
         }
 
@@ -56,9 +61,13 @@ public class TurnosCollection {
 
     // BAJA =================================================================================
 
-    public boolean eliminar(Turno turno) {
+    public boolean eliminar(Turno turno) throws ObjetoNuloException {
 
-        if (turno == null || !turnos.remove(turno)) {
+        if (turno == null) {
+            throw new ObjetoNuloException("No se puede eliminar un turno nulo");
+        }
+
+        if (!turnos.remove(turno)) {
             return false;
         }
 

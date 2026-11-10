@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
@@ -81,14 +82,14 @@ public abstract class Usuarios {
 
     public void setNombre(String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre no puede estar vacío.");
+            throw new ValorNoValidoException("El nombre no puede estar vacío.");
         }
         this.nombre = nombre;
     }
 
     public void setApellido(String apellido) {
         if (apellido == null || apellido.trim().isEmpty()) {
-            throw new IllegalArgumentException("El apellido no puede estar vacío.");
+            throw new ValorNoValidoException("El apellido no puede estar vacío.");
         }
         this.apellido = apellido;
     }
@@ -96,14 +97,14 @@ public abstract class Usuarios {
     //Con el matches exige que sean entre 7 y 8 numeros
     public void setDni(String dni) {
         if (dni == null || !dni.matches("\\d{7,8}")) {
-            throw new IllegalArgumentException("El DNI debe contener solo números y tener entre 7 y 8 dígitos.");
+            throw new ValorNoValidoException("El DNI debe contener solo números y tener entre 7 y 8 dígitos.");
         }
         this.dni = dni;
     }
 
     public void setEmail(String email) {
         if (email == null || !email.contains("@") || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("El email ingresado no es válido.");
+            throw new ValorNoValidoException("El email ingresado no es válido.");
         }
         this.email = email;
     }
@@ -111,14 +112,14 @@ public abstract class Usuarios {
     //Valida que contenga al menos 4 caracteres y el matches busca numeros en el String
     public void setPassword(String password) {
         if (password == null || password.length() < 4 || !password.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("La contraseña debe tener al menos 4 caracteres y contener al menos un número.");
+            throw new ValorNoValidoException("La contraseña debe tener al menos 4 caracteres y contener al menos un número.");
         }
         this.password = password;
     }
 
     public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
         if (fechaDeNacimiento != null && fechaDeNacimiento.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de nacimiento no puede ser en el futuro.");
+            throw new ValorNoValidoException("La fecha de nacimiento no puede ser en el futuro.");
         }
         this.fechaDeNacimiento = fechaDeNacimiento;
     }

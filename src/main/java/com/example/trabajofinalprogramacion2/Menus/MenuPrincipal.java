@@ -3,11 +3,13 @@ package com.example.trabajofinalprogramacion2.Menus;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
+import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.NutricionistaService;
+import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
 // Inicio de sesion: se elige el rol, se ingresa DNI y contraseña, y se deriva al menu de ese rol.
 // Los services se crean una sola vez aca y se pasan a cada menu.
@@ -18,16 +20,18 @@ public class MenuPrincipal {
     private final EntrenadorService entrenadorService;
     private final NutricionistaService nutricionistaService;
     private final TurnosService turnosService;
-    // private final SocioService socioService;       -> cuando este hecho
+    private final SocioService socioService;
     // private final GimnasioService gimnasioService; -> cuando este hecho
     // private final SucursalService sucursalService; -> cuando este hecho
 
     public MenuPrincipal() {
         administradorService = new AdministradorService();
-        entrenadorService = new EntrenadorService();
+        // SocioService va antes: EntrenadorService lo necesita para cargar los alumnos de cada entrenador
+        socioService = new SocioService();
+        entrenadorService = new EntrenadorService(socioService);
         nutricionistaService = new NutricionistaService();
-        // TurnosService necesita el de nutricionistas para vincular cada turno con su nutricionista
-        turnosService = new TurnosService(nutricionistaService);
+        // TurnosService necesita el de nutricionistas y el de socios para vincular cada turno con los objetos reales
+        turnosService = new TurnosService(nutricionistaService, socioService);
     }
 
     public void iniciar() {
@@ -55,10 +59,7 @@ public class MenuPrincipal {
                     ingresarComoNutricionista();
                     break;
                 case 4:
-                    // aca iria ingresarComoSocio(); cuando este SocioService:
-                    // Socio socio = validarCredenciales(socioService.buscarPorDni(dni), password);
-                    // if (socio != null) new MenuSocio(socio, turnosService).mostrar();
-                    System.out.println("El ingreso de socios todavía no está disponible.");
+                    ingresarComoSocio();
                     break;
                 case 0:
                     System.out.println("¡Hasta luego!");
@@ -83,7 +84,8 @@ public class MenuPrincipal {
         if (admin.isEsAdminSistema()) {
             new MenuAdministradorSistema(admin, administradorService).mostrar();
         } else {
-            new MenuAdministrador(admin, administradorService, entrenadorService, nutricionistaService, turnosService).mostrar();
+            new MenuAdministrador(admin, administradorService, entrenadorService, nutricionistaService,
+                    turnosService, socioService).mostrar();
         }
     }
 
@@ -106,6 +108,17 @@ public class MenuPrincipal {
 
         if (nutricionista != null) {
             new MenuNutricionista(nutricionista, nutricionistaService, turnosService).mostrar();
+        }
+    }
+
+    private void ingresarComoSocio() {
+        String dni = Consola.leerTexto("DNI: ");
+        String password = Consola.leerTexto("Contraseña: ");
+
+        Socio socio = validarCredenciales(socioService.buscarPorDni(dni), password);
+
+        if (socio != null) {
+            new MenuSocio(socio, socioService, turnosService).mostrar();
         }
     }
 

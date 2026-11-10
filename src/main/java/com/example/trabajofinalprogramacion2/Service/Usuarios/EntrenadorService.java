@@ -14,13 +14,23 @@ import java.util.List;
 public class EntrenadorService implements GestionPerfil {
     EntrenadorDAO dao;
     EntrenadorCollection coleccion;
+    SocioService socioService;
 
-    // CONSTRUCTOR
+    // CONSTRUCTORES
 
+    // Carga los entrenadores sin vincular sus alumnos a los socios de SocioService
+    // (los alumnos quedan solo con su id)
     public EntrenadorService() {
+        this(null);
+    }
+
+    // Carga los entrenadores activos y les vincula sus alumnos con los socios
+    // reales de SocioService (igual que TurnosService con NutricionistaService)
+    public EntrenadorService(SocioService socioService) {
 
         dao = new EntrenadorDAO();
         coleccion = new EntrenadorCollection();
+        this.socioService = socioService;
 
         // Cargar los entrenadores activos de MySQL en Collection
         // (los dados de baja quedan en la BD y se recuperan con alta)
@@ -36,14 +46,29 @@ public class EntrenadorService implements GestionPerfil {
 
 
     // Carga los alumnos del entrenador desde la tabla entrenador_socio.
-    // Por ahora cada Socio viene solo con su id: cuando exista SocioService
-    // se reemplazan por los objetos completos (igual que en TurnosService)
+    // Con SocioService se usa el objeto Socio completo que ya esta en memoria.
+    // Si el socio no esta en SocioService es porque esta dado de baja:
+    // se borra el vinculo de la BD para que no quede un alumno "fantasma".
 
     private void cargarAlumnos(int idEntrenador) {
 
         for (int idSocio : dao.listarIdsSocios(idEntrenador)) {
-            Socio socio = new Socio();
-            socio.setId(idSocio);
+
+            Socio socio;
+
+            if (socioService != null) {
+                socio = socioService.buscar(idSocio);
+
+                if (socio == null) {
+                    dao.desvincularSocio(idEntrenador, idSocio);
+                    continue;
+                }
+            } else {
+                // Sin SocioService el socio queda solo con su id
+                socio = new Socio();
+                socio.setId(idSocio);
+            }
+
             coleccion.agregarSocio(idEntrenador, socio);
         }
     }
@@ -501,6 +526,18 @@ public class EntrenadorService implements GestionPerfil {
     }
 
 
+    // AGREGAR SOCIO POR ID (lo busca en SocioService: tiene que existir y estar activo)
+
+    public boolean agregarSocio(int idEntrenador, int idSocio) {
+
+        if (socioService == null) {
+            return false;
+        }
+
+        return agregarSocio(idEntrenador, socioService.buscar(idSocio));
+    }
+
+
     // QUITAR SOCIO (ALUMNO) DEL ENTRENADOR
 
     public boolean quitarSocio(int idEntrenador, int idSocio) {
@@ -514,6 +551,21 @@ public class EntrenadorService implements GestionPerfil {
         }
 
         return false;
+    }
+
+
+    // QUITAR UN SOCIO DE TODOS SUS ENTRENADORES (en la BD y en memoria)
+    // Se llama cuando el socio se da de baja. No lo hace SocioService porque
+    // EntrenadorService ya depende de SocioService (se armaria un circulo)
+
+    public boolean quitarSocioDeTodos(int idSocio) {
+
+        if (!dao.desvincularSocioDeTodos(idSocio)) {
+            return false;
+        }
+
+        coleccion.quitarSocioDeTodos(idSocio);
+        return true;
     }
 
 

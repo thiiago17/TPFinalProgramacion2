@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import com.example.trabajofinalprogramacion2.interfaces.GestionPerfil;
 
@@ -53,14 +54,14 @@ public final class MenuPerfil {
 
         String email = Consola.leerTexto("Nuevo email: ");
 
-        // setEmail tira IllegalArgumentException si el email no es valido (por ejemplo, sin @)
+        // setEmail tira ValorNoValidoException si el email no es valido (por ejemplo, sin @)
         try {
             if (service.modificarEmail(usuario.getId(), email)) {
                 System.out.println("Email actualizado.");
             } else {
                 System.out.println("No se pudo actualizar el email (¿ya lo usa otro usuario?).");
             }
-        } catch (IllegalArgumentException e) {
+        } catch (ValorNoValidoException e) {
             System.out.println(e.getMessage());
         }
     }

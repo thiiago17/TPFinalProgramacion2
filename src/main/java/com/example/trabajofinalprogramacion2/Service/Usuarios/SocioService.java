@@ -354,7 +354,8 @@ public class SocioService implements GestionPerfil {
         String resultadoMemoria = coleccion.abonarCuotaSocio(id);
 
         // Si el abono fue exitoso, actualizamos los cambios en la base de datos
-        if (resultadoMemoria.contains("éxito")) {
+        // Membresia.abonarCuota devuelve "Cuota abonada con exito" (sin tilde)
+        if (resultadoMemoria.contains("exito")) {
             if (!guardarModificacion(socio)) {
                 return "Error al sincronizar el pago con la base de datos.";
             }

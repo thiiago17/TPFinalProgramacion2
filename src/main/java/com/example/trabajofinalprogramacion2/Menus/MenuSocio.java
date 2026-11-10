@@ -3,19 +3,18 @@ package com.example.trabajofinalprogramacion2.Menus;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
-
-// Listo para usar cuando exista SocioService (el login de socio todavia esta comentado en MenuPrincipal).
-// Lo que solo usa TurnosService o metodos de la propia entidad Socio ya funciona.
+import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
 public class MenuSocio {
 
     private final Socio socio;
+    private final SocioService socioService;
     private final TurnosService turnosService;
-    // private final SocioService socioService;        cuando este hecho descomenta
-    // private final SucursalService sucursalService;  lo mismo que arriba
+    // private final SucursalService sucursalService;  cuando este hecho
 
-    public MenuSocio(Socio socio, TurnosService turnosService) {
+    public MenuSocio(Socio socio, SocioService socioService, TurnosService turnosService) {
         this.socio = socio;
+        this.socioService = socioService;
         this.turnosService = turnosService;
     }
 
@@ -55,13 +54,10 @@ public class MenuSocio {
                     cancelarTurno();
                     break;
                 case 5:
-                    System.out.println(socio.getMembresia() != null
-                            ? socio.getMembresia().verPlanActual() + " | Vence: " + socio.getMembresia().getFechaVencimiento()
-                            : "No tiene membresía.");
+                    System.out.println(socioService.verEstadoMembresia(socio.getId()));
                     break;
                 case 6:
-                    // aca iria socioService.abonarCuota(socio.getId()); (tiene que guardar el nuevo vencimiento en la BD)
-                    System.out.println("(Pendiente: falta SocioService)");
+                    System.out.println(socioService.abonarCuota(socio.getId()));
                     break;
                 case 7:
                     // aca iria: for (Sucursal s : sucursalService.verListado()) if (socio.puedeIngresarA(s)) mostrar(s);
@@ -71,13 +67,11 @@ public class MenuSocio {
                     System.out.printf("IMC: %.2f - %s%n", socio.calcularIMC(), socio.verEstadoIMC());
                     break;
                 case 9:
-                    // aca iria MenuPerfil.mostrar(socio, socioService);
-                    // (SocioService tiene que implementar GestionPerfil, como los otros services)
-                    System.out.println(socio);
+                    MenuPerfil.mostrar(socio, socioService);
                     break;
             }
 
-            if (opcion != 0) {
+            if (opcion != 0 && opcion != 9) {
                 Consola.pausa();
             }
 

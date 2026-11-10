@@ -3,6 +3,7 @@ package com.example.trabajofinalprogramacion2.Colecciones.Usuarios;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 
 import java.util.HashSet;
 
@@ -49,10 +50,15 @@ public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
 
     // AGREGAR SOCIO (no se repite: Socio no tiene equals, asi que se compara por id)
 
-    public boolean agregarSocio(int idEntrenador, Socio socio) {
+    public boolean agregarSocio(int idEntrenador, Socio socio) throws ObjetoNuloException {
+
+        if (socio == null) {
+            throw new ObjetoNuloException("No se puede agregar un socio nulo al entrenador");
+        }
+
         Entrenador entrenador = buscar(idEntrenador);
 
-        if (entrenador == null || socio == null || tieneSocio(idEntrenador, socio.getId())) {
+        if (entrenador == null || tieneSocio(idEntrenador, socio.getId())) {
             return false;
         }
 
@@ -97,6 +103,14 @@ public class EntrenadorCollection extends UsuariosCollection<Entrenador> {
 
         if (entrenador != null && entrenador.getAlumnosAsociados() != null) {
             entrenador.getAlumnosAsociados().clear();
+        }
+    }
+
+    // QUITAR UN SOCIO DE TODOS LOS ENTRENADORES (cuando el socio se da de baja)
+
+    public void quitarSocioDeTodos(int idSocio) {
+        for (Entrenador entrenador : usuarios) {
+            quitarSocio(entrenador.getId(), idSocio);
         }
     }
 

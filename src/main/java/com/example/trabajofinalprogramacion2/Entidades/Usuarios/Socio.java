@@ -1,5 +1,7 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
@@ -58,32 +60,32 @@ public class Socio extends Usuarios {
 
     public void setPesoActual(Double pesoActual) {
         if (pesoActual == null || pesoActual <= 20.0 || pesoActual > 300.0) {
-            throw new IllegalArgumentException("El peso debe ser un valor logico (entre 20 kg y 300 kg).");
+            throw new ValorNoValidoException("El peso debe ser un valor logico (entre 20 kg y 300 kg).");
         }
         this.pesoActual = pesoActual;
     }
 
     public void setAltura(Double altura) {
         if (altura == null || altura < 0.50 || altura > 2.50) {
-            throw new IllegalArgumentException("La altura debe ser un valor logico (entre 0.50 m y 2.50 m).");
+            throw new ValorNoValidoException("La altura debe ser un valor logico (entre 0.50 m y 2.50 m).");
         }
         this.altura = altura;
     }
 
     public void setFechaAlta(LocalDate fechaAlta) {
         if (fechaAlta != null && fechaAlta.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de alta no puede ser en el futuro.");
+            throw new ValorNoValidoException("La fecha de alta no puede ser en el futuro.");
         }
 
         if (fechaAlta==null) {
-            throw new IllegalArgumentException("La fecha de alta no puede estar vacia.");
+            throw new ValorNoValidoException("La fecha de alta no puede estar vacia.");
         }
         this.fechaAlta = fechaAlta;
     }
 
     public void setMembresia(Membresia membresia) {
         if (membresia == null) {
-            throw new IllegalArgumentException("La membresía no puede ser nula.");
+            throw new ObjetoNuloException("La membresía no puede ser nula.");
         }
         this.membresia = membresia;
     }

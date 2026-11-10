@@ -132,7 +132,11 @@ public class Turno implements Comparable<Turno> {
 
         String textoSocio = "";
         if (socio != null) {
-            textoSocio = " | Socio #" + socio.getId();
+            if (socio.getNombre() != null) {
+                textoSocio = " | Socio: " + socio.getNombre() + " " + socio.getApellido();
+            } else {
+                textoSocio = " | Socio #" + socio.getId();
+            }
         }
 
         return "Turno #" + id + " | " + fecha

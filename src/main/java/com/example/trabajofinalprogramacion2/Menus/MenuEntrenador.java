@@ -10,7 +10,6 @@ public class MenuEntrenador {
 
     private final Entrenador entrenador;
     private final EntrenadorService entrenadorService;
-    // private final SocioService socioService; -> cuando este hecho
 
     public MenuEntrenador(Entrenador entrenador, EntrenadorService entrenadorService) {
         this.entrenador = entrenador;
@@ -36,10 +35,12 @@ public class MenuEntrenador {
                 case 1:
                     verAlumnos();
                     break;
-                case 2:
-                    // aca iria entrenadorService.agregarSocio(entrenador.getId(), socioService.buscar(idSocio));
-                    System.out.println("(Pendiente: falta SocioService)");
+                case 2: {
+                    int idSocio = Consola.leerEntero("ID del socio a agregar: ");
+                    Consola.resultado(entrenadorService.agregarSocio(entrenador.getId(), idSocio),
+                            "Alumno agregado.", "No se pudo: el socio no existe, está dado de baja o ya es su alumno.");
                     break;
+                }
                 case 3: {
                     int idSocio = Consola.leerEntero("ID del socio a quitar: ");
                     Consola.resultado(entrenadorService.quitarSocio(entrenador.getId(), idSocio),
@@ -68,15 +69,7 @@ public class MenuEntrenador {
 
         List<Socio> alumnos = entrenadorService.verAlumnos(entrenador.getId());
 
-        if (alumnos.isEmpty()) {
-            System.out.println("No tiene alumnos asignados.");
-            return;
-        }
-
-        // Por ahora los socios vienen solo con su id (los carga EntrenadorService desde entrenador_socio).
-        // Cuando este SocioService vienen completos y se muestran con su toString
-        for (Socio socio : alumnos) {
-            System.out.println(socio.getNombre() != null ? socio.toString() : "Socio #" + socio.getId());
-        }
+        // Los socios vienen completos desde SocioService: se muestran con su toString
+        Consola.mostrarLista(alumnos, "No tiene alumnos asignados.");
     }
 }
