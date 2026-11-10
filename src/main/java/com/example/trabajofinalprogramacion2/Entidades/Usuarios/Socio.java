@@ -58,14 +58,14 @@ public class Socio extends Usuarios {
 
     public void setPesoActual(Double pesoActual) {
         if (pesoActual == null || pesoActual <= 20.0 || pesoActual > 300.0) {
-            throw new IllegalArgumentException("El peso debe ser un valor lógico (entre 20 kg y 300 kg).");
+            throw new IllegalArgumentException("El peso debe ser un valor logico (entre 20 kg y 300 kg).");
         }
         this.pesoActual = pesoActual;
     }
 
     public void setAltura(Double altura) {
         if (altura == null || altura < 0.50 || altura > 2.50) {
-            throw new IllegalArgumentException("La altura debe ser un valor lógico (entre 0.50 m y 2.50 m).");
+            throw new IllegalArgumentException("La altura debe ser un valor logico (entre 0.50 m y 2.50 m).");
         }
         this.altura = altura;
     }
@@ -74,10 +74,17 @@ public class Socio extends Usuarios {
         if (fechaAlta != null && fechaAlta.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("La fecha de alta no puede ser en el futuro.");
         }
+
+        if (fechaAlta==null) {
+            throw new IllegalArgumentException("La fecha de alta no puede estar vacia.");
+        }
         this.fechaAlta = fechaAlta;
     }
 
     public void setMembresia(Membresia membresia) {
+        if (membresia == null) {
+            throw new IllegalArgumentException("La membresía no puede ser nula.");
+        }
         this.membresia = membresia;
     }
 
