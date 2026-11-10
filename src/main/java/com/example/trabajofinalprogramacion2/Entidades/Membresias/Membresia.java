@@ -1,7 +1,6 @@
 package com.example.trabajofinalprogramacion2.Entidades.Membresias;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Membresia {
     private LocalDate fechaInicio;
@@ -14,9 +13,9 @@ public class Membresia {
     }
 
     public Membresia(LocalDate fechaInicio, LocalDate fechaVencimiento, Plan plan) {
-        this.fechaInicio = fechaInicio;
-        this.fechaVencimiento = fechaVencimiento;
-        this.plan = plan;
+        setFechaInicio(fechaInicio);
+        setFechaVencimiento(fechaVencimiento);
+        setPlan(plan);
     }
 
     // GETTERS
@@ -73,13 +72,18 @@ public class Membresia {
     //Metodo abonar cuota
 
     public String abonarCuota(){
-        if (isVencida()){
-            this.fechaInicio=LocalDate.now();
-            this.fechaVencimiento=LocalDate.now().plusMonths(1);
-        }else {
-            return "Usted esta al dia con la cuota";
+
+        if (this.plan == null) {
+            return "No se puede abonar, primero debe elegir un plan.";
         }
-        return "Cuota abonada con éxito.\n" +
+        if (isVencida()){
+            this.fechaInicio = LocalDate.now();
+            this.fechaVencimiento = LocalDate.now().plusMonths(1);
+        } else {
+            return "No se puede abonar. Usted ya está al dia con la cuota.";
+        }
+
+        return "Cuota abonada con exito.\n" +
                 "Plan: " + this.plan.name() + "\n" +
                 "Monto: $" + this.plan.getPrecio() + "\n" +
                 "Nuevo vencimiento: " + this.fechaVencimiento;
@@ -113,10 +117,11 @@ public class Membresia {
             return "La membresia esta vencida.";
         }
 
-        java.time.Period diasFaltantes= java.time.Period.between(hoy,this.fechaVencimiento);
+        java.time.Period periodo = java.time.Period.between(hoy, this.fechaVencimiento);
 
-        return "Faltan " + diasFaltantes.getDays() + " días para que venza la membresía.";
+        return "Faltan " + periodo.getDays() + " días para que venza la membresía.";
     }
+
 
     @Override
     public String toString() {
