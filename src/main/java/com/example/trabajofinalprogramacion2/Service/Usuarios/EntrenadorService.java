@@ -122,7 +122,7 @@ public class EntrenadorService {
         Entrenador buscado = new Entrenador();
         buscado.setId(id);
 
-        Entrenador entrenador = dao.consulta(buscado);
+        Entrenador entrenador = dao.consulta(buscado.getId());
 
         // Si no existe o ya esta activo, no hay nada que reactivar
         if (entrenador == null || entrenador.isActivo()) {
@@ -155,7 +155,7 @@ public class EntrenadorService {
             return null;
         }
 
-        return dao.consulta(entrenador);
+        return dao.consulta(entrenador.getId());
     }
 
 
