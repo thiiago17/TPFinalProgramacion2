@@ -79,14 +79,14 @@ public class EntrenadorDAO implements ABCMLDAO<Entrenador> {
     }
 
     @Override
-    public Entrenador consulta(Entrenador objeto) {
-        String sql = "SELECT * FROM entrenador WHERE id_entrenador = ? OR dni = ?";
+    public Entrenador consulta(int clavePrimaria) {
+        String sql = "SELECT * FROM entrenador WHERE id_entrenador = ? ";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, objeto.getId());
-            pstmt.setString(2, objeto.getDni());
+            pstmt.setInt(1, clavePrimaria);
+
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
