@@ -102,7 +102,7 @@ public class NutricionistaService {
         Nutricionista buscado = new Nutricionista();
         buscado.setId(id);
 
-        Nutricionista nutricionista = dao.consulta(buscado);
+        Nutricionista nutricionista = dao.consulta(buscado.getId());
 
         if (nutricionista == null) {
             return false;
@@ -134,7 +134,7 @@ public class NutricionistaService {
             return null;
         }
 
-        return dao.consulta(nutricionista);
+        return dao.consulta(nutricionista.getId());
     }
 
 
