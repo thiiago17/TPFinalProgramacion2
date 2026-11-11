@@ -248,7 +248,7 @@ public class SucursalCollection implements ABCMLCollection<Sucursal> {
         return true;
     }
 
-    //VER LISTADOS
+    //VER LISTADOS (para el administrador del sistema, ya que muestra TODAS las sucursales del sistema)
     @Override
     public List<Sucursal> verListado() {
         return new ArrayList<>(listado);
