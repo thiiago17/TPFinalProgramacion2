@@ -61,6 +61,19 @@ public class MaquinaCollection implements ABCMLCollection<Maquina> {
         return maquinasEncontradas;
     }
 
+    public Maquina buscarPorNombre(String nombre) throws ValorNoValidoException {
+        if (nombre == null) {
+            throw new ValorNoValidoException("El nombre a buscar no es válido");
+        }
+
+        for (Maquina maquina : listado) {
+            if (maquina.getNombre().equalsIgnoreCase(nombre) && maquina.getEstado() == 1) {
+                return maquina;
+            }
+        }
+        return null;
+    }
+
     //ELIMINAR
     @Override
     public boolean eliminar(int id) throws ObjetoNuloException{
