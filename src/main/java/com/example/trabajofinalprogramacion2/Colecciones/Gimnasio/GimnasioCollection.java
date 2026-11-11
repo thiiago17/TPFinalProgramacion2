@@ -43,7 +43,7 @@ public class GimnasioCollection implements ABCMLCollection<Gimnasio> {
         List<Gimnasio> gimnasiosEncontrados= new ArrayList<>();
 
         for(Gimnasio gimnasio : listado){
-            if(nombre.equalsIgnoreCase(gimnasio.getNombre())){
+            if(nombre.equalsIgnoreCase(gimnasio.getNombre()) && gimnasio.getEstado()==1){
                 gimnasiosEncontrados.add(gimnasio);
             }
         }
@@ -138,7 +138,7 @@ public class GimnasioCollection implements ABCMLCollection<Gimnasio> {
         return true;
     }
 
-    public boolean bajar(int id) throws ValorNoValidoException, ObjetoNuloException{
+    public boolean baja(int id) throws ValorNoValidoException, ObjetoNuloException{
         if(id < 0){
             throw new ValorNoValidoException("El id es invalido");
         }
