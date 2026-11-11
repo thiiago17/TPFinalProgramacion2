@@ -168,6 +168,86 @@ public class SucursalCollection implements ABCMLCollection<Sucursal> {
         return true;
     }
 
+    public boolean alta(int id) throws ValorNoValidoException,ObjetoNuloException{
+        if(id < 0){
+            throw new ValorNoValidoException("El id es invalido");
+        }
+
+        Sucursal sucursal=buscar(id);
+
+        if(sucursal==null){
+            throw new ObjetoNuloException("No existe la sucursal que se intenta dar de alta");
+        }
+
+        sucursal.setEstado(1);
+
+        return true;
+    }
+
+    public boolean baja(int id) throws ValorNoValidoException,ObjetoNuloException{
+        if(id < 0){
+            throw new ValorNoValidoException("El id es invalido");
+        }
+
+        Sucursal sucursal=buscar(id);
+
+        if(sucursal==null){
+            throw new ObjetoNuloException("No existe la sucursal que se intenta dar de baja");
+        }
+
+        sucursal.setEstado(0);
+
+        return true;
+    }
+
+    public boolean modificarCalle(int id, String calleNueva) throws ValorNoValidoException, ObjetoNuloException{
+        if(id < 0 || calleNueva==null){
+            throw new ValorNoValidoException("Los valores son nulos o no validos");
+        }
+
+        Sucursal sucursal=buscar(id);
+
+        if(sucursal==null){
+            throw new ObjetoNuloException("No existe la sucursal que se intenta modificar");
+        }
+
+        sucursal.setCalle(calleNueva);
+
+        return true;
+    }
+
+    public boolean modificarAltura(int id, int alturaNueva) throws ValorNoValidoException, ObjetoNuloException{
+        if(id < 0 || alturaNueva < 0){
+            throw new ValorNoValidoException("Los valores no son validos");
+        }
+
+        Sucursal sucursal=buscar(id);
+
+        if(sucursal==null){
+            throw new ObjetoNuloException("No existe la sucursal que se intenta modificar");
+        }
+
+        sucursal.setAltura(alturaNueva);
+
+        return true;
+    }
+
+    public boolean modificarCiudad(int id, String ciudadNueva) throws ValorNoValidoException, ObjetoNuloException{
+        if(id < 0 || ciudadNueva==null){
+            throw new ValorNoValidoException("Los valores son nulos o no validos");
+        }
+
+        Sucursal sucursal=buscar(id);
+
+        if(sucursal==null){
+            throw new ObjetoNuloException("No existe la sucursal que se intenta modificar");
+        }
+
+        sucursal.setCiudad(ciudadNueva);
+
+        return true;
+    }
+
     //VER LISTADOS
     @Override
     public List<Sucursal> verListado() {
