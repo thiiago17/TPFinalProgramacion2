@@ -2,6 +2,7 @@ package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
+import com.example.trabajofinalprogramacion2.Excepciones.ListadoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.interfaces.Empleado;
 
@@ -24,16 +25,16 @@ public class Nutricionista extends Usuarios implements Empleado {
 
     public Nutricionista(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.turnos = turnos;
-        this.salario = salario;
-        this.comisionPorConsulta = comisionPorConsulta;
+        setTurnos(turnos);
+        setSalario(salario);
+        setComisionPorConsulta(comisionPorConsulta);
     }
 
     public Nutricionista(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.turnos = turnos;
-        this.salario = salario;
-        this.comisionPorConsulta = comisionPorConsulta;
+        setTurnos(turnos);
+        setSalario(salario);
+        setComisionPorConsulta(comisionPorConsulta);
     }
 
     // GETTERS
@@ -53,14 +54,23 @@ public class Nutricionista extends Usuarios implements Empleado {
     // SETTERS
 
     public void setTurnos(List<Turno> turnos) {
+        if (turnos == null) {
+            throw new ListadoNuloException("La lista de turnos no puede ser nula.");
+        }
         this.turnos = turnos;
     }
 
     public void setSalario(double salario) {
+        if (salario < 0.0) {
+            throw new ValorNoValidoException("El salario no puede ser un valor negativo.");
+        }
         this.salario = salario;
     }
 
     public void setComisionPorConsulta(double comisionPorConsulta) {
+        if (comisionPorConsulta < 0.0) {
+            throw new ValorNoValidoException("La comisión por consulta no puede ser un valor negativo.");
+        }
         this.comisionPorConsulta = comisionPorConsulta;
     }
 
@@ -71,6 +81,9 @@ public class Nutricionista extends Usuarios implements Empleado {
     }
 
     public void setSucursalAsignada(Sucursal sucursalAsignada) {
+        if (sucursalAsignada != null && sucursalAsignada.getId() <= 0) {
+            throw new ValorNoValidoException("El ID de la sucursal asignada no es válido.");
+        }
         this.sucursalAsignada = sucursalAsignada;
     }
 
@@ -101,7 +114,7 @@ public class Nutricionista extends Usuarios implements Empleado {
     // Salario mensual x 12 + la comision de los turnos que tiene reservados
     @Override
     public double calcularSueldoAnual() {
-        return salario * 12 + calcularExtraPorComision();
+        return (salario * 12) + calcularExtraPorComision();
     }
 
     // MOSTRAR
@@ -118,7 +131,6 @@ public class Nutricionista extends Usuarios implements Empleado {
 
     public double calcularExtraPorComision()
     {
-
         int consultasReservadas = 0;
 
         for (Turno turno : turnos) {
