@@ -136,7 +136,7 @@ public final class FormularioUsuario {
 
         System.out.println("Planes:");
         for (int i = 0; i < planes.length; i++) {
-            System.out.println((i + 1) + ". " + planes[i].name() + " ($" + planes[i].getPrecio() + ")");
+            System.out.println((i + 1) + " " + planes[i].name() + " ($" + planes[i].getPrecio() + ")");
         }
 
         int opcion = Consola.leerOpcion(1, planes.length);
@@ -151,7 +151,7 @@ public final class FormularioUsuario {
             if (password.length() >= 4 && password.matches(".*\\d.*")) {
                 return password;
             }
-            System.out.println("La contraseña debe tener al menos 4 caracteres y contener al menos un número.");
+            System.out.println("La contraseña debe tener al menos 4 caracteres y contener al menos un número");
         }
     }
 

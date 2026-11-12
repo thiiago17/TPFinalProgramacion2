@@ -44,11 +44,11 @@ public class MenuPrincipal {
 
         do {
             Consola.titulo("INICIO DE SESIÓN");
-            System.out.println("1. Administrador");
-            System.out.println("2. Entrenador");
-            System.out.println("3. Nutricionista");
-            System.out.println("4. Socio");
-            System.out.println("0. Salir");
+            System.out.println("1 - Administrador");
+            System.out.println("2 - Entrenador");
+            System.out.println("3 - Nutricionista");
+            System.out.println("4 - Socio");
+            System.out.println("0 - Salir");
 
             opcion = Consola.leerOpcion(0, 4);
 
@@ -120,9 +120,9 @@ public class MenuPrincipal {
         int opcion;
         do {
             Consola.titulo("ACCESO SOCIOS");
-            System.out.println("1. Iniciar Sesión");
-            System.out.println("2. Registrarse (Nuevo Socio)");
-            System.out.println("0. Volver al menú anterior");
+            System.out.println("1 - Iniciar Sesión");
+            System.out.println("2 - Registrarse (Nuevo Socio)");
+            System.out.println("0 - Volver al menú anterior");
 
             opcion = Consola.leerOpcion(0, 2);
 
@@ -175,9 +175,9 @@ public class MenuPrincipal {
 
             // Eleccion del plan inicial
             System.out.println("\n--- Seleccione su Plan Inicial ---");
-            System.out.println("1. BASICO ($" + Plan.BASICO.getPrecio() + ")");
-            System.out.println("2. LIBRE ($" + Plan.LIBRE.getPrecio() + ")");
-            System.out.println("3. PRO ($" + Plan.PRO.getPrecio() + ")");
+            System.out.println("1 - BASICO ($" + Plan.BASICO.getPrecio() + ")");
+            System.out.println("2 - LIBRE ($" + Plan.LIBRE.getPrecio() + ")");
+            System.out.println("3 - PRO ($" + Plan.PRO.getPrecio() + ")");
             int opPlan = Consola.leerOpcion(1, 3);
 
             Plan planElegido = (opPlan == 1) ? Plan.BASICO : (opPlan == 2) ? Plan.LIBRE : Plan.PRO;
@@ -194,9 +194,9 @@ public class MenuPrincipal {
             boolean registrado = socioService.agregar(nuevoSocio);
 
             if (registrado) {
-                System.out.println("\n¡Registro completado con éxito! Ya puede iniciar sesión.");
+                System.out.println("\n¡Registro completado con éxito! Ya puede iniciar sesión");
             } else {
-                System.out.println("\nNo se pudo completar el registro.");
+                System.out.println("\nNo se pudo completar el registro");
             }
 
         } catch (Exception e) {
@@ -211,11 +211,11 @@ public class MenuPrincipal {
     private <T extends Usuarios> T validarCredenciales(T usuario, String password) {
 
         if (usuario == null || !usuario.isActivo() || !password.equals(usuario.getPassword())) {
-            System.out.println("DNI o contraseña incorrectos.");
+            System.out.println("DNI o contraseña incorrectos");
             return null;
         }
 
-        System.out.println("Bienvenido/a, " + usuario.getNombre() + ".");
+        System.out.println("Bienvenido/a, " + usuario.getNombre());
         return usuario;
     }
 

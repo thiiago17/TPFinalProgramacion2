@@ -24,16 +24,16 @@ public class MenuSocio {
 
         do {
             Consola.titulo("SOCIO - " + socio.getNombre() + " " + socio.getApellido());
-            System.out.println("1. Ver turnos disponibles con nutricionista");
-            System.out.println("2. Reservar turno");
-            System.out.println("3. Ver mis turnos");
-            System.out.println("4. Cancelar un turno");
-            System.out.println("5. Ver mi membresía");
-            System.out.println("6. Pagar cuota");
-            System.out.println("7. Ver sucursales a las que puedo ir");
-            System.out.println("8. Ver mi IMC");
-            System.out.println("9. Mi perfil");
-            System.out.println("0. Cerrar sesión");
+            System.out.println("1 - Ver turnos disponibles con nutricionista");
+            System.out.println("2 - Reservar turno");
+            System.out.println("3 - Ver mis turnos");
+            System.out.println("4 - Cancelar un turno");
+            System.out.println("5 - Ver mi membresía");
+            System.out.println("6 - Pagar cuota");
+            System.out.println("7 - Ver sucursales a las que puedo ir");
+            System.out.println("8 - Ver mi IMC");
+            System.out.println("9 - Mi perfil");
+            System.out.println("0 - Cerrar sesión");
 
             opcion = Consola.leerOpcion(0, 9);
 
@@ -61,7 +61,6 @@ public class MenuSocio {
                     break;
                 case 7:
                     // aca iria: for (Sucursal s : sucursalService.verListado()) if (socio.puedeIngresarA(s)) mostrar(s);
-                    System.out.println("(Pendiente: falta SucursalService)");
                     break;
                 case 8:
                     System.out.printf("IMC: %.2f - %s%n", socio.calcularIMC(), socio.verEstadoIMC());
@@ -84,11 +83,11 @@ public class MenuSocio {
 
         // Solo puede cancelar sus propios turnos
         if (turno == null || turno.getSocio() == null || !turno.getSocio().equals(socio)) {
-            System.out.println("No tiene un turno reservado con ese ID.");
+            System.out.println("No tiene un turno reservado con ese ID");
             return;
         }
 
         Consola.resultado(turnosService.cancelar(turno.getId()),
-                "Turno cancelado.", "No se pudo cancelar el turno.");
+                "Turno cancelado", "No se pudo cancelar el turno");
     }
 }

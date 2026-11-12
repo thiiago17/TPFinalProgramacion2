@@ -25,28 +25,28 @@ public class MenuNutricionista {
 
         do {
             Consola.titulo("NUTRICIONISTA - " + nutricionista.getNombre() + " " + nutricionista.getApellido());
-            System.out.println("1. Ver todos mis turnos");
-            System.out.println("2. Ver mis turnos disponibles");
-            System.out.println("3. Ver mis turnos reservados");
-            System.out.println("4. Crear turno");
-            System.out.println("5. Dar de baja un turno (solo disponibles)");
-            System.out.println("6. Ver comisión, sueldo anual y antigüedad");
-            System.out.println("7. Mi perfil");
-            System.out.println("0. Cerrar sesión");
+            System.out.println("1 - Ver todos mis turnos");
+            System.out.println("2 - Ver mis turnos disponibles");
+            System.out.println("3 - Ver mis turnos reservados");
+            System.out.println("4 - Crear turno");
+            System.out.println("5 - Dar de baja un turno (solo disponibles)");
+            System.out.println("6 - Ver comisión, sueldo anual y antigüedad");
+            System.out.println("7 - Mi perfil");
+            System.out.println("0 - Cerrar sesión");
 
             opcion = Consola.leerOpcion(0, 7);
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(nutricionistaService.verTurnos(nutricionista.getId()), "No tiene turnos.");
+                    Consola.mostrarLista(nutricionistaService.verTurnos(nutricionista.getId()), "No tiene turnos");
                     break;
                 case 2:
                     Consola.mostrarLista(nutricionistaService.verTurnosDisponibles(nutricionista.getId()),
-                            "No tiene turnos disponibles.");
+                            "No tiene turnos disponibles");
                     break;
                 case 3:
                     Consola.mostrarLista(nutricionistaService.verTurnosOcupados(nutricionista.getId()),
-                            "No tiene turnos reservados.");
+                            "No tiene turnos reservados");
                     break;
                 case 4:
                     crearTurno();
@@ -79,8 +79,8 @@ public class MenuNutricionista {
         Turno turno = new Turno(null, nutricionista, fecha, precio);
 
         Consola.resultado(turnosService.agregar(turno),
-                "Turno creado con ID " + turno.getId() + ".",
-                "No se pudo crear (horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno, precio >= 0).");
+                "Turno creado con ID " + turno.getId(),
+                "No se pudo crear (horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno, precio >= 0)");
     }
 
     private void darDeBajaTurno() {
@@ -90,11 +90,11 @@ public class MenuNutricionista {
         // Solo puede dar de baja sus propios turnos
         if (turno == null || turno.getNutricionista() == null
                 || turno.getNutricionista().getId() != nutricionista.getId()) {
-            System.out.println("No tiene un turno con ese ID.");
+            System.out.println("No tiene un turno con ese ID");
             return;
         }
 
         Consola.resultado(turnosService.eliminar(turno.getId()),
-                "Turno dado de baja.", "No se pudo: el turno está reservado.");
+                "Turno dado de baja", "No se pudo: el turno está reservado");
     }
 }

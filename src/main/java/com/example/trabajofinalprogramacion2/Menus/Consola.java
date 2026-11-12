@@ -30,7 +30,7 @@ public final class Consola {
             if (!texto.isEmpty()) {
                 return texto;
             }
-            System.out.println("El dato no puede quedar vacío.");
+            System.out.println("El dato no puede quedar vacío");
         }
     }
 
@@ -42,7 +42,7 @@ public final class Consola {
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Ingrese un número entero válido.");
+                System.out.println("Ingrese un número entero válido");
             }
         }
     }
@@ -53,7 +53,7 @@ public final class Consola {
             try {
                 return Double.parseDouble(scanner.nextLine().trim().replace(',', '.'));
             } catch (NumberFormatException e) {
-                System.out.println("Ingrese un número válido.");
+                System.out.println("Ingrese un número válido");
             }
         }
     }
@@ -66,7 +66,7 @@ public final class Consola {
             if (opcion >= min && opcion <= max) {
                 return opcion;
             }
-            System.out.println("Opción inválida, elija entre " + min + " y " + max + ".");
+            System.out.println("Opción inválida, elija entre " + min + " y " + max);
         }
     }
 
@@ -78,7 +78,7 @@ public final class Consola {
             try {
                 return LocalDate.parse(scanner.nextLine().trim(), FORMATO_FECHA);
             } catch (DateTimeParseException e) {
-                System.out.println("Fecha inválida.");
+                System.out.println("Fecha inválida");
             }
         }
     }
@@ -89,7 +89,7 @@ public final class Consola {
             try {
                 return LocalDateTime.parse(scanner.nextLine().trim(), FORMATO_FECHA_HORA);
             } catch (DateTimeParseException e) {
-                System.out.println("Fecha y hora inválidas.");
+                System.out.println("Fecha y hora inválidas");
             }
         }
     }
@@ -107,7 +107,7 @@ public final class Consola {
             if (respuesta.equals("n")) {
                 return false;
             }
-            System.out.println("Responda 's' o 'n'.");
+            System.out.println("Responda 's' o 'n'");
         }
     }
 

@@ -23,10 +23,10 @@ public class MenuAdministradorSistema {
 
         do {
             Consola.titulo("ADMINISTRADOR DEL SISTEMA - " + admin.getNombre() + " " + admin.getApellido());
-            System.out.println("1. Gestionar gimnasios");
-            System.out.println("2. Gestionar administradores");
-            System.out.println("3. Mi perfil");
-            System.out.println("0. Cerrar sesión");
+            System.out.println("1 - Gestionar gimnasios");
+            System.out.println("2 - Gestionar administradores");
+            System.out.println("3 - Mi perfil");
+            System.out.println("0 - Cerrar sesión");
 
             opcion = Consola.leerOpcion(0, 3);
 
@@ -53,12 +53,12 @@ public class MenuAdministradorSistema {
 
         do {
             Consola.titulo("GIMNASIOS");
-            System.out.println("1. Ver gimnasios");
-            System.out.println("2. Agregar gimnasio");
-            System.out.println("3. Modificar nombre");
-            System.out.println("4. Dar de baja gimnasio");
-            System.out.println("5. Reactivar gimnasio");
-            System.out.println("0. Volver");
+            System.out.println("1 - Ver gimnasios");
+            System.out.println("2 - Agregar gimnasio");
+            System.out.println("3 - Modificar nombre");
+            System.out.println("4 - Dar de baja gimnasio");
+            System.out.println("5 - Reactivar gimnasio");
+            System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 5);
 
@@ -80,10 +80,6 @@ public class MenuAdministradorSistema {
                     break;
             }
 
-            if (opcion != 0) {
-                System.out.println("(Pendiente: falta GimnasioService)");
-            }
-
         } while (opcion != 0);
     }
 
@@ -95,25 +91,25 @@ public class MenuAdministradorSistema {
 
         do {
             Consola.titulo("ADMINISTRADORES");
-            System.out.println("1. Ver todos");
-            System.out.println("2. Ver administradores de un gimnasio");
-            System.out.println("3. Agregar administrador de gimnasio");
-            System.out.println("4. Agregar administrador del sistema");
-            System.out.println("5. Dar de baja administrador");
-            System.out.println("6. Reactivar administrador");
-            System.out.println("7. Cambiar de gimnasio a un administrador");
-            System.out.println("0. Volver");
+            System.out.println("1 - Ver todos");
+            System.out.println("2 - Ver administradores de un gimnasio");
+            System.out.println("3 - Agregar administrador de gimnasio");
+            System.out.println("4 - Agregar administrador del sistema");
+            System.out.println("5 - Dar de baja administrador");
+            System.out.println("6 - Reactivar administrador");
+            System.out.println("7 - Cambiar de gimnasio a un administrador");
+            System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 7);
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(administradorService.verListado(), "No hay administradores.");
+                    Consola.mostrarLista(administradorService.verListado(), "No hay administradores");
                     break;
                 case 2:
                     int idGimnasio = Consola.leerEntero("ID del gimnasio: ");
                     Consola.mostrarLista(administradorService.buscarPorGimnasio(idGimnasio),
-                            "Ese gimnasio no tiene administradores.");
+                            "Ese gimnasio no tiene administradores");
                     break;
                 case 3:
                     agregarAdministrador(false);
@@ -127,7 +123,7 @@ public class MenuAdministradorSistema {
                 case 6:
                     int idReactivar = Consola.leerEntero("ID del administrador a reactivar: ");
                     Consola.resultado(administradorService.alta(idReactivar),
-                            "Administrador reactivado.", "No se encontró un administrador dado de baja con ese ID.");
+                            "Administrador reactivado", "No se encontró un administrador dado de baja con ese ID");
                     break;
                 case 7:
                     cambiarGimnasio();
@@ -154,7 +150,7 @@ public class MenuAdministradorSistema {
 
         Consola.resultado(administradorService.agregar(nuevo),
                 "Administrador agregado con ID " + nuevo.getId() + ".",
-                "No se pudo agregar (¿DNI repetido o gimnasio inexistente?).");
+                "No se pudo agregar (DNI repetido - gimnasio inexistente)");
     }
 
     private void darDeBajaAdministrador() {
@@ -163,13 +159,13 @@ public class MenuAdministradorSistema {
 
         // No se puede dar de baja a uno mismo: el sistema se quedaria sin quien lo maneje
         if (id == admin.getId()) {
-            System.out.println("No podés darte de baja a vos mismo.");
+            System.out.println("No podés darte de baja a vos mismo");
             return;
         }
 
         if (Consola.confirmar("¿Seguro que desea dar de baja al administrador #" + id + "?")) {
             Consola.resultado(administradorService.eliminar(id),
-                    "Administrador dado de baja.", "No se encontró un administrador activo con ese ID.");
+                    "Administrador dado de baja", "No se encontró un administrador activo con ese ID");
         }
     }
 
@@ -179,7 +175,7 @@ public class MenuAdministradorSistema {
         Administrador otro = administradorService.buscar(id);
 
         if (otro == null || otro.isEsAdminSistema()) {
-            System.out.println("No existe un administrador de gimnasio activo con ese ID.");
+            System.out.println("No existe un administrador de gimnasio activo con ese ID");
             return;
         }
 
@@ -187,10 +183,10 @@ public class MenuAdministradorSistema {
         otro.setIdGimnasio(Consola.leerEntero("ID del nuevo gimnasio: "));
 
         if (administradorService.modificar(otro)) {
-            System.out.println("Gimnasio actualizado.");
+            System.out.println("Gimnasio actualizado");
         } else {
             otro.setIdGimnasio(anterior);
-            System.out.println("No se pudo cambiar el gimnasio (¿existe ese gimnasio?).");
+            System.out.println("No se pudo cambiar el gimnasio");
         }
     }
 

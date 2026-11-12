@@ -22,13 +22,13 @@ public class MenuEntrenador {
 
         do {
             Consola.titulo("ENTRENADOR - " + entrenador.getNombre() + " " + entrenador.getApellido());
-            System.out.println("1. Ver mis alumnos");
-            System.out.println("2. Agregar alumno");
-            System.out.println("3. Quitar alumno");
-            System.out.println("4. Ver mi sucursal");
-            System.out.println("5. Ver sueldo anual y antigüedad");
-            System.out.println("6. Mi perfil");
-            System.out.println("0. Cerrar sesión");
+            System.out.println("1 - Ver mis alumnos");
+            System.out.println("2 - Agregar alumno");
+            System.out.println("3 - Quitar alumno");
+            System.out.println("4 - Ver mi sucursal");
+            System.out.println("5 - Ver sueldo anual y antigüedad");
+            System.out.println("6 - Mi perfil");
+            System.out.println("0 - Cerrar sesión");
 
             opcion = Consola.leerOpcion(0, 6);
 
@@ -39,20 +39,20 @@ public class MenuEntrenador {
                 case 2: {
                     int idSocio = Consola.leerEntero("ID del socio a agregar: ");
                     Consola.resultado(entrenadorService.agregarSocio(entrenador.getId(), idSocio),
-                            "Alumno agregado.", "No se pudo: el socio no existe, está dado de baja o ya es su alumno.");
+                            "Alumno agregado.", "No se pudo: el socio no existe, está dado de baja o ya es su alumno");
                     break;
                 }
                 case 3: {
                     int idSocio = Consola.leerEntero("ID del socio a quitar: ");
                     Consola.resultado(entrenadorService.quitarSocio(entrenador.getId(), idSocio),
-                            "Alumno quitado.", "Ese socio no es alumno suyo.");
+                            "Alumno quitado", "Ese socio no es alumno suyo");
                     break;
                 }
                 case 4:
                     // aca iria sucursalService.buscar(id) para mostrar la direccion completa
                     System.out.println(entrenador.getSucursalAsignada() != null
                             ? "Sucursal #" + entrenador.getSucursalAsignada().getId()
-                            : "No tiene sucursal asignada.");
+                            : "No tiene sucursal asignada");
                     break;
                 case 5:
                     System.out.println("Sueldo anual: $" + entrenador.calcularSueldoAnual());
@@ -75,6 +75,6 @@ public class MenuEntrenador {
         List<Socio> alumnos = entrenadorService.verAlumnos(entrenador.getId());
 
         // Los socios vienen completos desde SocioService: se muestran con su toString
-        Consola.mostrarLista(alumnos, "No tiene alumnos asignados.");
+        Consola.mostrarLista(alumnos, "No tiene alumnos asignados");
     }
 }

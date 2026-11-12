@@ -20,10 +20,10 @@ public final class MenuPerfil {
 
         do {
             Consola.titulo("MI PERFIL");
-            System.out.println(usuario);   // llama al toString del tipo real (polimorfismo)
-            System.out.println("\n1. Cambiar contraseña");
-            System.out.println("2. Cambiar email");
-            System.out.println("0. Volver");
+            System.out.println(usuario);   // llama al toString del tipo real
+            System.out.println("\n1 - Cambiar contraseña");
+            System.out.println("2 - Cambiar email");
+            System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 2);
 
@@ -44,9 +44,9 @@ public final class MenuPerfil {
         String password = FormularioUsuario.leerPasswordNueva();
 
         if (service.modificarPassword(usuario.getId(), password)) {
-            System.out.println("Contraseña actualizada.");
+            System.out.println("Contraseña actualizada");
         } else {
-            System.out.println("No se pudo actualizar la contraseña.");
+            System.out.println("No se pudo actualizar la contraseña");
         }
     }
 
@@ -57,9 +57,9 @@ public final class MenuPerfil {
         // setEmail tira ValorNoValidoException si el email no es valido (por ejemplo, sin @)
         try {
             if (service.modificarEmail(usuario.getId(), email)) {
-                System.out.println("Email actualizado.");
+                System.out.println("Email actualizado");
             } else {
-                System.out.println("No se pudo actualizar el email (¿ya lo usa otro usuario?).");
+                System.out.println("No se pudo actualizar el email");
             }
         } catch (ValorNoValidoException e) {
             System.out.println(e.getMessage());
