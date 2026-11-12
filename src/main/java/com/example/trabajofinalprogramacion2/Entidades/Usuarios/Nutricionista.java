@@ -23,18 +23,22 @@ public class Nutricionista extends Usuarios implements Empleado {
     public Nutricionista() {
     }
 
-    public Nutricionista(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta) {
+    public Nutricionista(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta, LocalDate fechaIngreso, Sucursal sucursalAsignada) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setTurnos(turnos);
         setSalario(salario);
         setComisionPorConsulta(comisionPorConsulta);
+        setFechaIngreso(fechaIngreso);
+        setSucursalAsignada(sucursalAsignada);
     }
 
-    public Nutricionista(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta) {
+    public Nutricionista(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, List<Turno> turnos, double salario, double comisionPorConsulta, LocalDate fechaIngreso, Sucursal sucursalAsignada) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setTurnos(turnos);
         setSalario(salario);
         setComisionPorConsulta(comisionPorConsulta);
+        setFechaIngreso(fechaIngreso);
+        setSucursalAsignada(sucursalAsignada);
     }
 
     // GETTERS

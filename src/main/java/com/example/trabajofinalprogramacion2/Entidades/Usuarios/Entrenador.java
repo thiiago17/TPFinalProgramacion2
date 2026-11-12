@@ -23,20 +23,22 @@ public class Entrenador extends Usuarios implements Empleado {
     public Entrenador() {
     }
 
-    public Entrenador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada) {
+    public Entrenador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada, LocalDate fechaIngreso) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setEspecialidad(especialidad);
         setSalario(salario);
         setAlumnosAsociados(alumnosAsociados);
         setSucursalAsignada(sucursalAsignada);
+        setFechaIngreso(fechaIngreso);
     }
 
-    public Entrenador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada) {
+    public Entrenador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada, LocalDate fechaIngreso) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setEspecialidad(especialidad);
         setSalario(salario);
         setAlumnosAsociados(alumnosAsociados);
         setSucursalAsignada(sucursalAsignada);
+        setFechaIngreso(fechaIngreso);
     }
 
     // GETTERS

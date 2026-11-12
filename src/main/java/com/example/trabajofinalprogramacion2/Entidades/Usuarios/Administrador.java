@@ -18,14 +18,18 @@ public class Administrador extends Usuarios {
     public Administrador() {
     }
 
-    public Administrador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
+    public Administrador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso, boolean esAdminSistema, Integer idGimnasio) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setFechaIngreso(fechaIngreso);
+        setEsAdminSistema(esAdminSistema);
+        setIdGimnasio(idGimnasio);
     }
 
-    public Administrador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
+    public Administrador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso, boolean esAdminSistema, Integer idGimnasio) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
         setFechaIngreso(fechaIngreso);
+        setEsAdminSistema(esAdminSistema);
+        setIdGimnasio(idGimnasio);
     }
 
     // GETTERS
