@@ -39,16 +39,16 @@ public class MenuSocio {
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles.");
+                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles");
                     break;
                 case 2: {
                     int id = Consola.leerEntero("ID del turno a reservar: ");
                     Consola.resultado(turnosService.reservar(id, socio),
-                            "Turno reservado.", "No se pudo: el turno no existe o ya está reservado.");
+                            "Turno reservado", "No se pudo: el turno no existe o ya está reservado");
                     break;
                 }
                 case 3:
-                    Consola.mostrarLista(turnosService.buscarPorSocio(socio), "No tiene turnos reservados.");
+                    Consola.mostrarLista(turnosService.buscarPorSocio(socio), "No tiene turnos reservados");
                     break;
                 case 4:
                     cancelarTurno();
