@@ -112,6 +112,10 @@ public class Turno implements Comparable<Turno> {
         if (fechaTurno == null) {
             throw new ObjetoNuloException("La fecha y hora del turno no pueden ser nulas.");
         }
+
+        if (!esHorarioValido(fechaTurno)) {
+            throw new ValorNoValidoException("El horario del turno no es valido. Debe ser entre las 10:00 y las 18:30, en franjas exactas de 30 minutos.");
+        }
         this.fechaTurno = fechaTurno;
     }
 
