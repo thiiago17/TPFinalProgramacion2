@@ -3,6 +3,8 @@ package com.example.trabajofinalprogramacion2.Entidades.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -36,11 +38,11 @@ public class Turno implements Comparable<Turno> {
 
     // El estado se calcula solo: sin socio el turno esta disponible, con socio esta reservado
     public Turno(Socio socio, Nutricionista nutricionista, LocalDateTime fechaTurno, double precio) {
-        this.socio = socio;
-        this.nutricionista = nutricionista;
-        this.fechaTurno = fechaTurno;
+        setSocio(socio);
+        setNutricionista(nutricionista);
+        setFechaTurno(fechaTurno);
         this.estado = (socio == null) ? EstadoTurno.DISPONIBLE : EstadoTurno.RESERVADO;
-        this.precio = precio;
+        setPrecio(precio);
         // No se agrega a la lista del nutricionista aca: lo hace TurnosCollection.agregar
         // solo si el turno es valido (horario y sin superposicion)
     }
@@ -86,26 +88,44 @@ public class Turno implements Comparable<Turno> {
     // SETTERS
 
     public void setId(int id) {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID del turno debe ser mayor a 0.");
+        }
         this.id = id;
     }
 
     public void setSocio(Socio socio) {
+        if (socio == null){
+            throw new ObjetoNuloException("El socio del turno no puede ser nulo.");
+        }
         this.socio = socio;
     }
 
     public void setNutricionista(Nutricionista nutricionista) {
+        if (nutricionista == null) {
+            throw new ObjetoNuloException("El nutricionista del turno no puede ser nulo.");
+        }
         this.nutricionista = nutricionista;
     }
 
     public void setFechaTurno(LocalDateTime fechaTurno) {
+        if (fechaTurno == null) {
+            throw new ObjetoNuloException("La fecha y hora del turno no pueden ser nulas.");
+        }
         this.fechaTurno = fechaTurno;
     }
 
     public void setEstado(EstadoTurno estado) {
+        if (estado == null) {
+            throw new ObjetoNuloException("El estado del turno no puede ser nulo.");
+        }
         this.estado = estado;
     }
 
     public void setPrecio(double precio) {
+        if (precio < 0.0) {
+            throw new ValorNoValidoException("El precio del turno no puede ser un valor negativo.");
+        }
         this.precio = precio;
     }
 
