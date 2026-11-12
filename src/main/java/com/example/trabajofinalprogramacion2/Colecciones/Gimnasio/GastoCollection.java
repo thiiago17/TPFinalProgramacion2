@@ -2,6 +2,7 @@ package com.example.trabajofinalprogramacion2.Colecciones.Gimnasio;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gastos.Gasto;
 import com.example.trabajofinalprogramacion2.Entidades.Gastos.TipoGasto;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Excepciones.ListadoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
@@ -240,6 +241,17 @@ public class GastoCollection implements ABCMLCollection<Gasto> {
         return gastosEncontrados;
     }
 
+    public List<Gasto> buscarPorInactivos() {
+        List<Gasto> gastosEncontrados= new ArrayList<>();
+
+        for(Gasto gasto : listado){
+            if(gasto.getEstado()==0){
+                gastosEncontrados.add(gasto);
+            }
+        }
+
+        return gastosEncontrados;
+    }
 
 
     //ELIMINAR
