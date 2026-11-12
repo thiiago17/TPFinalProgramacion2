@@ -1,5 +1,8 @@
 package com.example.trabajofinalprogramacion2.Entidades.Gimnasio;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+
 import java.util.Objects;
 
 public class Maquina {
@@ -13,46 +16,45 @@ public class Maquina {
     // CONSTRUCTORES
 
     public Maquina() {
-        this.estado=1;
+        this.estado = 1;
     }
 
-    //con descripcion y nombre
+    // con descripcion y nombre
     public Maquina(String nombre, String descripcion, double pesoLimite, String grupoMuscular) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.pesoLimite = pesoLimite;
-        this.grupoMuscular = grupoMuscular;
-        this.estado=1;
+        setNombre(nombre);
+        setDescripcion(descripcion);
+        setPesoLimite(pesoLimite);
+        setGrupoMuscular(grupoMuscular);
+        this.estado = 1;
     }
 
     public Maquina(int id, String nombre, String descripcion, double pesoLimite, String grupoMuscular, int estado) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.pesoLimite = pesoLimite;
-        this.grupoMuscular = grupoMuscular;
-        this.estado= estado;
+        setId(id);
+        setNombre(nombre);
+        setDescripcion(descripcion);
+        setPesoLimite(pesoLimite);
+        setGrupoMuscular(grupoMuscular);
+        setEstado(estado);
     }
 
-    //sin descripcion y con nombre
+    // sin descripcion y con nombre
 
     public Maquina(int id, String nombre, double pesoLimite, String grupoMuscular, int estado) {
-        this.id = id;
-        this.nombre = nombre;
-        this.pesoLimite = pesoLimite;
-        this.grupoMuscular = grupoMuscular;
-        this.estado=estado;
+        setId(id);
+        setNombre(nombre);
+        setPesoLimite(pesoLimite);
+        setGrupoMuscular(grupoMuscular);
+        setEstado(estado);
     }
 
     public Maquina(String nombre, double pesoLimite, String grupoMuscular) {
-        this.nombre = nombre;
-        this.pesoLimite = pesoLimite;
-        this.grupoMuscular = grupoMuscular;
-        this.estado=1;
+        setNombre(nombre);
+        setPesoLimite(pesoLimite);
+        setGrupoMuscular(grupoMuscular);
+        this.estado = 1;
     }
 
-
-// GETTERS
+    // GETTERS
 
     public int getId() {
         return id;
@@ -77,32 +79,58 @@ public class Maquina {
     public int getEstado() {
         return estado;
     }
+
     // SETTERS
 
     public void setId(int id) {
+        if (id < 0) {
+            throw new ValorNoValidoException("El ID de la máquina no puede ser negativo.");
+        }
         this.id = id;
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null) {
+            throw new ObjetoNuloException("El nombre de la máquina no puede ser nulo.");
+        }
+        if (nombre.isBlank()) {
+            throw new ValorNoValidoException("El nombre de la máquina no puede estar vacío.");
+        }
         this.nombre = nombre;
     }
 
     public void setDescripcion(String descripcion) {
+        if (descripcion != null && descripcion.isBlank()) {
+            throw new ValorNoValidoException("La descripción de la máquina no puede estar vacía.");
+        }
         this.descripcion = descripcion;
     }
 
     public void setPesoLimite(double pesoLimite) {
+        if (pesoLimite < 0.0) {
+            throw new ValorNoValidoException("El peso límite no puede ser un valor negativo.");
+        }
         this.pesoLimite = pesoLimite;
     }
 
     public void setGrupoMuscular(String grupoMuscular) {
+        if (grupoMuscular == null) {
+            throw new ObjetoNuloException("El grupo muscular no puede ser nulo.");
+        }
+        if (grupoMuscular.isBlank()) {
+            throw new ValorNoValidoException("El grupo muscular no puede estar vacío.");
+        }
         this.grupoMuscular = grupoMuscular;
     }
 
     public void setEstado(int estado) {
+        if (estado != 0 && estado != 1) {
+            throw new ValorNoValidoException("El estado debe ser 0 (inactivo) o 1 (activo).");
+        }
         this.estado = estado;
     }
-    //EQUALS, HASHCODE Y TOSTRING
+
+    // EQUALS, HASHCODE Y TOSTRING
 
     @Override
     public boolean equals(Object o) {
@@ -120,14 +148,11 @@ public class Maquina {
     public String toString() {
         return "Maquina{" +
                 "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
+                ", nombre='" + (nombre != null ? nombre : "-") + '\'' +
+                ", descripcion='" + (descripcion != null ? descripcion : "-") + '\'' +
                 ", pesoLimite=" + pesoLimite +
-                ", grupoMuscular='" + grupoMuscular + '\'' +
+                ", grupoMuscular='" + (grupoMuscular != null ? grupoMuscular : "-") + '\'' +
                 ", estado=" + estado +
                 '}';
     }
-// MOSTRAR
-
-    // METODOS
 }
