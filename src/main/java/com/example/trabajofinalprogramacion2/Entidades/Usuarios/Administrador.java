@@ -1,5 +1,7 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+
 import java.time.LocalDate;
 
 // Hay dos tipos de administrador (en la misma tabla):
@@ -18,12 +20,12 @@ public class Administrador extends Usuarios {
 
     public Administrador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.fechaIngreso = fechaIngreso;
+        setFechaIngreso(fechaIngreso);
     }
 
     public Administrador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, LocalDate fechaIngreso) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.fechaIngreso = fechaIngreso;
+        setFechaIngreso(fechaIngreso);
     }
 
     // GETTERS
@@ -35,6 +37,9 @@ public class Administrador extends Usuarios {
     // SETTERS
 
     public void setFechaIngreso(LocalDate fechaIngreso) {
+        if (fechaIngreso != null && fechaIngreso.isAfter(LocalDate.now())) {
+            throw new ValorNoValidoException("La fecha de ingreso no puede ser en el futuro.");
+        }
         this.fechaIngreso = fechaIngreso;
     }
 
@@ -51,6 +56,9 @@ public class Administrador extends Usuarios {
     }
 
     public void setIdGimnasio(Integer idGimnasio) {
+        if (idGimnasio != null && idGimnasio <= 0) {
+            throw new ValorNoValidoException("El ID del gimnasio debe ser un valor válido.");
+        }
         this.idGimnasio = idGimnasio;
     }
 
