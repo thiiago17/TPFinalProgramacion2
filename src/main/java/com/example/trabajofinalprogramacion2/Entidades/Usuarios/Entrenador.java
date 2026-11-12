@@ -1,6 +1,8 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
+import com.example.trabajofinalprogramacion2.Excepciones.ListadoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.interfaces.Empleado;
 
@@ -23,18 +25,18 @@ public class Entrenador extends Usuarios implements Empleado {
 
     public Entrenador(String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada) {
         super(nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.especialidad = especialidad;
-        this.salario = salario;
-        this.alumnosAsociados = alumnosAsociados;
-        this.sucursalAsignada= sucursalAsignada;
+        setEspecialidad(especialidad);
+        setSalario(salario);
+        setAlumnosAsociados(alumnosAsociados);
+        setSucursalAsignada(sucursalAsignada);
     }
 
     public Entrenador(int id, String nombre, String apellido, String dni, String email, String password, LocalDate fechaDeNacimiento, boolean activo, String especialidad, Double salario, Set<Socio> alumnosAsociados, Sucursal sucursalAsignada) {
         super(id, nombre, apellido, dni, email, password, fechaDeNacimiento, activo);
-        this.especialidad = especialidad;
-        this.salario = salario;
-        this.alumnosAsociados = alumnosAsociados;
-        this.sucursalAsignada= sucursalAsignada;
+        setEspecialidad(especialidad);
+        setSalario(salario);
+        setAlumnosAsociados(alumnosAsociados);
+        setSucursalAsignada(sucursalAsignada);
     }
 
     // GETTERS
@@ -58,28 +60,41 @@ public class Entrenador extends Usuarios implements Empleado {
     // SETTERS
 
     public void setEspecialidad(String especialidad) {
+        if (especialidad != null && especialidad.isBlank()) {
+            throw new ValorNoValidoException("La especialidad no puede estar vacía.");
+        }
         this.especialidad = especialidad;
     }
 
     public void setSalario(Double salario) {
+        if (salario != null && salario < 0.0) {
+            throw new ValorNoValidoException("El salario no puede ser un valor negativo.");
+        }
         this.salario = salario;
     }
 
     public void setAlumnosAsociados(Set<Socio> alumnosAsociados) {
+        if (alumnosAsociados == null) {
+            throw new ListadoNuloException("El conjunto de alumnos asociados no puede ser nulo.");
+        }
         this.alumnosAsociados = alumnosAsociados;
     }
 
     public void setSucursalAsignada(Sucursal sucursalAsignada) {
+        if (sucursalAsignada != null && sucursalAsignada.getId() <= 0) {
+            throw new ValorNoValidoException("El ID de la sucursal asignada no es válido.");
+        }
         this.sucursalAsignada = sucursalAsignada;
     }
 
     public void agregarSocio(Socio socio) {
-        if (socio != null) {
-            if (this.alumnosAsociados == null) {
-                this.alumnosAsociados = new HashSet<>();
-            }
-            this.alumnosAsociados.add(socio);
+        if (socio == null) {
+            throw new ObjetoNuloException("No se puede agregar un socio nulo.");
         }
+        if (this.alumnosAsociados == null) {
+            this.alumnosAsociados = new HashSet<>();
+        }
+        this.alumnosAsociados.add(socio);
     }
 
     // FECHA DE INGRESO (puede venir en NULL de la BD para los cargados antes de agregar la columna)
@@ -123,6 +138,4 @@ public class Entrenador extends Usuarios implements Empleado {
                 + " | Alumnos: " + (alumnosAsociados != null ? alumnosAsociados.size() : 0)
                 + " | Sucursal: " + (sucursalAsignada != null ? "#" + sucursalAsignada.getId() : "sin asignar");
     }
-
-
 }
