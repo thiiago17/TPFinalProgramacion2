@@ -25,12 +25,12 @@ import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 // Menu del administrador de un gimnasio: maneja el dia a dia de SU gimnasio
 // (personal, socios, turnos, sucursales, maquinas y gastos).
-// TODO cuando este SucursalService: filtrar entrenadores y nutricionistas por las sucursales
-// del gimnasio del admin (admin.getIdGimnasio()), hoy se listan todos.
 
 public class MenuAdministrador {
 
@@ -127,7 +127,13 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(entrenadorService.verListado(), "No hay entrenadores");
+                    List<Entrenador> mios = new ArrayList<>();
+                    for (Entrenador e : entrenadorService.verListado()) {
+                        if (esDeMiGimnasio(e.getSucursalAsignada())) {
+                            mios.add(e);
+                        }
+                    }
+                    Consola.mostrarLista(mios, "No hay entrenadores en tu gimnasio");
                     break;
                 case 2:
                     agregarEntrenador();
@@ -209,7 +215,13 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(nutricionistaService.verListado(), "No hay nutricionistas");
+                    List<Nutricionista> mios = new ArrayList<>();
+                    for (Nutricionista n : nutricionistaService.verListado()) {
+                        if (esDeMiGimnasio(n.getSucursalAsignada())) {
+                            mios.add(n);
+                        }
+                    }
+                    Consola.mostrarLista(mios, "No hay nutricionistas en tu gimnasio");
                     break;
                 case 2:
                     agregarNutricionista();
@@ -830,7 +842,7 @@ public class MenuAdministrador {
             System.out.println("7 - Dar de baja gasto");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 6);
+            opcion = Consola.leerOpcion(0, 7);
 
             switch (opcion) {
                 case 1:
@@ -895,7 +907,7 @@ public class MenuAdministrador {
                     menuBusquedaGastos();
                     break;
                 case 6:
-                    //aca va otro menu que llame a los metodos de modificacion
+                    menuModificarGasto();
                     break;
                 case 7:
                     int idBaja = Consola.leerEntero("ID del gasto a dar de baja: ");
@@ -1230,7 +1242,7 @@ public class MenuAdministrador {
             System.out.println("4 - Gastos inactivos");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 3);
+            opcion = Consola.leerOpcion(0, 4);
 
             switch (opcion) {
                 case 1:
@@ -1427,5 +1439,71 @@ public class MenuAdministrador {
                     break;
             }
         } while (opcion != 0);
+    }
+
+    private void menuModificarGasto() {
+        int id = Consola.leerEntero("ID del gasto a modificar: ");
+        try {
+            Gasto gasto = gastoService.buscarPorId(id);
+            if (gasto == null || gasto.getIdGimnasio() != admin.getIdGimnasio()) {
+                System.out.println("Ese gasto no existe o no pertenece a tu gimnasio");
+                return;
+            }
+        } catch (ValorNoValidoException e) {
+            System.out.println("Error: " + e.getMessage());
+            return;
+        }
+
+        int opcion;
+        do {
+            Consola.titulo("MODIFICAR GASTO #" + id);
+            System.out.println("1 - Detalles");
+            System.out.println("2 - Monto");
+            System.out.println("3 - Tipo de gasto");
+            System.out.println("4 - Fecha");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            // el try va adentro del do para que un error no te saque del menu
+            try {
+                switch (opcion) {
+                    case 1:
+                        Consola.resultado(gastoService.modificarDetalles(id, Consola.leerTexto("Nuevos detalles: ")),
+                                "Detalles modificados", "No se pudo modificar");
+                        break;
+                    case 2:
+                        Consola.resultado(gastoService.modificarMonto(id, Consola.leerDouble("Nuevo monto: ")),
+                                "Monto modificado", "No se pudo modificar");
+                        break;
+                    case 3: {
+                        TipoGasto tipo = seleccionarTipoGasto();
+                        if (tipo != null) {
+                            Consola.resultado(gastoService.modificarTipoDeGasto(id, tipo),
+                                    "Tipo modificado", "No se pudo modificar");
+                        }
+                        break;
+                    }
+                    case 4:
+                        Consola.resultado(gastoService.modificarFecha(id, Consola.leerFecha("Nueva fecha (dd/MM/yyyy): ")),
+                                "Fecha modificada", "No se pudo modificar");
+                        break;
+                }
+            } catch (SQLException | ValorNoValidoException | ObjetoNuloException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        } while (opcion != 0);
+    }
+
+    private boolean esDeMiGimnasio(Sucursal sucursal) {
+        if (sucursal == null) {
+            return false;
+        }
+        try {
+            Sucursal real = sucursalService.buscarPorId(sucursal.getId());
+            return real != null && real.getIdGimnasio() == admin.getIdGimnasio();
+        } catch (ValorNoValidoException e) {
+            return false;
+        }
     }
 }

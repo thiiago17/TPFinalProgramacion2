@@ -1,21 +1,28 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuSocio {
 
     private final Socio socio;
     private final SocioService socioService;
     private final TurnosService turnosService;
-    // private final SucursalService sucursalService;  cuando este hecho
+    private final SucursalService sucursalService;
 
-    public MenuSocio(Socio socio, SocioService socioService, TurnosService turnosService) {
+    public MenuSocio(Socio socio, SocioService socioService, TurnosService turnosService, SucursalService sucursalService) {
         this.socio = socio;
         this.socioService = socioService;
         this.turnosService = turnosService;
+        this.sucursalService = sucursalService;
     }
 
     public void mostrar() {
@@ -60,7 +67,7 @@ public class MenuSocio {
                     System.out.println(socioService.abonarCuota(socio.getId()));
                     break;
                 case 7:
-                    // aca iria: for (Sucursal s : sucursalService.verListado()) if (socio.puedeIngresarA(s)) mostrar(s);
+                    verSucursalesHabilitadas();
                     break;
                 case 8:
                     System.out.printf("IMC: %.2f - %s%n", socio.calcularIMC(), socio.verEstadoIMC());
@@ -89,5 +96,36 @@ public class MenuSocio {
 
         Consola.resultado(turnosService.cancelar(turno.getId()),
                 "Turno cancelado", "No se pudo cancelar el turno");
+    }
+
+    private void verSucursalesHabilitadas()
+    {
+        if(socio.getSucursalAsignada()==null)
+        {
+            System.out.println("No tiene sucursal asignada");
+            return;
+        }
+        try {
+            Sucursal real = sucursalService.buscarPorId(socio.getSucursalAsignada().getId());
+            if(real == null)
+            {
+                System.out.println("Su sucursal asignada ya no existe");
+                return;
+            }
+            socio.setSucursalAsignada(real);
+
+            List<Sucursal> habilitadas = new ArrayList<>();
+            for(Sucursal s : sucursalService.verListado())
+            {
+                if(socio.puedeIngresarA(s))
+                {
+                    habilitadas.add(s);
+                }
+            }
+            Consola.mostrarLista(habilitadas, "No puede ingresar a ninguna sucursal (Membresia vencida)");
+        } catch (ValorNoValidoException e)
+        {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
 
 import java.util.List;
@@ -10,10 +13,12 @@ public class MenuEntrenador {
 
     private final Entrenador entrenador;
     private final EntrenadorService entrenadorService;
+    private final SucursalService sucursalService;
 
-    public MenuEntrenador(Entrenador entrenador, EntrenadorService entrenadorService) {
+    public MenuEntrenador(Entrenador entrenador, EntrenadorService entrenadorService, SucursalService sucursalService) {
         this.entrenador = entrenador;
         this.entrenadorService = entrenadorService;
+        this.sucursalService = sucursalService;
     }
 
     public void mostrar() {
@@ -49,10 +54,16 @@ public class MenuEntrenador {
                     break;
                 }
                 case 4:
-                    // aca iria sucursalService.buscar(id) para mostrar la direccion completa
-                    System.out.println(entrenador.getSucursalAsignada() != null
-                            ? "Sucursal #" + entrenador.getSucursalAsignada().getId()
-                            : "No tiene sucursal asignada");
+                    if (entrenador.getSucursalAsignada() == null) {
+                        System.out.println("No tiene sucursal asignada");
+                    } else {
+                        try {
+                            Sucursal s = sucursalService.buscarPorId(entrenador.getSucursalAsignada().getId());
+                            System.out.println(s != null ? s : "Su sucursal ya no existe");
+                        } catch (ValorNoValidoException e) {
+                            System.out.println("Error: " + e.getMessage());
+                        }
+                    }
                     break;
                 case 5:
                     System.out.println("Sueldo anual: $" + entrenador.calcularSueldoAnual());

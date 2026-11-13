@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
@@ -7,12 +8,17 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.GastoService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalMaquinaService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.NutricionistaService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 // Inicio de sesion: se elige el rol, se ingresa DNI y contraseña, y se deriva al menu de ese rol.
@@ -25,8 +31,10 @@ public class MenuPrincipal {
     private final NutricionistaService nutricionistaService;
     private final TurnosService turnosService;
     private final SocioService socioService;
-    // private final GimnasioService gimnasioService; -> cuando este hecho
-    // private final SucursalService sucursalService; -> cuando este hecho
+    private final GimnasioService gimnasioService;
+    private final SucursalService sucursalService;
+    private final SucursalMaquinaService sucursalMaquinaService;
+    private final GastoService gastoService;
 
     public MenuPrincipal() {
         administradorService = new AdministradorService();
@@ -36,6 +44,17 @@ public class MenuPrincipal {
         nutricionistaService = new NutricionistaService();
         // TurnosService necesita el de nutricionistas y el de socios para vincular cada turno con los objetos reales
         turnosService = new TurnosService(nutricionistaService, socioService);
+        gastoService = new GastoService();
+
+        // Estos constructores leen la BD y pueden tirar SQLException.
+        // Si fallan, el programa no puede funcionar, asi que se corta con un mensaje claro.
+        try {
+            gimnasioService = new GimnasioService();
+            sucursalService = new SucursalService();
+            sucursalMaquinaService = new SucursalMaquinaService();
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron cargar gimnasios/sucursales de la BD: " + e.getMessage());
+        }
     }
 
     public void iniciar() {
@@ -86,10 +105,10 @@ public class MenuPrincipal {
         }
 
         if (admin.isEsAdminSistema()) {
-            new MenuAdministradorSistema(admin, administradorService).mostrar();
+            new MenuAdministradorSistema(admin, administradorService, gimnasioService).mostrar();
         } else {
             new MenuAdministrador(admin, administradorService, entrenadorService, nutricionistaService,
-                    turnosService, socioService).mostrar();
+                    turnosService, socioService, sucursalService, sucursalMaquinaService, gastoService).mostrar();
         }
     }
 
@@ -100,7 +119,7 @@ public class MenuPrincipal {
         Entrenador entrenador = validarCredenciales(entrenadorService.buscarPorDni(dni), password);
 
         if (entrenador != null) {
-            new MenuEntrenador(entrenador, entrenadorService).mostrar();
+            new MenuEntrenador(entrenador, entrenadorService, sucursalService).mostrar();
         }
     }
 
@@ -145,7 +164,7 @@ public class MenuPrincipal {
             Socio socio = validarCredenciales(socioService.buscarPorDni(dni), password);
 
             if (socio != null) {
-                new MenuSocio(socio, socioService, turnosService).mostrar();
+                new MenuSocio(socio, socioService, turnosService, sucursalService).mostrar();
             }
         } catch (Exception e) {
             System.out.println("Aviso: " + e.getMessage());
@@ -185,10 +204,22 @@ public class MenuPrincipal {
             // Creamos la membresia inicial (hoy hasta en 1 mes)
             Membresia membresia = new Membresia(LocalDate.now(), LocalDate.now().plusMonths(1), planElegido);
 
+            // Eleccion de la sucursal
+            System.out.println("\n--- Sucursales disponibles ---");
+            Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales disponibles");
+
+            Sucursal sucursalElegida = sucursalService.buscarPorId(Consola.leerEntero("ID de la sucursal: "));
+
+            if (sucursalElegida == null || sucursalElegida.getEstado() !=1) {
+                System.out.println("\nLa sucursal elegida no existe o no está activa");
+                Consola.pausa();
+                return;
+            }
+
             Socio nuevoSocio = new Socio(
                     nombre, apellido, dni, email, password,
                     fechaNac, true, peso, altura,
-                    LocalDate.now(), membresia
+                    LocalDate.now(), membresia, sucursalElegida
             );
 
             boolean registrado = socioService.agregar(nuevoSocio);
