@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SucursalDAO implements ABCMLDAO<Sucursal> {
+    @Override
     public Sucursal agregar(Sucursal sucursal) {
         String sql="INSERT INTO Sucursal(id_gimnasio,calle,altura,ciudad) VALUES (?,?,?,?)";
         String sqlId="SELECT LAST_INSERT_ID()";

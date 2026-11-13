@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GastoDAO implements ABCMLDAO<Gasto> {
+    @Override
     public Gasto agregar(Gasto gasto) {
         String sql="INSERT INTO Gasto(detalles,monto,gasto,fecha,id_gimnasio) VALUES (?,?,?,?,?)"; //AGREGARLE "OTROS" AL ENUM DE LA BASE DE DATOS
         String sqlId="SELECT LAST_INSERT_ID()";

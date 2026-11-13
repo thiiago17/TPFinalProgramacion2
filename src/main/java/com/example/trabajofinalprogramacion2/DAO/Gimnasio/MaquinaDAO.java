@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MaquinaDAO implements ABCMLDAO<Maquina> {
+    @Override
     public Maquina agregar(Maquina maquina) {
         String sql="INSERT INTO Maquina(nombre,descripcion,pesoLimite,grupoMuscular) VALUES (?,?,?,?)";
         String sqlId="SELECT LAST_INSERT_ID()";

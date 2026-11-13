@@ -124,6 +124,45 @@ public class SucursalMaquinaCollection implements ABCMLCollection<SucursalMaquin
 
         return true;
     }
+    public boolean alta(int id) throws ValorNoValidoException, ObjetoNuloException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID de la relación no es válido");
+        }
+
+        SucursalMaquina sucursalMaquinaOriginal = buscar(id);
+
+        if (sucursalMaquinaOriginal == null) {
+            throw new ObjetoNuloException("La relación que se intenta dar de alta no existe");
+        }
+
+        int cantidadActual = mapMaquinas.remove(sucursalMaquinaOriginal);
+
+        sucursalMaquinaOriginal.setEstado(1);
+
+        mapMaquinas.put(sucursalMaquinaOriginal, cantidadActual);
+
+        return true;
+    }
+
+    public boolean baja(int id) throws ValorNoValidoException, ObjetoNuloException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID de la relación no es válido");
+        }
+
+        SucursalMaquina sucursalMaquinaOriginal = buscar(id);
+
+        if (sucursalMaquinaOriginal == null) {
+            throw new ObjetoNuloException("La relación que se intenta dar de baja no existe");
+        }
+
+        int cantidadActual = mapMaquinas.remove(sucursalMaquinaOriginal);
+
+        sucursalMaquinaOriginal.setEstado(0);
+
+        mapMaquinas.put(sucursalMaquinaOriginal, cantidadActual);
+
+        return true;
+    }
 
     public boolean modificarCantidad(int id, int nuevaCantidad) throws ValorNoValidoException, ObjetoNuloException {
         if (id < 0 || nuevaCantidad < 0) {
