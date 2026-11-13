@@ -294,8 +294,11 @@ public class GastoService {
         return coleccion.buscarAnualPorMontoMayorA(idGimnasio,monto,anio);
     }
 
-    public List<Gasto> buscarPorInactivos(){
-        return coleccion.buscarPorInactivos();
+    public List<Gasto> buscarPorInactivos(int idGimnasio) throws ValorNoValidoException{
+        if (idGimnasio <= 0) {
+            throw new ValorNoValidoException("El ID del gimnasio no es válido");
+        }
+        return coleccion.buscarPorInactivos(idGimnasio);
     }
 
     //LISTADOS

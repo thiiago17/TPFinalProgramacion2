@@ -821,23 +821,20 @@ public class MenuAdministrador {
 
         do {
             Consola.titulo("GASTOS");
-            System.out.println("1 - Ver gastos"); // despues deberiamos hacer un menu extra para ver historico, anual y mensual
+            System.out.println("1 - Ver gastos");
             System.out.println("2 - Registrar gasto");
             System.out.println("3 - Total del mes");
             System.out.println("4 - Total del mes por tipo");
-            System.out.println("5 - Total histórico");
-            System.out.println("6 - Dar de baja gasto");
+            System.out.println("5 - Filtrar gastos");
+            System.out.println("6 - Modificar gastos");
+            System.out.println("7 - Dar de baja gasto");
             System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 6);
 
             switch (opcion) {
                 case 1:
-                    try {
-                        Consola.mostrarLista(gastoService.buscarGastosHistoricos(admin.getIdGimnasio()), "No hay gastos registrados en tu gimnasio");
-                    } catch (ValorNoValidoException e) {
-                        System.err.println("Error: " + e.getMessage());
-                    }
+                    menuVerGastos();
                     break;
                 case 2:
                     try {
@@ -889,64 +886,18 @@ public class MenuAdministrador {
                     }
                     break;
                 case 3:
-                    int mes = Consola.leerEntero("Ingrese el mes (1-12): ");
-                    int anio = Consola.leerEntero("Ingrese el año: ");
-                    try {
-                        double totalMes = gastoService.calcularTotalMensual(admin.getIdGimnasio(), mes, anio);
-                        System.out.println("El total de gastos en " + mes + "/" + anio + " es: $" + totalMes);
-                    } catch (ValorNoValidoException e) {
-                        System.err.println("Error: " + e.getMessage());
-                    }
+                    menuCalcularTotales();
                     break;
                 case 4:
-                    int mesTipo = Consola.leerEntero("Ingrese el mes (1-12): ");
-                    int anioTipo = Consola.leerEntero("Ingrese el año: ");
-
-                    System.out.println("--- Seleccione el tipo de gasto a calcular ---");
-                    System.out.println("1 - Luz");
-                    System.out.println("2 - Agua");
-                    System.out.println("3 - Gas");
-                    System.out.println("4 - Mantenimiento");
-                    System.out.println("5 - Internet");
-                    System.out.println("6 - Empleados");
-                    System.out.println("7 - Alquiler");
-                    System.out.println("8 - Otros");
-                    int opcTipoBusqueda = Consola.leerEntero("Opción: ");
-
-                    TipoGasto tipoBusqueda = null;
-
-                    switch (opcTipoBusqueda) {
-                        case 1: tipoBusqueda = TipoGasto.LUZ; break;
-                        case 2: tipoBusqueda = TipoGasto.AGUA; break;
-                        case 3: tipoBusqueda = TipoGasto.GAS; break;
-                        case 4: tipoBusqueda = TipoGasto.MANTENIMIENTO; break;
-                        case 5: tipoBusqueda = TipoGasto.INTERNET; break;
-                        case 6: tipoBusqueda = TipoGasto.EMPLEADOS; break;
-                        case 7: tipoBusqueda = TipoGasto.ALQUILER; break;
-                        case 8: tipoBusqueda = TipoGasto.OTROS; break;
-                        default:
-                            System.out.println("Opción inválida -> Búsqueda cancelada");
-                            break;
-                    }
-
-                    if (tipoBusqueda != null) {
-                        try {
-                            double totalMesTipo = gastoService.calcularTotalMensualPorTipo(admin.getIdGimnasio(), mesTipo, anioTipo, tipoBusqueda);
-                            System.out.println("Total gastado en " + tipoBusqueda + " (" + mesTipo + "/" + anioTipo + "): $" + totalMesTipo);
-                        } catch (ValorNoValidoException e) {
-                            System.err.println("Error: " + e.getMessage());
-                        }
-                    }
+                    menuCalcularTotalesPorTipo();
                     break;
                 case 5:
-                    try {
-                        double totalHistorico = gastoService.calcularTotalHistorico(admin.getIdGimnasio());
-                        System.out.println("Total histórico de gastos del gimnasio: $" + totalHistorico);
-                    } catch (ValorNoValidoException e) {
-                        System.err.println("Error: " + e.getMessage());
-                    }
+                    menuBusquedaGastos();
                     break;
                 case 6:
+                    //aca va otro menu que llame a los metodos de modificacion
+                    break;
+                case 7:
                     int idBaja = Consola.leerEntero("ID del gasto a dar de baja: ");
                     try {
                         Gasto gastoABajar = gastoService.buscarPorId(idBaja);
@@ -969,4 +920,512 @@ public class MenuAdministrador {
         } while (opcion != 0);
     }
 
+    private void menuVerGastos(){
+        int opcion;
+
+        do {
+            Consola.titulo("VER GASTOS");
+            System.out.println("1 - Ver gastos historicos");
+            System.out.println("2 - Ver gastos anuales");
+            System.out.println("3 - Ver gastos mensuales");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 6);
+
+            switch (opcion) {
+                case 1:
+                    menuVerGastosHistoricos();
+                    break;
+                case 2:
+                    menuVerGastosAnuales();
+                    break;
+                case 3:
+                    menuVerGastosMensuales();
+                    break;
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void menuVerGastosHistoricos(){
+        int opcion;
+
+        do {
+            Consola.titulo("VER GASTOS HISTORICOS");
+            System.out.println("1 - Ver por monto ascendente");
+            System.out.println("2 - Ver por monto descendente");
+            System.out.println("3 - Ver por fecha ascendente");
+            System.out.println("4 - Ver por fecha descendente");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoHistoricoOrdenadoPorMontoAscendente(admin.getIdGimnasio()), "No hay gastos registrados para ordenar.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoHistoricoOrdenadoPorMontoDescendente(admin.getIdGimnasio()), "No hay gastos registrados para ordenar.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 3:
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoHistoricoOrdenadoPorFechaAscendente(admin.getIdGimnasio()), "No hay gastos registrados para ordenar.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 4:
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoHistoricoOrdenadoPorFechaDescendente(admin.getIdGimnasio()), "No hay gastos registrados para ordenar.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuVerGastosAnuales(){
+        int opcion;
+
+        do {
+            Consola.titulo("VER GASTOS ANUALES");
+            System.out.println("1 - Ver por monto ascendente");
+            System.out.println("2 - Ver por monto descendente");
+            System.out.println("3 - Ver por fecha ascendente");
+            System.out.println("4 - Ver por fecha descendente");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    int anioMontoAsc = Consola.leerEntero("Ingrese el año a consultar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoAnualOrdenadoPorMontoAscendente(admin.getIdGimnasio(), anioMontoAsc), "No hay gastos en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    int anioMontoDesc = Consola.leerEntero("Ingrese el año a consultar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoAnualOrdenadoPorMontoDescendente(admin.getIdGimnasio(), anioMontoDesc), "No hay gastos en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 3:
+                    int anioFechaAsc = Consola.leerEntero("Ingrese el año a consultar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoAnualOrdenadoPorFechaAscendente(admin.getIdGimnasio(), anioFechaAsc), "No hay gastos en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 4:
+                    int anioFechaDesc = Consola.leerEntero("Ingrese el año a consultar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoAnualOrdenadoPorFechaDescendente(admin.getIdGimnasio(), anioFechaDesc), "No hay gastos en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void menuVerGastosMensuales(){
+        int opcion;
+
+        do {
+            Consola.titulo("VER GASTOS MENSUALES");
+            System.out.println("1 - Ver por monto ascendente");
+            System.out.println("2 - Ver por monto descendente");
+            System.out.println("3 - Ver por fecha ascendente");
+            System.out.println("4 - Ver por fecha descendente");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    int mesMontoAsc = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioMontoAsc = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoMensualOrdenadoPorMontoAscendente(admin.getIdGimnasio(), mesMontoAsc, anioMontoAsc), "No hay gastos en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    int mesMontoDesc = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioMontoDesc = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoMensualOrdenadoPorMontoDescendente(admin.getIdGimnasio(), mesMontoDesc, anioMontoDesc), "No hay gastos en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 3:
+                    int mesFechaAsc = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioFechaAsc = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoMensualOrdenadoPorFechaAscendente(admin.getIdGimnasio(), mesFechaAsc, anioFechaAsc), "No hay gastos en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 4:
+                    int mesFechaDesc = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioFechaDesc = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.verListadoMensualOrdenadoPorFechaDescendente(admin.getIdGimnasio(), mesFechaDesc, anioFechaDesc), "No hay gastos en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuCalcularTotales(){
+        int opcion;
+
+        do {
+            Consola.titulo("CALCULAR TOTAL");
+            System.out.println("1 - Total historico");
+            System.out.println("2 - Total anual");
+            System.out.println("3 - Total mensual");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 3);
+
+            switch (opcion) {
+                case 1: // Total histórico
+                    try {
+                        double totalHistorico = gastoService.calcularTotalHistorico(admin.getIdGimnasio());
+                        System.out.println("Total histórico de gastos: $" + totalHistorico);
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2: // Total anual
+                    int anioTotal = Consola.leerEntero("Ingrese el año a calcular: ");
+                    try {
+                        double totalAnual = gastoService.calcularTotalAnual(admin.getIdGimnasio(), anioTotal);
+                        System.out.println("Total de gastos en el año " + anioTotal + ": $" + totalAnual);
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 3: // Total mensual
+                    int mesTotal = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioMesTotal = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        double totalMensual = gastoService.calcularTotalMensual(admin.getIdGimnasio(), mesTotal, anioMesTotal);
+                        System.out.println("Total de gastos en " + mesTotal + "/" + anioMesTotal + ": $" + totalMensual);
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuCalcularTotalesPorTipo(){
+        int opcion;
+
+        do {
+            Consola.titulo("CALCULAR TOTAL POR TIPO");
+            System.out.println("1 - Total historico");
+            System.out.println("2 - Total anual");
+            System.out.println("3 - Total mensual");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 3);
+
+            switch (opcion) {
+                case 1: // Total histórico por tipo
+                    TipoGasto tipoHistorico = seleccionarTipoGasto();
+                    if (tipoHistorico != null) {
+                        try {
+                            double total = gastoService.calcularTotalHistoricoPorTipo(admin.getIdGimnasio(), tipoHistorico);
+                            System.out.println("Total histórico en " + tipoHistorico + ": $" + total);
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case 2: // Total anual por tipo
+                    TipoGasto tipoAnual = seleccionarTipoGasto();
+                    if (tipoAnual != null) {
+                        int anio = Consola.leerEntero("Ingrese el año a calcular: ");
+                        try {
+                            double total = gastoService.calcularTotalAnualPorTipo(admin.getIdGimnasio(), anio, tipoAnual);
+                            System.out.println("Total gastado en " + tipoAnual + " durante el año " + anio + ": $" + total);
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case 3: // Total mensual por tipo
+                    TipoGasto tipoMensual = seleccionarTipoGasto();
+                    if (tipoMensual != null) {
+                        int mes = Consola.leerEntero("Ingrese el mes (1-12): ");
+                        int anioMensual = Consola.leerEntero("Ingrese el año: ");
+                        try {
+                            double total = gastoService.calcularTotalMensualPorTipo(admin.getIdGimnasio(), mes, anioMensual, tipoMensual);
+                            System.out.println("Total gastado en " + tipoMensual + " en " + mes + "/" + anioMensual + ": $" + total);
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private TipoGasto seleccionarTipoGasto() {
+        System.out.println("--- Tipo de Gasto ---");
+        System.out.println("1-Luz | 2-Agua | 3-Gas | 4-Mantenimiento | 5-Internet | 6-Empleados | 7-Alquiler | 8-Otros");
+        int opcionTipo = Consola.leerEntero("Seleccione una opción: ");
+
+        switch(opcionTipo) {
+            case 1: return TipoGasto.LUZ;
+            case 2: return TipoGasto.AGUA;
+            case 3: return TipoGasto.GAS;
+            case 4: return TipoGasto.MANTENIMIENTO;
+            case 5: return TipoGasto.INTERNET;
+            case 6: return TipoGasto.EMPLEADOS;
+            case 7: return TipoGasto.ALQUILER;
+            case 8: return TipoGasto.OTROS;
+            default:
+                System.out.println("Opción inválida. Operación cancelada.");
+                return null;
+        }
+    }
+
+    private void menuBusquedaGastos(){
+        int opcion;
+
+        do {
+            Consola.titulo("BUSQUEDA DE GASTOS");
+            System.out.println("1 - Gastos historicos");
+            System.out.println("2 - Gastos anuales");
+            System.out.println("3 - Gastos mensuales");
+            System.out.println("4 - Gastos inactivos");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 3);
+
+            switch (opcion) {
+                case 1:
+                    menuBusquedaGastosHistoricos();
+                    break;
+                case 2:
+                    menuBusquedaGastosAnuales();
+                    break;
+
+                case 3:
+                    menuBusquedaGastosMensuales();
+                    break;
+
+                case 4:
+                    try {
+                        Consola.mostrarLista(gastoService.buscarPorInactivos(admin.getIdGimnasio()), "No hay gastos inactivos registrados en tu gimnasio.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuBusquedaGastosHistoricos(){
+        int opcion;
+
+        do {
+            Consola.titulo("BUSQUEDA DE GASTOS HISTORICOS");
+            System.out.println("1 - Busqueda general");
+            System.out.println("2 - Busqueda por tipo");
+            System.out.println("3 - Busqueda por monto menor a");
+            System.out.println("4 - Busqueda por monto mayor a");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    try {
+                        Consola.mostrarLista(gastoService.buscarGastosHistoricos(admin.getIdGimnasio()), "No se encontraron gastos históricos.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    TipoGasto tipoBusqueda = seleccionarTipoGasto();
+                    if (tipoBusqueda != null) {
+                        try {
+                            Consola.mostrarLista(gastoService.buscarTipoDeGastoHistorico(admin.getIdGimnasio(), tipoBusqueda), "No se encontraron gastos históricos de ese tipo.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case 3:
+                    double montoMenor = Consola.leerDouble("Buscar gastos con monto menor a: $");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarHistoricoPorMontoMenorA(admin.getIdGimnasio(), montoMenor), "No se encontraron gastos menores a ese monto.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 4:
+                    double montoMayor = Consola.leerDouble("Buscar gastos con monto mayor a: $");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarHistoricoPorMontoMayorA(admin.getIdGimnasio(), montoMayor), "No se encontraron gastos mayores a ese monto.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuBusquedaGastosAnuales(){
+        int opcion;
+
+        do {
+            Consola.titulo("BUSQUEDA DE GASTOS ANUALES");
+            System.out.println("1 - Busqueda general");
+            System.out.println("2 - Busqueda por tipo");
+            System.out.println("3 - Busqueda por monto menor a");
+            System.out.println("4 - Busqueda por monto mayor a");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    int anioGeneral = Consola.leerEntero("Ingrese el año a buscar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarGastosAnuales(admin.getIdGimnasio(), anioGeneral), "No se encontraron gastos en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    TipoGasto tipoAnual = seleccionarTipoGasto();
+                    if (tipoAnual != null) {
+                        int anioTipo = Consola.leerEntero("Ingrese el año a buscar: ");
+                        try {
+                            Consola.mostrarLista(gastoService.buscarTipoDeGastoAnual(admin.getIdGimnasio(), tipoAnual, anioTipo), "No se encontraron gastos de ese tipo en ese año.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case 3:
+                    double montoMenorAnual = Consola.leerDouble("Buscar gastos con monto menor a: $");
+                    int anioMenor = Consola.leerEntero("Ingrese el año a buscar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarAnualPorMontoMenorA(admin.getIdGimnasio(), montoMenorAnual, anioMenor), "No se encontraron gastos menores a ese monto en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 4:
+                    double montoMayorAnual = Consola.leerDouble("Buscar gastos con monto mayor a: $");
+                    int anioMayor = Consola.leerEntero("Ingrese el año a buscar: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarAnualPorMontoMayorA(admin.getIdGimnasio(), montoMayorAnual, anioMayor), "No se encontraron gastos mayores a ese monto en ese año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuBusquedaGastosMensuales(){
+        int opcion;
+
+        do {
+            Consola.titulo("BUSQUEDA DE GASTOS MENSUALES");
+            System.out.println("1 - Busqueda general");
+            System.out.println("2 - Busqueda por tipo");
+            System.out.println("3 - Busqueda por monto menor a");
+            System.out.println("4 - Busqueda por monto mayor a");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 4);
+
+            switch (opcion) {
+                case 1:
+                    int mesGeneral = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioGeneral = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarGastosMensuales(admin.getIdGimnasio(), mesGeneral, anioGeneral), "No se encontraron gastos en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    TipoGasto tipoMensual = seleccionarTipoGasto();
+                    if (tipoMensual != null) {
+                        int mesTipo = Consola.leerEntero("Ingrese el mes (1-12): ");
+                        int anioTipo = Consola.leerEntero("Ingrese el año: ");
+                        try {
+                            Consola.mostrarLista(gastoService.buscarTipoDeGastoMensual(admin.getIdGimnasio(), tipoMensual, mesTipo, anioTipo), "No se encontraron gastos de ese tipo en ese mes/año.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case 3:
+                    double montoMenorMensual = Consola.leerDouble("Buscar gastos con monto menor a: $");
+                    int mesMenor = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioMenor = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarMensualPorMontoMenorA(admin.getIdGimnasio(), montoMenorMensual, mesMenor, anioMenor), "No se encontraron gastos menores a ese monto en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 4:
+                    double montoMayorMensual = Consola.leerDouble("Buscar gastos con monto mayor a: $");
+                    int mesMayor = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioMayor = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        Consola.mostrarLista(gastoService.buscarMensualPorMontoMayorA(admin.getIdGimnasio(), montoMayorMensual, mesMayor, anioMayor), "No se encontraron gastos mayores a ese monto en ese mes/año.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+        } while (opcion != 0);
+    }
 }

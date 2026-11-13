@@ -241,11 +241,11 @@ public class GastoCollection implements ABCMLCollection<Gasto> {
         return gastosEncontrados;
     }
 
-    public List<Gasto> buscarPorInactivos() {
+    public List<Gasto> buscarPorInactivos(int idGimnasio) {
         List<Gasto> gastosEncontrados= new ArrayList<>();
 
         for(Gasto gasto : listado){
-            if(gasto.getEstado()==0){
+            if(gasto.getEstado()==0 && gasto.getIdGimnasio() == idGimnasio){
                 gastosEncontrados.add(gasto);
             }
         }
