@@ -104,6 +104,14 @@ public class GimnasioService {
     }
 
     //BUSQUEDA
+    public Gimnasio buscarPorId(int id) throws ValorNoValidoException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID del gimnasio no es válido");
+        }
+
+        return coleccion.buscar(id);
+    }
+
     public List<Gimnasio> buscarPorNombre(String nombre){
         if(nombre==null){
             throw new ValorNoValidoException("El nombre a buscar no puede ser nulo");

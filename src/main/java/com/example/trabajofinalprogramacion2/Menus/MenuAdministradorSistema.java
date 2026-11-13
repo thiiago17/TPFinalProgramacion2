@@ -1,7 +1,13 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
+
+import java.sql.SQLException;
 
 // Menu del administrador del sistema: maneja todos los gimnasios y a los administradores
 // (quien entra y quien sale). No maneja el dia a dia de cada gimnasio: eso es del admin de gimnasio.
@@ -10,11 +16,12 @@ public class MenuAdministradorSistema {
 
     private final Administrador admin;
     private final AdministradorService administradorService;
-    // private final GimnasioService gimnasioService; -> cuando este hecho
+    private final GimnasioService gimnasioService;
 
-    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService) {
+    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService, GimnasioService gimnasioService) {
         this.admin = admin;
         this.administradorService = administradorService;
+        this.gimnasioService = gimnasioService;
     }
 
     public void mostrar() {
@@ -64,19 +71,56 @@ public class MenuAdministradorSistema {
 
             switch (opcion) {
                 case 1:
-                    // aca iria gimnasioService.verListado();
+                    Consola.mostrarLista(gimnasioService.verListado(),"No hay gimnasios");
                     break;
                 case 2:
-                    // aca iria gimnasioService.agregar(new Gimnasio(nombre));
+                    String nombre = Consola.leerTexto("Nombre del nuevo gimnasio: ");
+                    try {
+                        Gimnasio nuevoGimnasio = new Gimnasio();
+                        nuevoGimnasio.setNombre(nombre);
+                        nuevoGimnasio.setEstado(1);
+
+                        Consola.resultado(gimnasioService.agregar(nuevoGimnasio), "Gimnasio agregado correctamente", "No se pudo agregar el gimnasio");
+                    } catch (SQLException | ObjetoNuloException e) {
+                        System.err.println("Error al agregar: " + e.getMessage());
+                    }
                     break;
                 case 3:
-                    // aca iria gimnasioService.modificarNombre(id, nombre);
+                    int idModificar = Consola.leerEntero("ID del gimnasio a modificar: ");
+                    String nuevoNombre = Consola.leerTexto("Nuevo nombre: ");
+                    try {
+                        Consola.resultado(gimnasioService.modificarNombre(idModificar, nuevoNombre), "Nombre modificado correctamente", "No se pudo modificar el nombre");
+                    } catch (SQLException | ValorNoValidoException | ObjetoNuloException e) {
+                        System.err.println("Error al modificar: " + e.getMessage());
+                    }
                     break;
                 case 4:
-                    // aca iria gimnasioService.eliminar(id);
+                    int idBaja = Consola.leerEntero("ID del gimnasio a dar de baja: ");
+                    try {
+                        Gimnasio gimnasioBaja = gimnasioService.buscarPorId(idBaja);
+
+                        if (gimnasioBaja != null) {
+                            Consola.resultado(gimnasioService.baja(gimnasioBaja), "Gimnasio dado de baja correctamente", "No se pudo dar de baja");
+                        } else {
+                            System.out.println("No existe ningún gimnasio con ese ID.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error al dar de baja: " + e.getMessage());
+                    }
                     break;
                 case 5:
-                    // aca iria gimnasioService.alta(id);
+                    int idAlta = Consola.leerEntero("ID del gimnasio a reactivar: ");
+                    try {
+                        Gimnasio gimnasioAlta = gimnasioService.buscarPorId(idAlta);
+
+                        if (gimnasioAlta != null) {
+                            Consola.resultado(gimnasioService.alta(gimnasioAlta), "Gimnasio reactivado correctamente", "No se pudo reactivar");
+                        } else {
+                            System.out.println("No existe ningún gimnasio con ese ID.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error al reactivar: " + e.getMessage());
+                    }
                     break;
             }
 
