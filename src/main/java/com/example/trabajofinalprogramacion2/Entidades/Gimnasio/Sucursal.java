@@ -7,7 +7,6 @@ import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import java.util.Map;
 
 public class Sucursal extends Gimnasio {
-    private Map<Maquina, Integer> maquinas; // despues lo borro, esto va a la clase collection
     private String calle;
     private int altura;
     private String ciudad;
@@ -51,7 +50,13 @@ public class Sucursal extends Gimnasio {
         setIdGimnasio(idGimnasio);
     }
 
-    // GETTERS
+    public Sucursal(int id, String calle, int altura, String ciudad) {
+        super(id);
+        setCalle(calle);
+        setAltura(altura);
+        setCiudad(ciudad);
+    }
+// GETTERS
 
     public String getCalle() {
         return calle;

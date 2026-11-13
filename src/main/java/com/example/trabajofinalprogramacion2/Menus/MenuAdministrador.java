@@ -1,5 +1,9 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gastos.Gasto;
+import com.example.trabajofinalprogramacion2.Entidades.Gastos.TipoGasto;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.SucursalMaquina;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
 import com.example.trabajofinalprogramacion2.Entidades.Turno.Turno;
@@ -7,14 +11,21 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.GastoService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalMaquinaService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.NutricionistaService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 // Menu del administrador de un gimnasio: maneja el dia a dia de SU gimnasio
 // (personal, socios, turnos, sucursales, maquinas y gastos).
@@ -29,16 +40,22 @@ public class MenuAdministrador {
     private final NutricionistaService nutricionistaService;
     private final TurnosService turnosService;
     private final SocioService socioService;
+    private final SucursalService sucursalService;
+    private final SucursalMaquinaService sucursalMaquinaService;
+    private final GastoService gastoService;
 
     public MenuAdministrador(Administrador admin, AdministradorService administradorService,
                              EntrenadorService entrenadorService, NutricionistaService nutricionistaService,
-                             TurnosService turnosService, SocioService socioService) {
+                             TurnosService turnosService, SocioService socioService, SucursalService sucursalService, SucursalMaquinaService sucursalMaquinaService, GastoService gastoService) {
         this.admin = admin;
         this.administradorService = administradorService;
         this.entrenadorService = entrenadorService;
         this.nutricionistaService = nutricionistaService;
         this.turnosService = turnosService;
         this.socioService = socioService;
+        this.sucursalService = sucursalService;
+        this.sucursalMaquinaService = sucursalMaquinaService;
+        this.gastoService = gastoService;
     }
 
     public void mostrar() {
@@ -481,19 +498,76 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    // aca iria sucursalService.buscarPorGimnasio(admin.getIdGimnasio());
+                    Consola.mostrarLista(sucursalService.buscarPorGimnasio(admin.getIdGimnasio()),"No hay sucursales");
                     break;
                 case 2:
-                    // aca iria sucursalService.agregar(new Sucursal(calle, altura, ciudad, admin.getIdGimnasio()));
+                    String calle=Consola.leerTexto("Calle: ");
+                    int altura=Consola.leerEntero("Altura: ");
+                    String ciudad=Consola.leerTexto("Ciudad: ");
+
+                    try{
+                        Sucursal sucursal= new Sucursal(calle, altura, ciudad, admin.getIdGimnasio());
+                        sucursal.setEstado(1);
+
+                       Consola.resultado(sucursalService.agregar(sucursal),"Agregado correctamente","No se pudo agregar");
+                    }catch(SQLException | ObjetoNuloException e){
+                        System.err.println("Error al intentar agregar: " + e.getMessage());
+                    }
                     break;
                 case 3:
-                    // aca iria sucursalService.modificarDireccion(id, calle, altura, ciudad);
+                    int id = Consola.leerEntero("ID de la sucursal a modificar: ");
+
+                    try {
+                        Sucursal sucursalExistente = sucursalService.buscarPorId(id);
+
+                        if (sucursalExistente != null) {
+                            String calle2 = Consola.leerTexto("Calle nueva: ");
+                            int altura2 = Consola.leerEntero("Altura nueva: ");
+                            String ciudad2 = Consola.leerTexto("Ciudad nueva: ");
+
+                            sucursalExistente.setCalle(calle2);
+                            sucursalExistente.setAltura(altura2);
+                            sucursalExistente.setCiudad(ciudad2);
+
+                            Consola.resultado(sucursalService.modificar(sucursalExistente), "Modificado correctamente", "No se pudo modificar");
+                        } else {
+                            System.out.println("No existe ninguna sucursal con ese ID.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 4:
-                    // aca iria sucursalService.eliminar(id);
+                    int idBaja = Consola.leerEntero("ID de la sucursal a modificar: ");
+
+                    try {
+                        Sucursal sucursalABajar = sucursalService.buscarPorId(idBaja);
+
+                        if (sucursalABajar != null) {
+                            Consola.resultado(sucursalService.baja(sucursalABajar), "Sucursal dada de baja correctamente", "No se pudo dar de baja");
+                        } else {
+                            System.out.println("No existe ninguna sucursal con ese ID.");
+                        }
+
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error al intentar dar de baja: " + e.getMessage());
+                    }
                     break;
                 case 5:
-                    // aca iria sucursalService.alta(id);
+                    int idAlta = Consola.leerEntero("ID de la sucursal a dar de alta: ");
+
+                    try {
+                        Sucursal sucursalAAlta = sucursalService.buscarPorId(idAlta);
+
+                        if (sucursalAAlta != null) {
+                            Consola.resultado(sucursalService.alta(sucursalAAlta), "Sucursal dada de alta correctamente", "No se pudo dar de alta");
+                        } else {
+                            System.out.println("No existe ninguna sucursal con ese ID.");
+                        }
+
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error al intentar dar de alta: " + e.getMessage());
+                    }
                     break;
             }
 
@@ -511,7 +585,7 @@ public class MenuAdministrador {
             Consola.titulo("MÁQUINAS");
             System.out.println("1 - Ver máquinas");
             System.out.println("2 - Agregar máquina");
-            System.out.println("3 - Modificar máquina");
+            System.out.println("3 - Modificar cantidad");
             System.out.println("4 - Dar de baja máquina");
             System.out.println("5 - Reactivar máquina");
             System.out.println("0 - Volver");
@@ -520,22 +594,104 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    // aca iria maquinaService.verListado();
+                    int idSucursalVer = Consola.leerEntero("Ingrese el ID de su Sucursal: ");
+                    try {
+                        Sucursal sucursalVer = sucursalService.buscarPorId(idSucursalVer);
+
+                        if (sucursalVer != null && sucursalVer.getIdGimnasio() == admin.getIdGimnasio()) { //que coincida con el gimnasio del admin
+                            Consola.mostrarLista(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursalVer), "No hay máquinas activas en esta sucursal");
+                        } else {
+                            System.out.println("Esa sucursal no existe o no pertenece a tu gimnasio.");
+                        }
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 2:
-                    // aca iria maquinaService.agregar(new Maquina(nombre, descripcion, pesoLimite, grupoMuscular));
+                    int idSucursalAgregar = Consola.leerEntero("Ingrese el ID de su Sucursal: ");
+                    try {
+                        Sucursal sucursalAgregar = sucursalService.buscarPorId(idSucursalAgregar);
+
+                        if (sucursalAgregar != null && sucursalAgregar.getIdGimnasio() == admin.getIdGimnasio()) {
+                            int idMaquina = Consola.leerEntero("ID de la Máquina a agregar: ");
+                            int cantidad = Consola.leerEntero("Cantidad: ");
+
+                            SucursalMaquina sucursalMaquina = new SucursalMaquina();
+                            sucursalMaquina.setIdSucursal(idSucursalAgregar);
+                            sucursalMaquina.setIdMaquina(idMaquina);
+                            sucursalMaquina.setCantidad(cantidad);
+                            sucursalMaquina.setEstado(1);
+
+                            Consola.resultado(sucursalMaquinaService.agregar(sucursalMaquina), "Máquina agregada a la sucursal correctamente", "No se pudo agregar");
+                        } else {
+                            System.out.println("Esa sucursal no existe o no pertenece a tu gimnasio.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 3:
-                    // aca iria maquinaService.modificar(maquina);
+                    int idRelacionModificar = Consola.leerEntero("ID del registro a modificar: ");
+                    try {
+                        SucursalMaquina relacionBuscada = sucursalMaquinaService.buscarPorId(idRelacionModificar);
+
+                        if (relacionBuscada != null) { //si existe el registro
+                            Sucursal sucMod = sucursalService.buscarPorId(relacionBuscada.getIdSucursal()); //toma el id de la sucursal y la busca
+
+                            if (sucMod != null && sucMod.getIdGimnasio() == admin.getIdGimnasio()) { //verifica que la sucursal pertenezca al gimnasio del admin
+                                int nuevaCantidad = Consola.leerEntero("Nueva cantidad: ");
+                                Consola.resultado(sucursalMaquinaService.modificarCantidad(idRelacionModificar, nuevaCantidad), "Cantidad modificada correctamente", "No se pudo modificar");
+                            } else {
+                                System.out.println("No tenés permisos para modificar registros de otro gimnasio.");
+                            }
+                        } else {
+                            System.out.println("No existe ese registro.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 4:
-                    // aca iria maquinaService.eliminar(id);
+                    int idRelacionBaja = Consola.leerEntero("ID del registro a dar de baja: ");
+                    try {
+                        SucursalMaquina relacionABajar = sucursalMaquinaService.buscarPorId(idRelacionBaja);
+
+                        if (relacionABajar != null) {
+                            Sucursal sucursalBaja = sucursalService.buscarPorId(relacionABajar.getIdSucursal());
+
+                            if (sucursalBaja != null && sucursalBaja.getIdGimnasio() == admin.getIdGimnasio()) {
+                                Consola.resultado(sucursalMaquinaService.baja(relacionABajar), "Máquina dada de baja en esta sucursal", "No se pudo dar de baja");
+                            } else {
+                                System.out.println("No tenés permisos para dar de baja registros de otro gimnasio.");
+                            }
+                        } else {
+                            System.out.println("No existe ese registro.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 5:
-                    // aca iria maquinaService.alta(id);
+                    int idRelacionAlta = Consola.leerEntero("ID del registro a reactivar: ");
+                    try {
+                        SucursalMaquina relacionAAlta = sucursalMaquinaService.buscarPorId(idRelacionAlta);
+
+                        if (relacionAAlta != null) {
+                            Sucursal sucursalAlta = sucursalService.buscarPorId(relacionAAlta.getIdSucursal());
+
+                            if (sucursalAlta != null && sucursalAlta.getIdGimnasio() == admin.getIdGimnasio()) {
+                                Consola.resultado(sucursalMaquinaService.alta(relacionAAlta), "Máquina reactivada correctamente", "No se pudo reactivar");
+                            } else {
+                                System.out.println("No tenés permisos para reactivar registros de otro gimnasio.");
+                            }
+                        } else {
+                            System.out.println("No existe ese registro.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
             }
-
 
         } while (opcion != 0);
     }
@@ -548,7 +704,7 @@ public class MenuAdministrador {
 
         do {
             Consola.titulo("GASTOS");
-            System.out.println("1 - Ver gastos");
+            System.out.println("1 - Ver gastos"); // despues deberiamos hacer un menu extra para ver historico, anual y mensual
             System.out.println("2 - Registrar gasto");
             System.out.println("3 - Total del mes");
             System.out.println("4 - Total del mes por tipo");
@@ -560,22 +716,136 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    // aca iria gastoService.buscarPorGimnasio(admin.getIdGimnasio());
+                    try {
+                        Consola.mostrarLista(gastoService.buscarGastosHistoricos(admin.getIdGimnasio()), "No hay gastos registrados en tu gimnasio");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 2:
-                    // aca iria gastoService.agregar(new Gasto(detalles, monto, tipo, fecha, admin.getIdGimnasio()));
+                    try {
+                        String detalles = Consola.leerTexto("Detalles del gasto: ");
+                        double monto = Consola.leerDouble("Monto: $");
+
+                        System.out.println("--- Tipo de Gasto ---");
+                        System.out.println("1 - Luz");
+                        System.out.println("2 - Agua");
+                        System.out.println("3 - Gas");
+                        System.out.println("4 - Mantenimiento");
+                        System.out.println("5 - Internet");
+                        System.out.println("6 - Empleados");
+                        System.out.println("7 - Alquiler");
+                        System.out.println("8 - Otros");
+                        int opcionTipo = Consola.leerEntero("Seleccione una opción: ");
+
+                        TipoGasto tipo = null;
+
+                        switch (opcionTipo) {
+                            case 1: tipo = TipoGasto.LUZ; break;
+                            case 2: tipo = TipoGasto.AGUA; break;
+                            case 3: tipo = TipoGasto.GAS; break;
+                            case 4: tipo = TipoGasto.MANTENIMIENTO; break;
+                            case 5: tipo = TipoGasto.INTERNET; break;
+                            case 6: tipo = TipoGasto.EMPLEADOS; break;
+                            case 7: tipo = TipoGasto.ALQUILER; break;
+                            case 8: tipo = TipoGasto.OTROS; break;
+                            default:
+                                System.out.println("Opción de tipo de gasto inválida. Operación cancelada.");
+                                break;
+                        }
+
+                        // Avanza solo si el usuario eligio una opcion correcta
+                        if (tipo != null) {
+                            Gasto nuevoGasto = new Gasto();
+                            nuevoGasto.setDetalles(detalles);
+                            nuevoGasto.setMonto(monto);
+                            nuevoGasto.setTipoGasto(tipo);
+                            nuevoGasto.setFecha(LocalDate.now());
+                            nuevoGasto.setIdGimnasio(admin.getIdGimnasio());
+                            nuevoGasto.setEstado(1);
+
+                            Consola.resultado(gastoService.agregar(nuevoGasto), "Gasto registrado correctamente", "No se pudo registrar");
+                        }
+
+                    } catch (SQLException | ObjetoNuloException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 3:
-                    // aca iria gastoService.calcularTotalMensual(admin.getIdGimnasio());
+                    int mes = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anio = Consola.leerEntero("Ingrese el año: ");
+                    try {
+                        double totalMes = gastoService.calcularTotalMensual(admin.getIdGimnasio(), mes, anio);
+                        System.out.println("El total de gastos en " + mes + "/" + anio + " es: $" + totalMes);
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 4:
-                    // aca iria gastoService.calcularTotalMensualPorTipo(admin.getIdGimnasio(), tipo);
+                    int mesTipo = Consola.leerEntero("Ingrese el mes (1-12): ");
+                    int anioTipo = Consola.leerEntero("Ingrese el año: ");
+
+                    System.out.println("--- Seleccione el tipo de gasto a calcular ---");
+                    System.out.println("1 - Luz");
+                    System.out.println("2 - Agua");
+                    System.out.println("3 - Gas");
+                    System.out.println("4 - Mantenimiento");
+                    System.out.println("5 - Internet");
+                    System.out.println("6 - Empleados");
+                    System.out.println("7 - Alquiler");
+                    System.out.println("8 - Otros");
+                    int opcTipoBusqueda = Consola.leerEntero("Opción: ");
+
+                    TipoGasto tipoBusqueda = null;
+
+                    switch (opcTipoBusqueda) {
+                        case 1: tipoBusqueda = TipoGasto.LUZ; break;
+                        case 2: tipoBusqueda = TipoGasto.AGUA; break;
+                        case 3: tipoBusqueda = TipoGasto.GAS; break;
+                        case 4: tipoBusqueda = TipoGasto.MANTENIMIENTO; break;
+                        case 5: tipoBusqueda = TipoGasto.INTERNET; break;
+                        case 6: tipoBusqueda = TipoGasto.EMPLEADOS; break;
+                        case 7: tipoBusqueda = TipoGasto.ALQUILER; break;
+                        case 8: tipoBusqueda = TipoGasto.OTROS; break;
+                        default:
+                            System.out.println("Opción inválida. Búsqueda cancelada.");
+                            break;
+                    }
+
+                    if (tipoBusqueda != null) {
+                        try {
+                            double totalMesTipo = gastoService.calcularTotalMensualPorTipo(admin.getIdGimnasio(), mesTipo, anioTipo, tipoBusqueda);
+                            System.out.println("Total gastado en " + tipoBusqueda + " (" + mesTipo + "/" + anioTipo + "): $" + totalMesTipo);
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                    }
                     break;
                 case 5:
-                    // aca iria gastoService.calcularTotalHistorico(admin.getIdGimnasio());
+                    try {
+                        double totalHistorico = gastoService.calcularTotalHistorico(admin.getIdGimnasio());
+                        System.out.println("Total histórico de gastos del gimnasio: $" + totalHistorico);
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 6:
-                    // aca iria gastoService.eliminar(id);
+                    int idBaja = Consola.leerEntero("ID del gasto a dar de baja: ");
+                    try {
+                        Gasto gastoABajar = gastoService.buscarPorId(idBaja);
+
+                        if (gastoABajar != null) {
+                            if (gastoABajar.getIdGimnasio() == admin.getIdGimnasio()) {
+                                Consola.resultado(gastoService.baja(gastoABajar), "Gasto dado de baja correctamente", "No se pudo dar de baja");
+                            } else {
+                                System.out.println("Acceso denegado: Este gasto no pertenece a tu gimnasio.");
+                            }
+                        } else {
+                            System.out.println("No existe ningún gasto con ese ID.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
                     break;
             }
 

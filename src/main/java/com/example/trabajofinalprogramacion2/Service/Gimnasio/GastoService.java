@@ -191,6 +191,13 @@ public class GastoService {
     }
 
     //BUSQUEDA
+    public Gasto buscarPorId(int id) throws ValorNoValidoException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID del gasto no es válido");
+        }
+        return coleccion.buscar(id);
+    }
+
     public List<Gasto> buscarGastosHistoricos(int idGimnasio){
         if(idGimnasio <= 0){
             throw new ValorNoValidoException("El parametro de busqueda no es valido");

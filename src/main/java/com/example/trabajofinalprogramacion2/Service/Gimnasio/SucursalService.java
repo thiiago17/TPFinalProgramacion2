@@ -160,6 +160,14 @@ public class SucursalService {
 
 
     //BUSQUEDA (los que devuelven un objeto incluyen a los inactivos (estado=0))
+    public Sucursal buscarPorId(int id) throws ValorNoValidoException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID de la sucursal no es válido");
+        }
+
+        return coleccion.buscar(id);
+    }
+
     public Sucursal buscarPorDireccion(String calle, int altura) throws ValorNoValidoException{
         if(calle==null || altura < 0){
             throw new ValorNoValidoException("Alguno de los valores de la direccion no es valido");

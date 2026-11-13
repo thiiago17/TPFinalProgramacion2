@@ -108,6 +108,13 @@ public class SucursalMaquinaService {
     }
 
     // BÚSQUEDAS Y FILTROS
+    public SucursalMaquina buscarPorId(int id) throws ValorNoValidoException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID de la relación no es válido");
+        }
+        return coleccion.buscar(id);
+    }
+
     public List<SucursalMaquina> buscarActivosPorIdSucursal(int idSucursal) throws ValorNoValidoException {
         if (idSucursal <= 0) {
             throw new ValorNoValidoException("El ID de la sucursal no es válido");
