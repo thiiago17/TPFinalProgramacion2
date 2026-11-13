@@ -61,19 +61,23 @@ public class MenuAdministradorSistema {
         do {
             Consola.titulo("GIMNASIOS");
             System.out.println("1 - Ver gimnasios");
-            System.out.println("2 - Agregar gimnasio");
-            System.out.println("3 - Modificar nombre");
-            System.out.println("4 - Dar de baja gimnasio");
-            System.out.println("5 - Reactivar gimnasio");
+            System.out.println("2 - Busqueda de gimnasios");
+            System.out.println("3 - Agregar gimnasio");
+            System.out.println("4 - Modificar nombre");
+            System.out.println("5 - Dar de baja gimnasio");
+            System.out.println("6 - Reactivar gimnasio");
             System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 5);
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(gimnasioService.verListado(),"No hay gimnasios");
+                    menuListadoGimnasios();
                     break;
                 case 2:
+                    menuBusquedaGimnasios();
+                    break;
+                case 3:
                     String nombre = Consola.leerTexto("Nombre del nuevo gimnasio: ");
                     try {
                         Gimnasio nuevoGimnasio = new Gimnasio();
@@ -85,7 +89,7 @@ public class MenuAdministradorSistema {
                         System.err.println("Error al agregar: " + e.getMessage());
                     }
                     break;
-                case 3:
+                case 4:
                     int idModificar = Consola.leerEntero("ID del gimnasio a modificar: ");
                     String nuevoNombre = Consola.leerTexto("Nuevo nombre: ");
                     try {
@@ -94,7 +98,7 @@ public class MenuAdministradorSistema {
                         System.err.println("Error al modificar: " + e.getMessage());
                     }
                     break;
-                case 4:
+                case 5:
                     int idBaja = Consola.leerEntero("ID del gimnasio a dar de baja: ");
                     try {
                         Gimnasio gimnasioBaja = gimnasioService.buscarPorId(idBaja);
@@ -108,7 +112,7 @@ public class MenuAdministradorSistema {
                         System.err.println("Error al dar de baja: " + e.getMessage());
                     }
                     break;
-                case 5:
+                case 6:
                     int idAlta = Consola.leerEntero("ID del gimnasio a reactivar: ");
                     try {
                         Gimnasio gimnasioAlta = gimnasioService.buscarPorId(idAlta);
@@ -239,4 +243,94 @@ public class MenuAdministradorSistema {
     private void menuPerfil() {
         MenuPerfil.mostrar(admin, administradorService);
     }
+
+    //LISTADOS DE GIMNASIOS
+    private void menuListadoGimnasios(){
+        int opcion;
+
+        do {
+            Consola.titulo("LISTADO DE GIMNASIOS");
+            System.out.println("1 - Listado general");
+            System.out.println("2 - Listado general ordenado por nombre");
+            System.out.println("3 - Listado de activos ordenado por nombre");
+            System.out.println("4 - Listado de inactivos ordenado por nombre");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 5);
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("--- LISTADO GENERAL ---");
+                    Consola.mostrarLista(gimnasioService.verListado(), "No hay gimnasios registrados en el sistema.");
+                    break;
+
+                case 2:
+                    System.out.println("--- LISTADO GENERAL (ORDENADO POR NOMBRE) ---");
+                    Consola.mostrarLista(gimnasioService.verListadoOrdenadoPorNombre(), "No hay gimnasios registrados en el sistema.");
+                    break;
+
+                case 3:
+                    System.out.println("--- GIMNASIOS ACTIVOS (ORDENADO POR NOMBRE) ---");
+                    Consola.mostrarLista(gimnasioService.verActivosOrdenadoPorNombre(), "No hay gimnasios activos registrados.");
+                    break;
+
+                case 4:
+                    System.out.println("--- GIMNASIOS INACTIVOS (ORDENADO POR NOMBRE) ---");
+                    Consola.mostrarLista(gimnasioService.verInactivosOrdenadoPorNombre(), "No hay gimnasios inactivos registrados.");
+                    break;
+            }
+
+        } while (opcion != 0);
+    }
+
+    //BUSQUEDA DE GIMNASIOS
+    private void menuBusquedaGimnasios(){
+            int opcion;
+
+            do {
+                Consola.titulo("BUSQUEDA DE GIMNASIOS");
+                System.out.println("1 - Buscar por ID");
+                System.out.println("2 - Buscar por nombre");
+                System.out.println("3 - Buscar por activos");
+                System.out.println("4 - Buscar por inactivos");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 5);
+
+                switch (opcion) {
+                    case 1:
+                        int idGim = Consola.leerEntero("Ingrese el ID del gimnasio: ");
+                        try {
+                            Gimnasio gimEncontrado = gimnasioService.buscarPorId(idGim);
+                            if (gimEncontrado != null) {
+                                System.out.println("Gimnasio encontrado:");
+                                System.out.println(gimEncontrado.toString());
+                            } else {
+                                System.out.println("No se encontró ningún gimnasio con el ID: " + idGim);
+                            }
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                        break;
+                    case 2:
+                        String nombreABuscar = Consola.leerTexto("Ingrese el nombre del gimnasio a buscar: ");
+                        try {
+                            Consola.mostrarLista(gimnasioService.buscarPorNombre(nombreABuscar), "No se encontraron gimnasios con ese nombre.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                        break;
+                    case 3:
+                        System.out.println("--- GIMNASIOS ACTIVOS ---");
+                        Consola.mostrarLista(gimnasioService.buscarPorActivos(), "No hay gimnasios activos en el sistema.");
+                        break;
+
+                    case 4:
+                        System.out.println("--- GIMNASIOS INACTIVOS ---");
+                        Consola.mostrarLista(gimnasioService.buscarPorInactivos(), "No hay gimnasios inactivos en el sistema.");
+                        break;
+                }
+
+            } while (opcion != 0);
+        }
 }

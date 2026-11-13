@@ -112,7 +112,7 @@ public class GimnasioService {
         return coleccion.buscar(id);
     }
 
-    public List<Gimnasio> buscarPorNombre(String nombre){
+    public List<Gimnasio> buscarPorNombre(String nombre) throws ValorNoValidoException{
         if(nombre==null){
             throw new ValorNoValidoException("El nombre a buscar no puede ser nulo");
         }
