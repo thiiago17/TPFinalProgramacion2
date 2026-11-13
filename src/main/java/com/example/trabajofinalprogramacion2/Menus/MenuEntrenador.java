@@ -39,7 +39,7 @@ public class MenuEntrenador {
                 case 2: {
                     int idSocio = Consola.leerEntero("ID del socio a agregar: ");
                     Consola.resultado(entrenadorService.agregarSocio(entrenador.getId(), idSocio),
-                            "Alumno agregado.", "No se pudo: el socio no existe, está dado de baja o ya es su alumno");
+                            "Alumno agregado", "No se pudo: el socio no existe, está dado de baja o ya es su alumno");
                     break;
                 }
                 case 3: {
