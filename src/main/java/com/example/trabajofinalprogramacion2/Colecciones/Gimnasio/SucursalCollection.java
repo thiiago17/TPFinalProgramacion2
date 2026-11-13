@@ -112,6 +112,30 @@ public class SucursalCollection implements ABCMLCollection<Sucursal> {
         return null;
     }
 
+    public List<Sucursal> buscarActivosPorGimnasio(int idGimnasio) {
+        List<Sucursal> sucursalesEncontradas = new ArrayList<>();
+
+        for (Sucursal sucursal : listado) {
+            if (sucursal.getEstado() == 1 && sucursal.getIdGimnasio() == idGimnasio) {
+                sucursalesEncontradas.add(sucursal);
+            }
+        }
+
+        return sucursalesEncontradas;
+    }
+
+    public List<Sucursal> buscarInactivosPorGimnasio(int idGimnasio) {
+        List<Sucursal> sucursalesEncontradas = new ArrayList<>();
+
+        for (Sucursal sucursal : listado) {
+            if (sucursal.getEstado() == 0 && sucursal.getIdGimnasio() == idGimnasio) {
+                sucursalesEncontradas.add(sucursal);
+            }
+        }
+
+        return sucursalesEncontradas;
+    }
+
     public List<Sucursal> buscarPorActivos(){
         List<Sucursal> sucursalesEncontradas= new ArrayList<>();
 

@@ -488,10 +488,11 @@ public class MenuAdministrador {
         do {
             Consola.titulo("SUCURSALES");
             System.out.println("1 - Ver sucursales del gimnasio");
-            System.out.println("2 - Agregar sucursal");
-            System.out.println("3 - Modificar dirección");
-            System.out.println("4 - Dar de baja sucursal");
-            System.out.println("5 - Reactivar sucursal");
+            System.out.println("2 - Buscar sucursales");
+            System.out.println("3 - Agregar sucursal");
+            System.out.println("4 - Modificar sucursales");
+            System.out.println("5 - Dar de baja sucursal");
+            System.out.println("6 - Reactivar sucursal");
             System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 5);
@@ -501,6 +502,8 @@ public class MenuAdministrador {
                     Consola.mostrarLista(sucursalService.buscarPorGimnasio(admin.getIdGimnasio()),"No hay sucursales");
                     break;
                 case 2:
+                    menuBusquedaSucursales();
+                case 3:
                     String calle=Consola.leerTexto("Calle: ");
                     int altura=Consola.leerEntero("Altura: ");
                     String ciudad=Consola.leerTexto("Ciudad: ");
@@ -514,30 +517,10 @@ public class MenuAdministrador {
                         System.err.println("Error al intentar agregar: " + e.getMessage());
                     }
                     break;
-                case 3:
-                    int id = Consola.leerEntero("ID de la sucursal a modificar: ");
-
-                    try {
-                        Sucursal sucursalExistente = sucursalService.buscarPorId(id);
-
-                        if (sucursalExistente != null) {
-                            String calle2 = Consola.leerTexto("Calle nueva: ");
-                            int altura2 = Consola.leerEntero("Altura nueva: ");
-                            String ciudad2 = Consola.leerTexto("Ciudad nueva: ");
-
-                            sucursalExistente.setCalle(calle2);
-                            sucursalExistente.setAltura(altura2);
-                            sucursalExistente.setCiudad(ciudad2);
-
-                            Consola.resultado(sucursalService.modificar(sucursalExistente), "Modificado correctamente", "No se pudo modificar");
-                        } else {
-                            System.out.println("No existe ninguna sucursal con ese ID");
-                        }
-                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
-                        System.err.println("Error: " + e.getMessage());
-                    }
-                    break;
                 case 4:
+                    menuModificacionSucursales();
+                    break;
+                case 5:
                     int idBaja = Consola.leerEntero("ID de la sucursal a modificar: ");
 
                     try {
@@ -553,7 +536,7 @@ public class MenuAdministrador {
                         System.err.println("Error al intentar dar de baja: " + e.getMessage());
                     }
                     break;
-                case 5:
+                case 6:
                     int idAlta = Consola.leerEntero("ID de la sucursal a dar de alta: ");
 
                     try {
@@ -567,6 +550,140 @@ public class MenuAdministrador {
 
                     } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
                         System.err.println("Error al intentar dar de alta: " + e.getMessage());
+                    }
+                    break;
+            }
+
+
+        } while (opcion != 0);
+    }
+
+    private void menuBusquedaSucursales(){
+        int opcion;
+
+        do {
+            Consola.titulo("BUSQUEDA DE SUCURSALES");
+            System.out.println("1 - Buscar por direccion");
+            System.out.println("2 - Buscar por ciudad");
+            System.out.println("3 - Buscar por activos");
+            System.out.println("4 - Buscar por inactivos");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 5);
+
+            switch (opcion) {
+                case 1:
+                    int idTodo = Consola.leerEntero("ID de la sucursal a modificar: ");
+                    try {
+                        Sucursal sucursalExistente = sucursalService.buscarPorId(idTodo);
+
+                        if (sucursalExistente != null) {
+                            if (sucursalExistente.getIdGimnasio() == admin.getIdGimnasio()) {
+                                String calleModificada = Consola.leerTexto("Nueva calle: ");
+                                int alturaModificada = Consola.leerEntero("Nueva altura: ");
+                                String ciudadModificada = Consola.leerTexto("Nueva ciudad: ");
+
+                                sucursalExistente.setCalle(calleModificada);
+                                sucursalExistente.setAltura(alturaModificada);
+                                sucursalExistente.setCiudad(ciudadModificada);
+
+                                Consola.resultado(sucursalService.modificar(sucursalExistente), "Sucursal modificada completamente", "No se pudo modificar la sucursal");
+                            } else {
+                                System.out.println("Acceso denegado: No puede modificar esta sucursal.");
+                            }
+                        } else {
+                            System.out.println("No existe ninguna sucursal con ese ID.");
+                        }
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    int idDir = Consola.leerEntero("ID de la sucursal a modificar: ");
+                    String nuevaCalle = Consola.leerTexto("Nueva calle: ");
+                    int nuevaAltura = Consola.leerEntero("Nueva altura: ");
+                    try {
+                        boolean okCalle = sucursalService.modificarCalle(idDir, nuevaCalle, admin.getIdGimnasio());
+                        boolean okAltura = sucursalService.modificarAltura(idDir, nuevaAltura, admin.getIdGimnasio());
+
+                        Consola.resultado(okCalle, "Calle modificada correctamente", "No se pudo modificar la calle");
+                        Consola.resultado(okAltura,"Altura modificada correctamente", "No se pudo modificar la altura");
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 3:
+                    int idCiu = Consola.leerEntero("ID de la sucursal a modificar: ");
+                    String nuevaCiudad = Consola.leerTexto("Nueva ciudad: ");
+                    try {
+                        Consola.resultado(sucursalService.modificarCiudad(idCiu, nuevaCiudad, admin.getIdGimnasio()), "Ciudad modificada correctamente", "No se pudo modificar la ciudad");
+                    } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+            }
+
+
+        } while (opcion != 0);
+    }
+
+    private void menuModificacionSucursales(){
+        int opcion;
+
+        do {
+            Consola.titulo("MODIFICACION DE SUCURSALES");
+            System.out.println("1 - Modificar todo");
+            System.out.println("2 - Modificar direccion");
+            System.out.println("3 - Modificar ciudad");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 5);
+
+            switch (opcion) {
+                case 1:
+                    String calle = Consola.leerTexto("Ingrese la calle a buscar: ");
+                    int altura = Consola.leerEntero("Ingrese la altura: ");
+                    try {
+                        Sucursal sucursalEncontrada = sucursalService.buscarPorGimnasioYDireccion(admin.getIdGimnasio(), calle, altura);
+
+                        if (sucursalEncontrada != null) {
+                            System.out.println("--- SUCURSAL ENCONTRADA ---");
+                            System.out.println(sucursalEncontrada.toString());
+                        } else {
+                            System.out.println("No se encontró ninguna sucursal en " + calle + " " + altura + " para tu gimnasio.");
+                        }
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    String ciudad = Consola.leerTexto("Ingrese la ciudad a buscar: ");
+                    try {
+                        System.out.println("--- SUCURSALES ENCONTRADAS ---");
+                        Consola.mostrarLista(sucursalService.buscarPorGimnasioYCiudad(admin.getIdGimnasio(), ciudad), "No se encontraron sucursales en esa ciudad para tu gimnasio.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("--- SUCURSALES ACTIVAS ---");
+                    try {
+                        Consola.mostrarLista(sucursalService.buscarActivosPorGimnasio(admin.getIdGimnasio()), "No tenés sucursales activas en este gimnasio.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("--- SUCURSALES INACTIVAS ---");
+                    try {
+                        Consola.mostrarLista(sucursalService.buscarInactivosPorGimnasio(admin.getIdGimnasio()), "No tenés sucursales inactivas en este gimnasio.");
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
                     }
                     break;
             }

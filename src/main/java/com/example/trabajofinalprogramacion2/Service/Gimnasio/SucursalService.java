@@ -83,81 +83,95 @@ public class SucursalService {
         return false;
     }
 
-    public boolean modificarCalle(int id, String calleNueva) throws SQLException, ValorNoValidoException, ObjetoNuloException{
-        if(id <= 0 || calleNueva==null){
+    public boolean modificarCalle(int id, String calleNueva, int idGimnasioAdmin) throws SQLException, ValorNoValidoException, ObjetoNuloException {
+        if(id <= 0 || calleNueva == null) {
             throw new ValorNoValidoException("Los valores son nulos o no validos");
         }
 
-        Sucursal sucursalBuscada= coleccion.buscar(id);
-        if(sucursalBuscada==null){
+        Sucursal sucursalBuscada = coleccion.buscar(id);
+        if(sucursalBuscada == null) {
             throw new ObjetoNuloException("La sucursal a modificar no existe");
         }
 
-        Sucursal sucursalCopia= new Sucursal();
+        if(sucursalBuscada.getIdGimnasio() != idGimnasioAdmin) {
+            throw new ValorNoValidoException("Acceso denegado: No tenés permisos para modificar una sucursal de otro gimnasio.");
+        }
+
+        Sucursal sucursalCopia = new Sucursal();
         sucursalCopia.setId(sucursalBuscada.getId());
         sucursalCopia.setAltura(sucursalBuscada.getAltura());
         sucursalCopia.setCiudad(sucursalBuscada.getCiudad());
         sucursalCopia.setEstado(sucursalBuscada.getEstado());
         sucursalCopia.setIdGimnasio(sucursalBuscada.getIdGimnasio());
+
         sucursalCopia.setCalle(calleNueva);
 
-        if(dao.modificar(sucursalCopia)){
-            return coleccion.modificarCalle(id,calleNueva);
+        if(dao.modificar(sucursalCopia)) {
+            return coleccion.modificarCalle(id, calleNueva);
         }
 
         return false;
     }
 
-    public boolean modificarAltura(int id, int alturaNueva) throws SQLException, ValorNoValidoException, ObjetoNuloException{
+    public boolean modificarAltura(int id, int alturaNueva, int idGimnasioAdmin) throws SQLException, ValorNoValidoException, ObjetoNuloException {
         if(id <= 0 || alturaNueva < 0){
             throw new ValorNoValidoException("Los valores son nulos o no validos");
         }
 
-        Sucursal sucursalBuscada= coleccion.buscar(id);
-        if(sucursalBuscada==null){
+        Sucursal sucursalBuscada = coleccion.buscar(id);
+        if(sucursalBuscada == null){
             throw new ObjetoNuloException("La sucursal a modificar no existe");
         }
 
-        Sucursal sucursalCopia= new Sucursal();
+        if(sucursalBuscada.getIdGimnasio() != idGimnasioAdmin) {
+            throw new ValorNoValidoException("Acceso denegado: No tenés permisos para modificar una sucursal de otro gimnasio.");
+        }
+
+        Sucursal sucursalCopia = new Sucursal();
         sucursalCopia.setId(sucursalBuscada.getId());
         sucursalCopia.setCalle(sucursalBuscada.getCalle());
         sucursalCopia.setCiudad(sucursalBuscada.getCiudad());
         sucursalCopia.setEstado(sucursalBuscada.getEstado());
         sucursalCopia.setIdGimnasio(sucursalBuscada.getIdGimnasio());
+
         sucursalCopia.setAltura(alturaNueva);
 
         if(dao.modificar(sucursalCopia)){
-            return coleccion.modificarAltura(id,alturaNueva);
+            return coleccion.modificarAltura(id, alturaNueva);
         }
 
         return false;
     }
 
-    public boolean modificarCiudad(int id, String ciudadNueva) throws SQLException, ValorNoValidoException, ObjetoNuloException{
-        if(id <= 0 || ciudadNueva==null){
+    public boolean modificarCiudad(int id, String ciudadNueva, int idGimnasioAdmin) throws SQLException, ValorNoValidoException, ObjetoNuloException {
+        if(id <= 0 || ciudadNueva == null){
             throw new ValorNoValidoException("Los valores son nulos o no validos");
         }
 
-        Sucursal sucursalBuscada= coleccion.buscar(id);
-        if(sucursalBuscada==null){
+        Sucursal sucursalBuscada = coleccion.buscar(id);
+        if(sucursalBuscada == null){
             throw new ObjetoNuloException("La sucursal a modificar no existe");
         }
 
-        Sucursal sucursalCopia= new Sucursal();
+        if(sucursalBuscada.getIdGimnasio() != idGimnasioAdmin) {
+            throw new ValorNoValidoException("Acceso denegado: No tenés permisos para modificar una sucursal de otro gimnasio.");
+        }
+
+        Sucursal sucursalCopia = new Sucursal();
         sucursalCopia.setId(sucursalBuscada.getId());
         sucursalCopia.setAltura(sucursalBuscada.getAltura());
         sucursalCopia.setCalle(sucursalBuscada.getCalle());
         sucursalCopia.setEstado(sucursalBuscada.getEstado());
         sucursalCopia.setIdGimnasio(sucursalBuscada.getIdGimnasio());
+
         sucursalCopia.setCiudad(ciudadNueva);
 
         if(dao.modificar(sucursalCopia)){
-            return coleccion.modificarCiudad(id,ciudadNueva);
+            return coleccion.modificarCiudad(id, ciudadNueva);
         }
 
         return false;
     }
-
 
     //BUSQUEDA (los que devuelven un objeto incluyen a los inactivos (estado=0))
     public Sucursal buscarPorId(int id) throws ValorNoValidoException {
@@ -206,6 +220,22 @@ public class SucursalService {
         }
 
         return coleccion.buscarPorGimnasioYDireccion(idGimnasio,calle,altura);
+    }
+
+    public List<Sucursal> buscarActivosPorGimnasio(int idGimnasio) throws ValorNoValidoException {
+        if (idGimnasio <= 0) {
+            throw new ValorNoValidoException("El ID del gimnasio no es válido");
+        }
+
+        return coleccion.buscarActivosPorGimnasio(idGimnasio);
+    }
+
+    public List<Sucursal> buscarInactivosPorGimnasio(int idGimnasio) throws ValorNoValidoException {
+        if (idGimnasio <= 0) {
+            throw new ValorNoValidoException("El ID del gimnasio no es válido");
+        }
+
+        return coleccion.buscarInactivosPorGimnasio(idGimnasio);
     }
 
     public List<Sucursal> buscarPorActivos() throws ValorNoValidoException{
