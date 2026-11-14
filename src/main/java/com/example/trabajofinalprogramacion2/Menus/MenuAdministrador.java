@@ -835,7 +835,6 @@ public class MenuAdministrador {
                         if (sucursal.getIdGimnasio() == admin.getIdGimnasio()) {
                             switch (opcion) {
                                 case 1:
-                                    // Ajustá el nombre del método si en tu Service se llama distinto (ej. verListadoPorSucursal)
                                     Consola.mostrarLista(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursal), "No hay máquinas registradas en esta sucursal.");
                                     break;
                                 case 2:
