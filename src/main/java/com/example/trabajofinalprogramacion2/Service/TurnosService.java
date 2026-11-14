@@ -69,6 +69,11 @@ public class TurnosService {
             return false;
         }
 
+        // No se pueden crear turnos en una fecha que ya paso
+        if (turno.yaPaso()) {
+            return false;
+        }
+
         if (nutricionistaOcupado(turno.getNutricionista(), turno.getFechaTurno(), turno)) {
             return false;
         }
@@ -192,6 +197,11 @@ public class TurnosService {
             return false;
         }
 
+        // No se puede reservar un turno que ya paso, ni con la cuota vencida
+        if (turno.yaPaso() || !socio.tieneCuotaAlDia()) {
+            return false;
+        }
+
         return dao.reservar(turno, socio);
     }
 
@@ -304,7 +314,7 @@ public class TurnosService {
 
         Turno turno = buscar(idTurno);
 
-        if (turno == null || !Turno.esHorarioValido(nuevaFecha)) {
+        if (turno == null || !Turno.esHorarioValido(nuevaFecha) || Turno.esFechaPasada(nuevaFecha)) {
             return false;
         }
 

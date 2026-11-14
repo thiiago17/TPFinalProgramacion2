@@ -75,6 +75,11 @@ public class MenuNutricionista {
     private void crearTurno() {
 
         LocalDateTime fecha = Consola.leerFechaHora("Fecha y hora del turno");
+        if (Turno.esFechaPasada(fecha)) {
+            System.out.println("No se puede crear un turno en una fecha que ya pasó");
+            return;
+        }
+
         double precio = Consola.leerDouble("Precio: ");
 
         // El constructor de Turno valida horario y precio: si estan mal tira ValorNoValidoException

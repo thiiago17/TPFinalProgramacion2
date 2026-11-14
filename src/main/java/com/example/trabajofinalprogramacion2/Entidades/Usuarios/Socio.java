@@ -148,6 +148,11 @@ public class Socio extends Usuarios {
     // PRO            -> pueden ir a cualquier sucursal activa de ese mismo gimnasio
     // Sin membresia o con la cuota vencida no puede ingresar a ninguna
 
+    // True si tiene membresia con plan y la cuota no esta vencida
+    public boolean tieneCuotaAlDia() {
+        return membresia != null && membresia.getPlan() != null && !membresia.isVencida();
+    }
+
     public boolean puedeIngresarA(Sucursal sucursal) {
 
         if (sucursal == null || sucursalAsignada == null || sucursal.getEstado() == 0) {

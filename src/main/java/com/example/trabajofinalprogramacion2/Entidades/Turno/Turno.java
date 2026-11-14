@@ -194,6 +194,16 @@ public class Turno implements Comparable<Turno> {
         return horarioFijo && !hora.isBefore(HORA_APERTURA) && !hora.isAfter(ultimoInicio);
     }
 
+    // True si la fecha y hora ya pasaron (no se puede crear, mover ni reservar un turno en el pasado).
+    // No se valida en setFechaTurno porque el DAO lo usa para cargar los turnos viejos de la BD
+    public static boolean esFechaPasada(LocalDateTime fechaHora) {
+        return fechaHora != null && fechaHora.isBefore(LocalDateTime.now());
+    }
+
+    public boolean yaPaso() {
+        return esFechaPasada(fechaTurno);
+    }
+
     // True si dos turnos que empiezan en esos horarios se pisan
     // (empiezan a menos de 30 minutos uno del otro)
 

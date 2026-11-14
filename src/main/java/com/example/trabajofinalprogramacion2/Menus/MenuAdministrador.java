@@ -366,7 +366,7 @@ public class MenuAdministrador {
                     LocalDateTime fecha = Consola.leerFechaHora("Nueva fecha y hora");
                     Consola.resultado(turnosService.modificarFecha(id, fecha),
                             "Fecha actualizada.",
-                            "No se pudo (horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno)");
+                            "No se pudo (fecha futura, horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno)");
                     break;
                 }
                 case 6: {
@@ -420,6 +420,12 @@ public class MenuAdministrador {
         }
 
         LocalDateTime fecha = Consola.leerFechaHora("Fecha y hora del turno");
+
+        if (Turno.esFechaPasada(fecha)) {
+            System.out.println("No se puede crear un turno en una fecha que ya pasó");
+            return;
+        }
+
         double precio = Consola.leerDouble("Precio: ");
 
         // El constructor de Turno valida horario y precio: si estan mal tira ValorNoValidoException

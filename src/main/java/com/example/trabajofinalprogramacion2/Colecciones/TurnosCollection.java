@@ -249,8 +249,15 @@ public class TurnosCollection {
 
     // POR ESTADO
 
+    // Disponibles que todavia no pasaron (los de fechas pasadas ya no se pueden reservar)
     public List<Turno> verDisponibles() {
-        return filtrarPorEstado(EstadoTurno.DISPONIBLE);
+        List<Turno> disponibles = new ArrayList<>();
+        for (Turno turno : filtrarPorEstado(EstadoTurno.DISPONIBLE)) {
+            if (!turno.yaPaso()) {
+                disponibles.add(turno);
+            }
+        }
+        return disponibles;
     }
 
     public List<Turno> verReservados() {

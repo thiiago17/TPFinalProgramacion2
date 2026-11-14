@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
@@ -21,6 +22,7 @@ import com.example.trabajofinalprogramacion2.Service.Usuarios.SocioService;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 // Inicio de sesion: se elige el rol, se ingresa DNI y contraseña, y se deriva al menu de ese rol.
 // Los services se crean una sola vez aca y se pasan a cada menu.
@@ -295,25 +297,58 @@ public class MenuPrincipal {
             // Validado por setter
         }
 
-        // 11. Elección de la sucursal
+        // 11. Elección del gimnasio y despues de una sucursal de ese gimnasio
+        List<Gimnasio> gimnasios = gimnasioService.verActivosOrdenadoPorNombre();
+        if (gimnasios.isEmpty()) {
+            System.out.println("\nNo hay gimnasios disponibles. No se puede completar el registro");
+            Consola.pausa();
+            return;
+        }
+
         Sucursal sucursalElegida = null;
         while (sucursalElegida == null) {
-            System.out.println("\n--- Sucursales disponibles ---");
-            Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales disponibles");
 
-            int idSucursal = Consola.leerEntero("ID de la sucursal: ");
-            Sucursal tempSuc = sucursalService.buscarPorId(idSucursal);
+            // 11.a Gimnasio
+            System.out.println("\n--- Gimnasios disponibles ---");
+            Consola.mostrarLista(gimnasios, "No hay gimnasios disponibles");
 
-            if (tempSuc == null || tempSuc.getEstado() != 1) {
-                System.out.println("\nLa sucursal elegida no existe o no está activa. Intente de nuevo.");
-            } else {
-                try {
-                    tempSocio.setSucursalAsignada(tempSuc);
-                    sucursalElegida = tempSuc;
-                } catch (Exception e) {
-                    System.out.println("Error: " + e.getMessage() + "\n");
-                }
+            Gimnasio gimnasioElegido = null;
+            try {
+                gimnasioElegido = gimnasioService.buscarPorId(Consola.leerEntero("ID del gimnasio: "));
+            } catch (ValorNoValidoException e) {
+                // ID negativo o 0: se trata igual que un gimnasio inexistente
             }
+
+            if (gimnasioElegido == null || gimnasioElegido.getEstado() != 1) {
+                System.out.println("\nEl gimnasio elegido no existe o no está activo. Intente de nuevo.");
+                continue;
+            }
+
+            // 11.b Sucursal (solo las activas de ese gimnasio)
+            List<Sucursal> sucursales = sucursalService.buscarActivosPorGimnasio(gimnasioElegido.getId());
+            if (sucursales.isEmpty()) {
+                System.out.println("\nEse gimnasio no tiene sucursales activas. Elija otro.");
+                continue;
+            }
+
+            System.out.println("\n--- Sucursales de " + gimnasioElegido.getNombre() + " ---");
+            Consola.mostrarLista(sucursales, "No hay sucursales disponibles");
+
+            Sucursal tempSuc = null;
+            try {
+                tempSuc = sucursalService.buscarPorId(Consola.leerEntero("ID de la sucursal: "));
+            } catch (ValorNoValidoException e) {
+                // ID negativo o 0: se trata igual que una sucursal inexistente
+            }
+
+            // Tiene que ser una de las listadas (activa y de ese gimnasio)
+            if (tempSuc == null || tempSuc.getEstado() != 1 || tempSuc.getIdGimnasio() != gimnasioElegido.getId()) {
+                System.out.println("\nLa sucursal elegida no es una sucursal activa de ese gimnasio. Intente de nuevo.");
+                continue;
+            }
+
+            tempSocio.setSucursalAsignada(tempSuc);
+            sucursalElegida = tempSuc;
         }
 
         // Marcamos como activo por defecto al registrarse

@@ -49,9 +49,14 @@ public class MenuSocio {
                     Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles");
                     break;
                 case 2: {
+                    // Con la cuota vencida no puede reservar (TurnosService tambien lo controla)
+                    if (!socio.tieneCuotaAlDia()) {
+                        System.out.println("No puede reservar turnos: la cuota está vencida. Abónela desde la opción 6");
+                        break;
+                    }
                     int id = Consola.leerEntero("ID del turno a reservar: ");
                     Consola.resultado(turnosService.reservar(id, socio),
-                            "Turno reservado", "No se pudo: el turno no existe o ya está reservado");
+                            "Turno reservado", "No se pudo: el turno no existe, ya está reservado o ya pasó");
                     break;
                 }
                 case 3:
