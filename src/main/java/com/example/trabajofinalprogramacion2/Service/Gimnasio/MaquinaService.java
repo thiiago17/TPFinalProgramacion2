@@ -133,7 +133,7 @@ public class MaquinaService {
         return false;
     }
 
-    public boolean modificarPesoLimite(int id, int pesoLimiteNuevo) throws SQLException, ValorNoValidoException, ObjetoNuloException{
+    public boolean modificarPesoLimite(int id, double pesoLimiteNuevo) throws SQLException, ValorNoValidoException, ObjetoNuloException{
         if(id < 0 || pesoLimiteNuevo < 0){
             throw new ValorNoValidoException("Alguno de los parametros no es valido");
         }

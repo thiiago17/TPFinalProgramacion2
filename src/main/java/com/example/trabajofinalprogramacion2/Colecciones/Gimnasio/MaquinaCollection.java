@@ -170,7 +170,7 @@ public class MaquinaCollection implements ABCMLCollection<Maquina> {
         return true;
     }
 
-    public boolean modificarPesoLimite(int id, int pesoLimiteNuevo) throws ValorNoValidoException,ObjetoNuloException{
+    public boolean modificarPesoLimite(int id, double pesoLimiteNuevo) throws ValorNoValidoException,ObjetoNuloException{
         if(id < 0 || pesoLimiteNuevo < 0){
             throw new ValorNoValidoException("Alguno de los parametros no es valido");
         }
