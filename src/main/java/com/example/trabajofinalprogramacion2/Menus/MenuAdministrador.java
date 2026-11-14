@@ -139,35 +139,50 @@ public class MenuAdministrador {
                     agregarEntrenador();
                     break;
                 case 3: {
-                    int id = Consola.leerEntero("ID del entrenador: ");
+                    int id = leerIdEntrenadorDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     String especialidad = Consola.leerTexto("Nueva especialidad: ");
                     Consola.resultado(entrenadorService.modificarEspecialidad(id, especialidad),
-                            "Especialidad actualizada", "No se encontró un entrenador activo con ese ID");
+                            "Especialidad actualizada", "No se pudo: el entrenador está dado de baja");
                     break;
                 }
                 case 4: {
-                    int id = Consola.leerEntero("ID del entrenador: ");
+                    int id = leerIdEntrenadorDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     double salario = Consola.leerDouble("Nuevo salario: ");
                     Consola.resultado(entrenadorService.modificarSalario(id, salario),
-                            "Salario actualizado", "No se pudo actualizar (ID incorrecto - salario negativo)");
+                            "Salario actualizado", "No se pudo actualizar (entrenador de baja - salario negativo)");
                     break;
                 }
                 case 5: {
-                    int id = Consola.leerEntero("ID del entrenador: ");
-                    Consola.resultado(entrenadorService.modificarSucursal(id, FormularioUsuario.leerSucursal()),
-                            "Sucursal asignada", "No se pudo asignar");
+                    int id = leerIdEntrenadorDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
+                    Sucursal sucursal = leerSucursalDeMiGimnasio();
+                    if (sucursal != null) {
+                        Consola.resultado(entrenadorService.modificarSucursal(id, sucursal),
+                                "Sucursal asignada", "No se pudo asignar");
+                    }
                     break;
                 }
                 case 6: {
-                    int id = Consola.leerEntero("ID del entrenador: ");
-                    if (Consola.confirmar("¿Seguro? El entrenador va a perder a todos sus alumnos")) {
+                    int id = leerIdEntrenadorDeMiGimnasio();
+                    if (id != -1 && Consola.confirmar("¿Seguro? El entrenador va a perder a todos sus alumnos")) {
                         Consola.resultado(entrenadorService.eliminar(id),
-                                "Entrenador dado de baja", "No se encontró un entrenador activo con ese ID");
+                                "Entrenador dado de baja", "No se pudo: el entrenador ya está dado de baja");
                     }
                     break;
                 }
                 case 7: {
-                    int id = Consola.leerEntero("ID del entrenador: ");
+                    int id = leerIdEntrenadorDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     Consola.resultado(entrenadorService.alta(id),
                             "Entrenador reactivado", "No se encontró un entrenador dado de baja con ese ID");
                     break;
@@ -183,15 +198,21 @@ public class MenuAdministrador {
 
     private void agregarEntrenador() {
 
+        // La sucursal se pide primero: si no es valida no se hace cargar todo el formulario
+        Sucursal sucursal = leerSucursalDeMiGimnasio();
+        if (sucursal == null) {
+            return;
+        }
+
         Entrenador nuevo = new Entrenador();
         FormularioUsuario.cargarDatosBasicos(nuevo);
         nuevo.setEspecialidad(Consola.leerTexto("Especialidad: "));
         nuevo.setSalario(Consola.leerDouble("Salario: "));
-        nuevo.setSucursalAsignada(FormularioUsuario.leerSucursal());
+        nuevo.setSucursalAsignada(sucursal);
 
         Consola.resultado(entrenadorService.agregar(nuevo),
                 "Entrenador agregado con ID " + nuevo.getId(),
-                "No se pudo agregar (DNI repetido - sucursal inexistente)");
+                "No se pudo agregar (DNI repetido)");
     }
 
     // NUTRICIONISTAS =================================================================================
@@ -227,35 +248,50 @@ public class MenuAdministrador {
                     agregarNutricionista();
                     break;
                 case 3: {
-                    int id = Consola.leerEntero("ID del nutricionista: ");
+                    int id = leerIdNutricionistaDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     double salario = Consola.leerDouble("Nuevo salario: ");
                     Consola.resultado(nutricionistaService.modificarSalario(id, salario),
-                            "Salario actualizado", "No se pudo actualizar (ID correcto - salario negativo)");
+                            "Salario actualizado", "No se pudo actualizar (nutricionista de baja - salario negativo)");
                     break;
                 }
                 case 4: {
-                    int id = Consola.leerEntero("ID del nutricionista: ");
+                    int id = leerIdNutricionistaDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     double comision = Consola.leerDouble("Nueva comisión por consulta: ");
                     Consola.resultado(nutricionistaService.modificarComisionPorConsulta(id, comision),
-                            "Comisión actualizada", "No se pudo actualizar (ID correcto - comisión negativa)");
+                            "Comisión actualizada", "No se pudo actualizar (nutricionista de baja - comisión negativa)");
                     break;
                 }
                 case 5: {
-                    int id = Consola.leerEntero("ID del nutricionista: ");
-                    Consola.resultado(nutricionistaService.modificarSucursal(id, FormularioUsuario.leerSucursal()),
-                            "Sucursal asignada", "No se pudo asignar");
+                    int id = leerIdNutricionistaDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
+                    Sucursal sucursal = leerSucursalDeMiGimnasio();
+                    if (sucursal != null) {
+                        Consola.resultado(nutricionistaService.modificarSucursal(id, sucursal),
+                                "Sucursal asignada", "No se pudo asignar");
+                    }
                     break;
                 }
                 case 6: {
-                    int id = Consola.leerEntero("ID del nutricionista: ");
-                    if (Consola.confirmar("¿Seguro que desea darlo de baja?")) {
+                    int id = leerIdNutricionistaDeMiGimnasio();
+                    if (id != -1 && Consola.confirmar("¿Seguro que desea darlo de baja?")) {
                         Consola.resultado(nutricionistaService.eliminar(id),
-                                "Nutricionista dado de baja", "No se encontró un nutricionista activo con ese ID");
+                                "Nutricionista dado de baja", "No se pudo: el nutricionista ya está dado de baja");
                     }
                     break;
                 }
                 case 7: {
-                    int id = Consola.leerEntero("ID del nutricionista: ");
+                    int id = leerIdNutricionistaDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     Consola.resultado(nutricionistaService.alta(id),
                             "Nutricionista reactivado", "No se encontró un nutricionista dado de baja con ese ID");
                     break;
@@ -271,15 +307,21 @@ public class MenuAdministrador {
 
     private void agregarNutricionista() {
 
+        // La sucursal se pide primero: si no es valida no se hace cargar todo el formulario
+        Sucursal sucursal = leerSucursalDeMiGimnasio();
+        if (sucursal == null) {
+            return;
+        }
+
         Nutricionista nuevo = new Nutricionista();
         FormularioUsuario.cargarDatosBasicos(nuevo);
         nuevo.setSalario(Consola.leerDouble("Salario: "));
         nuevo.setComisionPorConsulta(Consola.leerDouble("Comisión por consulta: "));
-        nuevo.setSucursalAsignada(FormularioUsuario.leerSucursal());
+        nuevo.setSucursalAsignada(sucursal);
 
         Consola.resultado(nutricionistaService.agregar(nuevo),
                 "Nutricionista agregado con ID " + nuevo.getId(),
-                "No se pudo agregar (DNI repetido - sucursal inexistente)");
+                "No se pudo agregar (DNI repetido)");
     }
 
     // TURNOS =================================================================================
@@ -305,19 +347,22 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    Consola.mostrarLista(turnosService.verListado(), "No hay turnos");
+                    Consola.mostrarLista(turnosDeMiGimnasio(turnosService.verListado()), "No hay turnos");
                     break;
                 case 2:
-                    Consola.mostrarLista(turnosService.verDisponibles(), "No hay turnos disponibles");
+                    Consola.mostrarLista(turnosDeMiGimnasio(turnosService.verDisponibles()), "No hay turnos disponibles");
                     break;
                 case 3:
-                    Consola.mostrarLista(turnosService.verReservados(), "No hay turnos reservados");
+                    Consola.mostrarLista(turnosDeMiGimnasio(turnosService.verReservados()), "No hay turnos reservados");
                     break;
                 case 4:
                     crearTurno();
                     break;
                 case 5: {
-                    int id = Consola.leerEntero("ID del turno: ");
+                    int id = leerIdTurnoDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     LocalDateTime fecha = Consola.leerFechaHora("Nueva fecha y hora");
                     Consola.resultado(turnosService.modificarFecha(id, fecha),
                             "Fecha actualizada.",
@@ -325,23 +370,32 @@ public class MenuAdministrador {
                     break;
                 }
                 case 6: {
-                    int id = Consola.leerEntero("ID del turno: ");
+                    int id = leerIdTurnoDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     double precio = Consola.leerDouble("Nuevo precio: ");
                     Consola.resultado(turnosService.modificarPrecio(id, precio),
-                            "Precio actualizado", "No se pudo actualizar (ID incorrecto - precio negativo)");
+                            "Precio actualizado", "No se pudo actualizar (turno de baja - precio negativo)");
                     break;
                 }
                 case 7: {
-                    int id = Consola.leerEntero("ID del turno: ");
+                    int id = leerIdTurnoDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     Consola.resultado(turnosService.eliminar(id),
-                            "Turno dado de baja", "No se pudo: el turno no existe o está reservado");
+                            "Turno dado de baja", "No se pudo: el turno está reservado o ya está dado de baja");
                     break;
                 }
                 case 8:
-                    Consola.mostrarLista(turnosService.verDadosDeBaja(), "No hay turnos dados de baja");
+                    Consola.mostrarLista(turnosDeMiGimnasio(turnosService.verDadosDeBaja()), "No hay turnos dados de baja");
                     break;
                 case 9: {
-                    int id = Consola.leerEntero("ID del turno: ");
+                    int id = leerIdTurnoDeMiGimnasio();
+                    if (id == -1) {
+                        break;
+                    }
                     Consola.resultado(turnosService.alta(id),
                             "Turno reactivado",
                             "No se pudo: no está dado de baja o ya hay otro turno en ese horario");
@@ -360,8 +414,8 @@ public class MenuAdministrador {
 
         Nutricionista nutricionista = nutricionistaService.buscar(Consola.leerEntero("ID del nutricionista: "));
 
-        if (nutricionista == null) {
-            System.out.println("No se encontró un nutricionista activo con ese ID");
+        if (nutricionista == null || !esDeMiGimnasio(nutricionista.getSucursalAsignada())) {
+            System.out.println("No hay un nutricionista activo con ese ID en tu gimnasio");
             return;
         }
 
@@ -395,48 +449,81 @@ public class MenuAdministrador {
 
             opcion = Consola.leerOpcion(0, 8);
 
-            switch (opcion) {
-                case 1:
-                    Consola.mostrarLista(socioService.verListado(), "No hay socios");
-                    break;
-                case 2:
-                    agregarSocio();
-                    break;
-                case 3: {
-                    int id = Consola.leerEntero("ID del socio: ");
-                    Plan plan = FormularioUsuario.leerPlan();
-                    Consola.resultado(socioService.cambiarPlanMembresia(id, plan),
-                            "Plan actualizado", "No se encontró un socio activo con ese ID");
-                    break;
+            // SocioService tira ObjetoNuloException / ValorNoValidoException si el ID no existe o un dato es invalido:
+            // se atrapan aca para mostrar el error sin que se cierre el programa
+            try {
+                switch (opcion) {
+                    case 1: {
+                        List<Socio> mios = new ArrayList<>();
+                        for (Socio s : socioService.verListado()) {
+                            if (esDeMiGimnasio(s.getSucursalAsignada())) {
+                                mios.add(s);
+                            }
+                        }
+                        Consola.mostrarLista(mios, "No hay socios en tu gimnasio");
+                        break;
+                    }
+                    case 2:
+                        agregarSocio();
+                        break;
+                    case 3: {
+                        int id = leerIdSocioDeMiGimnasio();
+                        if (id == -1) {
+                            break;
+                        }
+                        Plan plan = FormularioUsuario.leerPlan();
+                        Consola.resultado(socioService.cambiarPlanMembresia(id, plan),
+                                "Plan actualizado", "No se pudo cambiar el plan");
+                        break;
+                    }
+                    case 4: {
+                        int id = leerIdSocioDeMiGimnasio();
+                        if (id == -1) {
+                            break;
+                        }
+                        Sucursal sucursal = leerSucursalDeMiGimnasio();
+                        if (sucursal != null) {
+                            Consola.resultado(socioService.modificarSucursal(id, sucursal),
+                                    "Sucursal asignada", "No se pudo asignar");
+                        }
+                        break;
+                    }
+                    case 5: {
+                        int id = leerIdSocioDeMiGimnasio();
+                        if (id != -1) {
+                            System.out.println(socioService.abonarCuota(id));
+                        }
+                        break;
+                    }
+                    case 6: {
+                        int idSocio = leerIdSocioDeMiGimnasio();
+                        if (idSocio == -1) {
+                            break;
+                        }
+                        int idEntrenador = leerIdEntrenadorDeMiGimnasio();
+                        if (idEntrenador == -1) {
+                            break;
+                        }
+                        Consola.resultado(entrenadorService.agregarSocio(idEntrenador, idSocio),
+                                "Entrenador asignado",
+                                "No se pudo: el socio o el entrenador no existen / están de baja, o ya estaban vinculados");
+                        break;
+                    }
+                    case 7:
+                        darDeBajaSocio();
+                        break;
+                    case 8: {
+                        int id = leerIdSocioDeMiGimnasio();
+                        if (id == -1) {
+                            break;
+                        }
+                        Consola.resultado(socioService.alta(id),
+                                "Socio reactivado", "No se pudo reactivar al socio");
+                        break;
+                    }
                 }
-                case 4: {
-                    int id = Consola.leerEntero("ID del socio: ");
-                    Consola.resultado(socioService.modificarSucursal(id, FormularioUsuario.leerSucursal()),
-                            "Sucursal asignada", "No se pudo asignar");
-                    break;
-                }
-                case 5: {
-                    int id = Consola.leerEntero("ID del socio: ");
-                    System.out.println(socioService.abonarCuota(id));
-                    break;
-                }
-                case 6: {
-                    int idSocio = Consola.leerEntero("ID del socio: ");
-                    int idEntrenador = Consola.leerEntero("ID del entrenador: ");
-                    Consola.resultado(entrenadorService.agregarSocio(idEntrenador, idSocio),
-                            "Entrenador asignado",
-                            "No se pudo: el socio o el entrenador no existen / están de baja, o ya estaban vinculados");
-                    break;
-                }
-                case 7:
-                    darDeBajaSocio();
-                    break;
-                case 8: {
-                    int id = Consola.leerEntero("ID del socio: ");
-                    Consola.resultado(socioService.alta(id),
-                            "Socio reactivado", "No se encontró un socio con ese ID");
-                    break;
-                }
+            } catch (ObjetoNuloException | ValorNoValidoException e) {
+                System.out.println("Error: " + e.getMessage());
             }
 
             if (opcion != 0) {
@@ -449,6 +536,12 @@ public class MenuAdministrador {
     // El socio nuevo paga el primer mes al inscribirse: la membresia arranca hoy y vence en un mes
     private void agregarSocio() {
 
+        // La sucursal se pide primero: si no es valida no se hace cargar todo el formulario
+        Sucursal sucursal = leerSucursalDeMiGimnasio();
+        if (sucursal == null) {
+            return;
+        }
+
         Socio nuevo = new Socio();
         FormularioUsuario.cargarDatosBasicos(nuevo);
         FormularioUsuario.pedirPesoYAltura(nuevo);
@@ -457,11 +550,11 @@ public class MenuAdministrador {
         Plan plan = FormularioUsuario.leerPlan();
         nuevo.setMembresia(new Membresia(LocalDate.now(), LocalDate.now().plusMonths(1), plan));
 
-        nuevo.setSucursalAsignada(FormularioUsuario.leerSucursal());
+        nuevo.setSucursalAsignada(sucursal);
 
         Consola.resultado(socioService.agregar(nuevo),
                 "Socio agregado con ID " + nuevo.getId() + ". Primer mes abonado: $" + plan.getPrecio(),
-                "No se pudo agregar (DNI repetido - sucursal inexistente)");
+                "No se pudo agregar");
     }
 
     // Al darse de baja el socio pierde su entrenador y se le cancelan los turnos reservados
@@ -471,8 +564,8 @@ public class MenuAdministrador {
         int id = Consola.leerEntero("ID del socio: ");
         Socio socio = socioService.buscar(id);
 
-        if (socio == null) {
-            System.out.println("No se encontró un socio activo con ese ID");
+        if (socio == null || !esDeMiGimnasio(socio.getSucursalAsignada())) {
+            System.out.println("No hay un socio activo con ese ID en tu gimnasio");
             return;
         }
 
@@ -515,6 +608,7 @@ public class MenuAdministrador {
                     break;
                 case 2:
                     menuBusquedaSucursales();
+                    break;
                 case 3:
                     String calle=Consola.leerTexto("Calle: ");
                     int altura=Consola.leerEntero("Altura: ");
@@ -533,12 +627,14 @@ public class MenuAdministrador {
                     menuModificacionSucursales();
                     break;
                 case 5:
-                    int idBaja = Consola.leerEntero("ID de la sucursal a modificar: ");
+                    int idBaja = Consola.leerEntero("ID de la sucursal a dar de baja: ");
 
                     try {
                         Sucursal sucursalABajar = sucursalService.buscarPorId(idBaja);
 
-                        if (sucursalABajar != null) {
+                        if (sucursalABajar != null && sucursalABajar.getIdGimnasio() != admin.getIdGimnasio()) {
+                            System.out.println("Acceso denegado: la sucursal pertenece a otro gimnasio");
+                        } else if (sucursalABajar != null) {
                             Consola.resultado(sucursalService.baja(sucursalABajar), "Sucursal dada de baja correctamente", "No se pudo dar de baja");
                         } else {
                             System.out.println("No existe ninguna sucursal con ese ID");
@@ -554,7 +650,9 @@ public class MenuAdministrador {
                     try {
                         Sucursal sucursalAAlta = sucursalService.buscarPorId(idAlta);
 
-                        if (sucursalAAlta != null) {
+                        if (sucursalAAlta != null && sucursalAAlta.getIdGimnasio() != admin.getIdGimnasio()) {
+                            System.out.println("Acceso denegado: la sucursal pertenece a otro gimnasio");
+                        } else if (sucursalAAlta != null) {
                             Consola.resultado(sucursalService.alta(sucursalAAlta), "Sucursal dada de alta correctamente", "No se pudo dar de alta");
                         } else {
                             System.out.println("No existe ninguna sucursal con ese ID");
@@ -570,18 +668,17 @@ public class MenuAdministrador {
         } while (opcion != 0);
     }
 
-    private void menuBusquedaSucursales(){
+    private void menuModificacionSucursales(){
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE SUCURSALES");
-            System.out.println("1 - Buscar por direccion");
-            System.out.println("2 - Buscar por ciudad");
-            System.out.println("3 - Buscar por activos");
-            System.out.println("4 - Buscar por inactivos");
+            Consola.titulo("MODIFICACION DE SUCURSALES");
+            System.out.println("1 - Modificar todo");
+            System.out.println("2 - Modificar direccion");
+            System.out.println("3 - Modificar ciudad");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 4);
+            opcion = Consola.leerOpcion(0, 3);
 
             switch (opcion) {
                 case 1:
@@ -641,17 +738,18 @@ public class MenuAdministrador {
         } while (opcion != 0);
     }
 
-    private void menuModificacionSucursales(){
+    private void menuBusquedaSucursales(){
         int opcion;
 
         do {
-            Consola.titulo("MODIFICACION DE SUCURSALES");
-            System.out.println("1 - Modificar todo");
-            System.out.println("2 - Modificar direccion");
-            System.out.println("3 - Modificar ciudad");
+            Consola.titulo("BUSQUEDA DE SUCURSALES");
+            System.out.println("1 - Buscar por direccion");
+            System.out.println("2 - Buscar por ciudad");
+            System.out.println("3 - Buscar por activos");
+            System.out.println("4 - Buscar por inactivos");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 3);
+            opcion = Consola.leerOpcion(0, 4);
 
             switch (opcion) {
                 case 1:
@@ -1528,6 +1626,13 @@ public class MenuAdministrador {
         } while (opcion != 0);
     }
 
+    // CONTROL DE GIMNASIO =================================================================================
+    // El admin solo puede ver y modificar lo que pertenece a SU gimnasio.
+    // Un empleado o socio es "de mi gimnasio" si su sucursal asignada es de mi gimnasio,
+    // y un turno lo es si su nutricionista es de mi gimnasio.
+    // Los metodos leerId... piden un ID y lo devuelven solo si es de mi gimnasio; si no, avisan y devuelven -1.
+    // Buscan primero en memoria (activos) y despues en la BD, asi tambien sirven para reactivar a los dados de baja.
+
     private boolean esDeMiGimnasio(Sucursal sucursal) {
         if (sucursal == null) {
             return false;
@@ -1538,5 +1643,117 @@ public class MenuAdministrador {
         } catch (ValorNoValidoException e) {
             return false;
         }
+    }
+
+    private boolean entrenadorEsDeMiGimnasio(int id) {
+        Entrenador entrenador = entrenadorService.buscar(id);
+        if (entrenador == null) {
+            entrenador = entrenadorService.consultar(id);
+        }
+        return entrenador != null && esDeMiGimnasio(entrenador.getSucursalAsignada());
+    }
+
+    private boolean nutricionistaEsDeMiGimnasio(int id) {
+        Nutricionista nutricionista = nutricionistaService.buscar(id);
+        if (nutricionista == null) {
+            nutricionista = nutricionistaService.consultar(id);
+        }
+        return nutricionista != null && esDeMiGimnasio(nutricionista.getSucursalAsignada());
+    }
+
+    private boolean socioEsDeMiGimnasio(int id) {
+        Socio socio = socioService.buscar(id);
+        if (socio == null) {
+            try {
+                socio = socioService.consultar(id);   // tira ObjetoNuloException si tampoco esta en la BD
+            } catch (ObjetoNuloException e) {
+                return false;
+            }
+        }
+        return esDeMiGimnasio(socio.getSucursalAsignada());
+    }
+
+    private boolean turnoEsDeMiGimnasio(Turno turno) {
+        return turno != null && turno.getNutricionista() != null
+                && nutricionistaEsDeMiGimnasio(turno.getNutricionista().getId());
+    }
+
+    private int leerIdEntrenadorDeMiGimnasio() {
+        int id = Consola.leerEntero("ID del entrenador: ");
+        if (!entrenadorEsDeMiGimnasio(id)) {
+            System.out.println("No hay un entrenador con ese ID en tu gimnasio");
+            return -1;
+        }
+        return id;
+    }
+
+    private int leerIdNutricionistaDeMiGimnasio() {
+        int id = Consola.leerEntero("ID del nutricionista: ");
+        if (!nutricionistaEsDeMiGimnasio(id)) {
+            System.out.println("No hay un nutricionista con ese ID en tu gimnasio");
+            return -1;
+        }
+        return id;
+    }
+
+    private int leerIdSocioDeMiGimnasio() {
+        int id = Consola.leerEntero("ID del socio: ");
+        if (!socioEsDeMiGimnasio(id)) {
+            System.out.println("No hay un socio con ese ID en tu gimnasio");
+            return -1;
+        }
+        return id;
+    }
+
+    private int leerIdTurnoDeMiGimnasio() {
+        int id = Consola.leerEntero("ID del turno: ");
+        Turno turno = turnosService.buscar(id);
+        if (turno == null) {
+            turno = turnosService.consultar(id);   // los dados de baja solo estan en la BD
+        }
+        if (!turnoEsDeMiGimnasio(turno)) {
+            System.out.println("No hay un turno con ese ID en tu gimnasio");
+            return -1;
+        }
+        return id;
+    }
+
+    // Deja solo los turnos de mi gimnasio
+    private List<Turno> turnosDeMiGimnasio(List<Turno> turnos) {
+        List<Turno> mios = new ArrayList<>();
+        for (Turno turno : turnos) {
+            if (turnoEsDeMiGimnasio(turno)) {
+                mios.add(turno);
+            }
+        }
+        return mios;
+    }
+
+    // Muestra las sucursales activas de mi gimnasio y pide una. Devuelve null si el ID no es de esa lista.
+    private Sucursal leerSucursalDeMiGimnasio() {
+        List<Sucursal> activas;
+        try {
+            activas = sucursalService.buscarActivosPorGimnasio(admin.getIdGimnasio());
+        } catch (ValorNoValidoException e) {
+            activas = new ArrayList<>();
+        }
+
+        if (activas.isEmpty()) {
+            System.out.println("Tu gimnasio no tiene sucursales activas");
+            return null;
+        }
+
+        System.out.println("Sucursales de tu gimnasio:");
+        Consola.mostrarLista(activas, "");
+        int id = Consola.leerEntero("ID de la sucursal: ");
+
+        for (Sucursal sucursal : activas) {
+            if (sucursal.getId() == id) {
+                return sucursal;
+            }
+        }
+
+        System.out.println("Esa no es una sucursal activa de tu gimnasio");
+        return null;
     }
 }

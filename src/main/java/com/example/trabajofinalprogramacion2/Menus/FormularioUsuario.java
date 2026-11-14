@@ -1,7 +1,6 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
-import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Plan;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
@@ -153,13 +152,5 @@ public final class FormularioUsuario {
             }
             System.out.println("La contraseña debe tener al menos 4 caracteres y contener al menos un número");
         }
-    }
-
-    // Por ahora la sucursal se arma solo con el id (la FK de la BD valida que exista).
-    // Cuando este SucursalService, buscarla ahi y validar que sea del gimnasio del administrador.
-    public static Sucursal leerSucursal() {
-        Sucursal sucursal = new Sucursal();
-        sucursal.setId(Consola.leerEntero("ID de la sucursal: "));
-        return sucursal;
     }
 }

@@ -139,13 +139,11 @@ public class SocioService implements GestionPerfil {
     }
 
     // BUSCAR POR ID (EN MEMORIA)
+    // Devuelve null si no esta (no existe o esta dado de baja), igual que los otros services.
+    // EntrenadorService y TurnosService usan ese null para detectar socios dados de baja al cargar la BD.
 
     public Socio buscar(int id) {
-        Socio socio = coleccion.buscar(id);
-        if (socio == null) {
-            throw new ObjetoNuloException("No se encontro el socio con ID: " + id + " en memoria.");
-        }
-        return socio;
+        return coleccion.buscar(id);
     }
 
     // =========================
