@@ -1,13 +1,16 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 
 import java.sql.SQLException;
+import java.util.List;
 
 // Menu del administrador del sistema: maneja todos los gimnasios y a los administradores
 // (quien entra y quien sale). No maneja el dia a dia de cada gimnasio: eso es del admin de gimnasio.
@@ -17,11 +20,13 @@ public class MenuAdministradorSistema {
     private final Administrador admin;
     private final AdministradorService administradorService;
     private final GimnasioService gimnasioService;
+    private final SucursalService sucursalService;
 
-    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService, GimnasioService gimnasioService) {
+    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService, GimnasioService gimnasioService, SucursalService sucursalService) {
         this.admin = admin;
         this.administradorService = administradorService;
         this.gimnasioService = gimnasioService;
+        this.sucursalService = sucursalService;
     }
 
     public void mostrar() {
@@ -104,7 +109,17 @@ public class MenuAdministradorSistema {
                         Gimnasio gimnasioBaja = gimnasioService.buscarPorId(idBaja);
 
                         if (gimnasioBaja != null) {
-                            Consola.resultado(gimnasioService.baja(gimnasioBaja), "Gimnasio dado de baja correctamente", "No se pudo dar de baja");
+                            if (gimnasioService.baja(gimnasioBaja)) { //da de baja el gimnasio
+
+                                List<Sucursal> sucursalesActivas = sucursalService.buscarActivosPorGimnasio(idBaja);
+                                for (Sucursal suc : sucursalesActivas) {
+                                    sucursalService.baja(suc); //da de baja todas las sucursales vinculadas a ese id
+                                }
+
+                                System.out.println("Gimnasio y sus " + sucursalesActivas.size() + " sucursales activas dados de baja correctamente.");
+                            } else {
+                                System.out.println("No se pudo dar de baja el gimnasio.");
+                            }
                         } else {
                             System.out.println("No existe ningún gimnasio con ese ID.");
                         }
