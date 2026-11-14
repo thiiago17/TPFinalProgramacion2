@@ -8,6 +8,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Entrenador;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
+import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.GastoService;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalMaquinaService;
@@ -174,64 +175,161 @@ public class MenuPrincipal {
     private void registrarNuevoSocio() {
         Consola.titulo("REGISTRO DE NUEVO SOCIO");
 
+        // Creamos un socio vacío (o usamos setters provisionales)
+        Socio tempSocio = new Socio();
+
+        // 1. Validar Nombre
+        while (true) {
+            try {
+                tempSocio.setNombre(Consola.leerTexto("Nombre: "));
+                break; // Si el setter no tiró excepción, el dato es válido y salimos del while
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 2. Validar Apellido
+        while (true) {
+            try {
+                tempSocio.setApellido(Consola.leerTexto("Apellido: "));
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 3. Validar DNI
+        while (true) {
+            try {
+                String dni = Consola.leerTexto("DNI: ");
+
+                // Chequeo si ya existe en la base
+                if (socioService.buscarPorDni(dni) != null) {
+                    throw new ValorNoValidoException("Ya existe un socio registrado con ese DNI.");
+                }
+
+                tempSocio.setDni(dni);
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 4. Validar Email
+        while (true) {
+            try {
+                tempSocio.setEmail(Consola.leerTexto("Email: "));
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 5. Validar Contraseña
+        while (true) {
+            try {
+                tempSocio.setPassword(Consola.leerTexto("Contraseña: "));
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 6. Validar Fecha de Nacimiento
+        LocalDate fechaNac = null;
+        while (fechaNac == null) {
+            try {
+                System.out.println("--- Fecha de Nacimiento ---");
+                int anioNac = Consola.leerEntero("Año: ");
+                int mesNac = Consola.leerEntero("Mes (1-12): ");
+                int diaNac = Consola.leerEntero("Día (1-31): ");
+
+                LocalDate tempFecha = LocalDate.of(anioNac, mesNac, diaNac);
+                tempSocio.setFechaDeNacimiento(tempFecha); // Usa el setter heredado que valida edad/futuro
+                fechaNac = tempFecha;
+            } catch (Exception e) {
+                System.out.println("Error en la fecha: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 7. Validar Peso
+        while (true) {
+            try {
+                tempSocio.setPesoActual(Consola.leerDouble("Peso actual (kg): "));
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 8. Validar Altura
+        while (true) {
+            try {
+                tempSocio.setAltura(Consola.leerDouble("Altura (m, ej: 1.75): "));
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + " Intente de nuevo.\n");
+            }
+        }
+
+        // 9. Fecha de Alta (se asigna directo porque es interna de hoy)
         try {
-            String nombre = Consola.leerTexto("Nombre: ");
-            String apellido = Consola.leerTexto("Apellido: ");
-            String dni = Consola.leerTexto("DNI: ");
-            String email = Consola.leerTexto("Email: ");
-            String password = Consola.leerTexto("Contraseña: ");
+            tempSocio.setFechaAlta(LocalDate.now());
+        } catch (Exception e) {
+            // Manejo por seguridad
+        }
 
-            // Fecha de nacimiento
-            System.out.println("--- Fecha de Nacimiento ---");
-            int anioNac = Consola.leerEntero("Año: ");
-            int mesNac = Consola.leerEntero("Mes (1-12): ");
-            int diaNac = Consola.leerEntero("Día (1-31): ");
-            LocalDate fechaNac = LocalDate.of(anioNac, mesNac, diaNac);
+        // 10. Elección del plan inicial
+        System.out.println("\n--- Seleccione su Plan Inicial ---");
+        System.out.println("1 - BASICO ($" + Plan.BASICO.getPrecio() + ")");
+        System.out.println("2 - LIBRE ($" + Plan.LIBRE.getPrecio() + ")");
+        System.out.println("3 - PRO ($" + Plan.PRO.getPrecio() + ")");
+        int opPlan = Consola.leerOpcion(1, 3);
 
-            // Datos fisicos
-            double peso = Consola.leerDouble("Peso actual (kg): ");
-            double altura = Consola.leerDouble("Altura (m, ej: 1.75): ");
+        Plan planElegido = (opPlan == 1) ? Plan.BASICO : (opPlan == 2) ? Plan.LIBRE : Plan.PRO;
+        Membresia membresia = new Membresia(LocalDate.now(), LocalDate.now().plusMonths(1), planElegido);
 
-            // Eleccion del plan inicial
-            System.out.println("\n--- Seleccione su Plan Inicial ---");
-            System.out.println("1 - BASICO ($" + Plan.BASICO.getPrecio() + ")");
-            System.out.println("2 - LIBRE ($" + Plan.LIBRE.getPrecio() + ")");
-            System.out.println("3 - PRO ($" + Plan.PRO.getPrecio() + ")");
-            int opPlan = Consola.leerOpcion(1, 3);
+        try {
+            tempSocio.setMembresia(membresia);
+        } catch (Exception e) {
+            // Validado por setter
+        }
 
-            Plan planElegido = (opPlan == 1) ? Plan.BASICO : (opPlan == 2) ? Plan.LIBRE : Plan.PRO;
-
-            // Creamos la membresia inicial (hoy hasta en 1 mes)
-            Membresia membresia = new Membresia(LocalDate.now(), LocalDate.now().plusMonths(1), planElegido);
-
-            // Eleccion de la sucursal
+        // 11. Elección de la sucursal
+        Sucursal sucursalElegida = null;
+        while (sucursalElegida == null) {
             System.out.println("\n--- Sucursales disponibles ---");
             Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales disponibles");
 
-            Sucursal sucursalElegida = sucursalService.buscarPorId(Consola.leerEntero("ID de la sucursal: "));
+            int idSucursal = Consola.leerEntero("ID de la sucursal: ");
+            Sucursal tempSuc = sucursalService.buscarPorId(idSucursal);
 
-            if (sucursalElegida == null || sucursalElegida.getEstado() !=1) {
-                System.out.println("\nLa sucursal elegida no existe o no está activa");
-                Consola.pausa();
-                return;
+            if (tempSuc == null || tempSuc.getEstado() != 1) {
+                System.out.println("\nLa sucursal elegida no existe o no está activa. Intente de nuevo.");
+            } else {
+                try {
+                    tempSocio.setSucursalAsignada(tempSuc);
+                    sucursalElegida = tempSuc;
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage() + "\n");
+                }
             }
+        }
 
-            Socio nuevoSocio = new Socio(
-                    nombre, apellido, dni, email, password,
-                    fechaNac, true, peso, altura,
-                    LocalDate.now(), membresia, sucursalElegida
-            );
+        // Marcamos como activo por defecto al registrarse
+        tempSocio.setActivo(true);
 
-            boolean registrado = socioService.agregar(nuevoSocio);
+        // Finalmente, guardamos el objeto ya totalmente validado campo por campo
+        try {
+            boolean registrado = socioService.agregar(tempSocio);
 
             if (registrado) {
                 System.out.println("\n¡Registro completado con éxito! Ya puede iniciar sesión");
             } else {
                 System.out.println("\nNo se pudo completar el registro");
             }
-
         } catch (Exception e) {
-            System.out.println("\nError en el registro: " + e.getMessage());
+            System.out.println("\nError al guardar en la base de datos: " + e.getMessage());
         }
 
         Consola.pausa();

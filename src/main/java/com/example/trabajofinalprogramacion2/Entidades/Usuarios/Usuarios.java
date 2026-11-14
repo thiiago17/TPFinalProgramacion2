@@ -1,5 +1,6 @@
 package com.example.trabajofinalprogramacion2.Entidades.Usuarios;
 
+import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import java.time.LocalDate;
 import java.time.Period;
@@ -84,12 +85,18 @@ public abstract class Usuarios {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new ValorNoValidoException("El nombre no puede estar vacío.");
         }
+        if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new ValorNoValidoException("El nombre solo debe contener letras.");
+        }
         this.nombre = nombre;
     }
 
     public void setApellido(String apellido) {
         if (apellido == null || apellido.trim().isEmpty()) {
             throw new ValorNoValidoException("El apellido no puede estar vacío.");
+        }
+        if (!apellido.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new ValorNoValidoException("El apellido solo debe contener letras.");
         }
         this.apellido = apellido;
     }
@@ -118,9 +125,22 @@ public abstract class Usuarios {
     }
 
     public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
-        if (fechaDeNacimiento != null && fechaDeNacimiento.isAfter(LocalDate.now())) {
+        if (fechaDeNacimiento == null) {
+            throw new ObjetoNuloException("La fecha de nacimiento no puede ser nula.");
+        }
+
+        int anio = fechaDeNacimiento.getYear();
+        int anioActual = LocalDate.now().getYear();
+
+        // Validar que sea una fecha lógica para una persona (ej: entre 1900 y el año actual)
+        if (anio < 1900 || anio > anioActual) {
+            throw new ValorNoValidoException("El año de nacimiento no es lógico (debe ser entre 1900 y " + anioActual + ").");
+        }
+
+        if (fechaDeNacimiento.isAfter(LocalDate.now())) {
             throw new ValorNoValidoException("La fecha de nacimiento no puede ser en el futuro.");
         }
+
         this.fechaDeNacimiento = fechaDeNacimiento;
     }
 
