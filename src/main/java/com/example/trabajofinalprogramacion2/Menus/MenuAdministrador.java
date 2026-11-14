@@ -507,7 +507,7 @@ public class MenuAdministrador {
             System.out.println("6 - Reactivar sucursal");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 6);
 
             switch (opcion) {
                 case 1:
@@ -581,7 +581,7 @@ public class MenuAdministrador {
             System.out.println("4 - Buscar por inactivos");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 4);
 
             switch (opcion) {
                 case 1:
@@ -651,7 +651,7 @@ public class MenuAdministrador {
             System.out.println("3 - Modificar ciudad");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 3);
 
             switch (opcion) {
                 case 1:
@@ -976,7 +976,7 @@ public class MenuAdministrador {
             System.out.println("3 - Ver gastos mensuales");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 6);
+            opcion = Consola.leerOpcion(0, 3);
 
             switch (opcion) {
                 case 1:
@@ -1248,7 +1248,7 @@ public class MenuAdministrador {
     private TipoGasto seleccionarTipoGasto() {
         System.out.println("--- Tipo de Gasto ---");
         System.out.println("1-Luz | 2-Agua | 3-Gas | 4-Mantenimiento | 5-Internet | 6-Empleados | 7-Alquiler | 8-Otros");
-        int opcionTipo = Consola.leerEntero("Seleccione una opción: ");
+        int opcionTipo = Consola.leerOpcion(1,8);
 
         switch(opcionTipo) {
             case 1: return TipoGasto.LUZ;

@@ -74,7 +74,7 @@ public class MenuAdministradorSistema {
             System.out.println("7 - Ver sucursales");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 7);
 
             switch (opcion) {
                 case 1:
@@ -274,7 +274,7 @@ public class MenuAdministradorSistema {
             System.out.println("4 - Listado de inactivos ordenado por nombre");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 5);
+            opcion = Consola.leerOpcion(0, 4);
 
             switch (opcion) {
                 case 1:
@@ -313,7 +313,7 @@ public class MenuAdministradorSistema {
                 System.out.println("4 - Buscar por inactivos");
                 System.out.println("0 - Volver");
 
-                opcion = Consola.leerOpcion(0, 5);
+                opcion = Consola.leerOpcion(0, 4);
 
                 switch (opcion) {
                     case 1:
