@@ -38,7 +38,10 @@ public class Turno implements Comparable<Turno> {
 
     // El estado se calcula solo: sin socio el turno esta disponible, con socio esta reservado
     public Turno(Socio socio, Nutricionista nutricionista, LocalDateTime fechaTurno, double precio) {
-        setSocio(socio);
+        // El socio puede venir nulo: es un turno nuevo, todavia disponible (sin reservar)
+        if (socio != null) {
+            setSocio(socio);
+        }
         setNutricionista(nutricionista);
         setFechaTurno(fechaTurno);
         this.estado = (socio == null) ? EstadoTurno.DISPONIBLE : EstadoTurno.RESERVADO;
