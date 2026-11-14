@@ -40,21 +40,21 @@ public class Membresia {
 
     public void setFechaInicio(LocalDate fechaInicio) {
         if (fechaInicio == null) {
-            throw new ValorNoValidoException("La fecha de inicio no puede ser nula.");
+            throw new ValorNoValidoException("La fecha de inicio no puede ser nula");
         }
         this.fechaInicio = fechaInicio;
     }
 
     public void setFechaVencimiento(LocalDate fechaVencimiento) {
         if (fechaVencimiento == null) {
-            throw new ValorNoValidoException("La fecha de vencimiento no puede ser nula.");
+            throw new ValorNoValidoException("La fecha de vencimiento no puede ser nula");
         }
         this.fechaVencimiento = fechaVencimiento;
     }
 
     public void setPlan(Plan plan) {
         if (plan == null) {
-            throw new ObjetoNuloException("El plan seleccionado no puede ser nulo.");
+            throw new ObjetoNuloException("El plan seleccionado no puede ser nulo");
         }
         this.plan = plan;
     }
@@ -80,13 +80,13 @@ public class Membresia {
     public String abonarCuota(){
 
         if (this.plan == null) {
-            return "No se puede abonar, primero debe elegir un plan.";
+            return "No se puede abonar: la membresía no tiene un plan elegido";
         }
         if (isVencida()){
             this.fechaInicio = LocalDate.now();
             this.fechaVencimiento = LocalDate.now().plusMonths(1);
         } else {
-            return "No se puede abonar. Usted ya está al dia con la cuota.";
+            return "No se puede abonar: la cuota ya está al día";
         }
 
         return "Cuota abonada con exito.\n" +
@@ -120,13 +120,13 @@ public class Membresia {
         LocalDate hoy= LocalDate.now();
 
         if (isVencida()){
-            return "La membresia esta vencida.";
+            return "La membresia esta vencida";
         }
 
         // ChronoUnit.DAYS cuenta el total de dias (Period.getDays solo daba los dias sueltos, sin los meses)
         long dias = java.time.temporal.ChronoUnit.DAYS.between(hoy, this.fechaVencimiento);
 
-        return "Faltan " + dias + " días para que venza la membresía.";
+        return "Faltan " + dias + " días para que venza la membresía";
     }
 
 

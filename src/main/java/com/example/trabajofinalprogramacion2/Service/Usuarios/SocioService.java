@@ -39,10 +39,10 @@ public class SocioService implements GestionPerfil {
 
     public boolean agregar(Socio socio) {
         if (socio == null) {
-            throw new ObjetoNuloException("El socio no puede ser nulo.");
+            throw new ObjetoNuloException("El socio no puede ser nulo");
         }
         if (socio.getFechaDeNacimiento() == null) {
-            throw new ObjetoNuloException("La fecha de nacimiento del socio no puede ser nula.");
+            throw new ObjetoNuloException("La fecha de nacimiento del socio no puede ser nula");
         }
         if (coleccion.buscarPorDni(socio.getDni()) != null) {
             throw new ValorNoValidoException("Ya existe un socio registrado con el DNI: " + socio.getDni());
@@ -61,7 +61,7 @@ public class SocioService implements GestionPerfil {
 
     public boolean modificar(Socio socio) {
         if (socio == null) {
-            throw new ObjetoNuloException("El socio a modificar no puede ser nulo.");
+            throw new ObjetoNuloException("El socio a modificar no puede ser nulo");
         }
         if (coleccion.buscar(socio.getId()) == null) {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + socio.getId());
@@ -96,7 +96,7 @@ public class SocioService implements GestionPerfil {
         Socio socio = dao.consulta(id);
 
         if (socio == null) {
-            throw new ObjetoNuloException("No se encontro el socio con ID: " + id + " en la base de datos.");
+            throw new ObjetoNuloException("No se encontro el socio con ID: " + id + " en la base de datos");
         }
 
         if (!dao.alta(socio)) {
@@ -129,7 +129,7 @@ public class SocioService implements GestionPerfil {
 
     public Socio consultarPorDni(String dni) {
         if (dni == null || dni.isBlank()) {
-            throw new ValorNoValidoException("El DNI a consultar no puede estar vacio.");
+            throw new ValorNoValidoException("El DNI a consultar no puede estar vacio");
         }
         Socio socio = dao.consultaPorDni(dni);
         if (socio == null) {
@@ -152,28 +152,28 @@ public class SocioService implements GestionPerfil {
 
     public Socio buscarPorDni(String dni) {
         if (dni == null || dni.isBlank()) {
-            throw new ValorNoValidoException("El DNI de busqueda no puede estar vacio.");
+            throw new ValorNoValidoException("El DNI de busqueda no puede estar vacio");
         }
         return coleccion.buscarPorDni(dni);
     }
 
     public List<Socio> buscarPorNombre(String nombre) {
         if (nombre == null) {
-            throw new ObjetoNuloException("El nombre de busqueda no puede ser nulo.");
+            throw new ObjetoNuloException("El nombre de busqueda no puede ser nulo");
         }
         return coleccion.buscarPorNombre(nombre);
     }
 
     public List<Socio> buscarPorApellido(String apellido) {
         if (apellido == null) {
-            throw new ObjetoNuloException("El apellido de busqueda no puede ser nulo.");
+            throw new ObjetoNuloException("El apellido de busqueda no puede ser nulo");
         }
         return coleccion.buscarPorApellido(apellido);
     }
 
     public Socio buscarPorEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new ValorNoValidoException("El email de busqueda no puede estar vacio.");
+            throw new ValorNoValidoException("El email de busqueda no puede estar vacio");
         }
         return coleccion.buscarPorEmail(email);
     }
@@ -184,7 +184,7 @@ public class SocioService implements GestionPerfil {
 
     private boolean guardarModificacion(Socio socio) {
         if (socio == null) {
-            throw new ObjetoNuloException("El socio modificado no puede ser nulo.");
+            throw new ObjetoNuloException("El socio modificado no puede ser nulo");
         }
         return dao.modificar(socio);
     }
@@ -195,7 +195,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (nombre == null || nombre.isBlank()) {
-            throw new ValorNoValidoException("El nuevo nombre no puede estar vacio.");
+            throw new ValorNoValidoException("El nuevo nombre no puede estar vacio");
         }
         String anterior = socio.getNombre();
         Socio modificado = coleccion.modificarNombre(id, nombre);
@@ -213,7 +213,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (apellido == null || apellido.isBlank()) {
-            throw new ValorNoValidoException("El nuevo apellido no puede estar vacio.");
+            throw new ValorNoValidoException("El nuevo apellido no puede estar vacio");
         }
         String anterior = socio.getApellido();
         Socio modificado = coleccion.modificarApellido(id, apellido);
@@ -231,7 +231,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (dni == null || dni.isBlank()) {
-            throw new ValorNoValidoException("El nuevo DNI no puede estar vacio.");
+            throw new ValorNoValidoException("El nuevo DNI no puede estar vacio");
         }
         Socio existente = coleccion.buscarPorDni(dni);
         if (existente != null && existente.getId() != id) {
@@ -253,7 +253,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (email == null || email.isBlank()) {
-            throw new ValorNoValidoException("El nuevo email no puede estar vacio.");
+            throw new ValorNoValidoException("El nuevo email no puede estar vacio");
         }
         Socio existente = coleccion.buscarPorEmail(email);
         if (existente != null && existente.getId() != id) {
@@ -275,7 +275,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (password == null || password.isBlank()) {
-            throw new ValorNoValidoException("La nueva contraseña no puede estar vacia.");
+            throw new ValorNoValidoException("La nueva contraseña no puede estar vacia");
         }
         String anterior = socio.getPassword();
         Socio modificado = coleccion.modificarPassword(id, password);
@@ -293,7 +293,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (fecha == null) {
-            throw new ObjetoNuloException("La fecha de nacimiento no puede ser nula.");
+            throw new ObjetoNuloException("La fecha de nacimiento no puede ser nula");
         }
         LocalDate anterior = socio.getFechaDeNacimiento();
         Socio modificado = coleccion.modificarFechaNacimiento(id, fecha);
@@ -330,7 +330,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (peso <= 0) {
-            throw new ValorNoValidoException("El peso debe ser mayor a 0.");
+            throw new ValorNoValidoException("El peso debe ser mayor a 0");
         }
         Double anterior = socio.getPesoActual();
         Socio modificado = coleccion.modificarPeso(id, peso);
@@ -348,7 +348,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (altura <= 0) {
-            throw new ValorNoValidoException("La altura debe ser mayor a 0.");
+            throw new ValorNoValidoException("La altura debe ser mayor a 0");
         }
         Double anterior = socio.getAltura();
         Socio modificado = coleccion.modificarAltura(id, altura);
@@ -366,10 +366,10 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + id);
         }
         if (sucursal == null) {
-            throw new ObjetoNuloException("La sucursal no puede ser nula.");
+            throw new ObjetoNuloException("La sucursal no puede ser nula");
         }
         if (sucursal.getId() <= 0) {
-            throw new ValorNoValidoException("El ID de la sucursal no es valido.");
+            throw new ValorNoValidoException("El ID de la sucursal no es valido");
         }
         Sucursal anterior = socio.getSucursalAsignada();
         Socio modificado = coleccion.modificarSucursal(id, sucursal);
@@ -414,7 +414,7 @@ public class SocioService implements GestionPerfil {
 
         if (resultadoMemoria.contains("exito")) {
             if (!guardarModificacion(socio)) {
-                return "Error al sincronizar el pago con la base de datos.";
+                return "Error al sincronizar el pago con la base de datos";
             }
         }
 
@@ -439,7 +439,7 @@ public class SocioService implements GestionPerfil {
             throw new ObjetoNuloException("No se encontro el socio con ID: " + idSocio);
         }
         if (sucursal == null) {
-            throw new ObjetoNuloException("La sucursal a verificar no puede ser nula.");
+            throw new ObjetoNuloException("La sucursal a verificar no puede ser nula");
         }
         return coleccion.verificarAccesoSucursal(idSocio, sucursal);
     }

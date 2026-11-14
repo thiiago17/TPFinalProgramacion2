@@ -698,10 +698,10 @@ public class MenuAdministrador {
 
                                 Consola.resultado(sucursalService.modificar(sucursalExistente), "Sucursal modificada completamente", "No se pudo modificar la sucursal");
                             } else {
-                                System.out.println("Acceso denegado: No puede modificar esta sucursal.");
+                                System.out.println("Acceso denegado: No puede modificar esta sucursal");
                             }
                         } else {
-                            System.out.println("No existe ninguna sucursal con ese ID.");
+                            System.out.println("No existe ninguna sucursal con ese ID");
                         }
                     } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
                         System.err.println("Error: " + e.getMessage());
@@ -762,7 +762,7 @@ public class MenuAdministrador {
                             System.out.println("--- SUCURSAL ENCONTRADA ---");
                             System.out.println(sucursalEncontrada.toString());
                         } else {
-                            System.out.println("No se encontró ninguna sucursal en " + calle + " " + altura + " para tu gimnasio.");
+                            System.out.println("No se encontró ninguna sucursal en " + calle + " " + altura + " para tu gimnasio");
                         }
                     } catch (ValorNoValidoException e) {
                         System.err.println("Error: " + e.getMessage());
@@ -773,7 +773,7 @@ public class MenuAdministrador {
                     String ciudad = Consola.leerTexto("Ingrese la ciudad a buscar: ");
                     try {
                         System.out.println("--- SUCURSALES ENCONTRADAS ---");
-                        Consola.mostrarLista(sucursalService.buscarPorGimnasioYCiudad(admin.getIdGimnasio(), ciudad), "No se encontraron sucursales en esa ciudad para tu gimnasio.");
+                        Consola.mostrarLista(sucursalService.buscarPorGimnasioYCiudad(admin.getIdGimnasio(), ciudad), "No se encontraron sucursales en esa ciudad para tu gimnasio");
                     } catch (ValorNoValidoException e) {
                         System.err.println("Error: " + e.getMessage());
                     }
@@ -782,7 +782,7 @@ public class MenuAdministrador {
                 case 3:
                     System.out.println("--- SUCURSALES ACTIVAS ---");
                     try {
-                        Consola.mostrarLista(sucursalService.buscarActivosPorGimnasio(admin.getIdGimnasio()), "No tenés sucursales activas en este gimnasio.");
+                        Consola.mostrarLista(sucursalService.buscarActivosPorGimnasio(admin.getIdGimnasio()), "No tenés sucursales activas en este gimnasio");
                     } catch (ValorNoValidoException e) {
                         System.err.println("Error: " + e.getMessage());
                     }
