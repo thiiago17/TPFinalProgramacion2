@@ -71,6 +71,7 @@ public class MenuAdministradorSistema {
             System.out.println("4 - Modificar nombre");
             System.out.println("5 - Dar de baja gimnasio");
             System.out.println("6 - Reactivar gimnasio");
+            System.out.println("7 - Ver sucursales");
             System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 5);
@@ -141,6 +142,8 @@ public class MenuAdministradorSistema {
                         System.err.println("Error al reactivar: " + e.getMessage());
                     }
                     break;
+                case 7:
+                    menuSucursales();
             }
 
         } while (opcion != 0);
@@ -343,6 +346,128 @@ public class MenuAdministradorSistema {
                     case 4:
                         System.out.println("--- GIMNASIOS INACTIVOS ---");
                         Consola.mostrarLista(gimnasioService.buscarPorInactivos(), "No hay gimnasios inactivos en el sistema.");
+                        break;
+                }
+
+            } while (opcion != 0);
+        }
+
+        //LISTADO DE TODAS LAS SUCURSALES DEL SISTEMA
+
+        private void menuSucursales(){
+            int opcion;
+
+            do {
+                Consola.titulo("MENU SUCURSALES");
+                System.out.println("1 - Ver listado");
+                System.out.println("2 - Busqueda de sucursales");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 2);
+
+                switch (opcion) {
+                    case 1:
+                        menuListadoSucursales();
+                        break;
+                    case 2:
+                        menuBusquedaSucursales();
+                        break;
+                }
+
+            } while (opcion != 0);
+        }
+
+        private void menuListadoSucursales(){
+            int opcion;
+
+            do {
+                Consola.titulo("MENU DE LISTADO DE SUCURSALES");
+                System.out.println("1 - Ver listado completo ordenado por calle");
+                System.out.println("2 - Ver listado completo ordenado por ciudad");
+                System.out.println("3 - Ver activos ordenado por calle");
+                System.out.println("4 - Ver activos ordenado por ciudad");
+                System.out.println("5 - Ver inactivos ordenado por calle");
+                System.out.println("6 - Ver inactivos ordenado por ciudad");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 6);
+
+                switch (opcion) {
+                    case 1:
+                        Consola.mostrarLista(sucursalService.verListadoOrdenadoPorCalle(), "No hay sucursales registradas en el sistema.");
+                        break;
+                    case 2:
+                        Consola.mostrarLista(sucursalService.verListadoOrdenadoPorCiudad(), "No hay sucursales registradas en el sistema.");
+                        break;
+                    case 3:
+                        Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCalle(), "No hay sucursales activas en el sistema.");
+                        break;
+                    case 4:
+                        Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales activas en el sistema.");
+                        break;
+                    case 5:
+                        Consola.mostrarLista(sucursalService.verInactivosOrdenadoPorCalle(), "No hay sucursales inactivas en el sistema.");
+                        break;
+                    case 6:
+                        Consola.mostrarLista(sucursalService.verInactivosOrdenadoPorCiudad(), "No hay sucursales inactivas en el sistema.");
+                        break;
+                }
+            } while (opcion != 0);
+        }
+
+        private void menuBusquedaSucursales(){
+            int opcion;
+
+            do {
+                Consola.titulo("MENU DE BUSQUEDA DE SUCURSALES");
+                System.out.println("1 - Buscar por direccion");
+                System.out.println("2 - Buscar por ciudad");
+                System.out.println("3 - Buscar por activos");
+                System.out.println("4 - Buscar por inactivos");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 4);
+
+                switch (opcion) {
+                    case 1:
+                        String calle = Consola.leerTexto("Ingrese la calle a buscar: ");
+                        int altura = Consola.leerEntero("Ingrese la altura: ");
+                        try {
+                            Sucursal sucursalEncontrada = sucursalService.buscarPorDireccion(calle, altura);
+                            if (sucursalEncontrada != null) {
+                                System.out.println("--- SUCURSAL ENCONTRADA ---");
+                                System.out.println(sucursalEncontrada.toString());
+                            } else {
+                                System.out.println("No se encontró ninguna sucursal en " + calle + " " + altura + ".");
+                            }
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                        break;
+
+                    case 2:
+                        String ciudad = Consola.leerTexto("Ingrese la ciudad a buscar: ");
+                        try {
+                            Consola.mostrarLista(sucursalService.buscarPorCiudad(ciudad), "No se encontraron sucursales en esa ciudad.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                        break;
+
+                    case 3:
+                        try {
+                            Consola.mostrarLista(sucursalService.buscarPorActivos(), "No hay sucursales activas registradas en el sistema.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
+                        break;
+
+                    case 4:
+                        try {
+                            Consola.mostrarLista(sucursalService.buscarPorInactivos(), "No hay sucursales inactivas registradas en el sistema.");
+                        } catch (ValorNoValidoException e) {
+                            System.err.println("Error: " + e.getMessage());
+                        }
                         break;
                 }
 

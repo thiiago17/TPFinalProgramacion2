@@ -723,18 +723,7 @@ public class MenuAdministrador {
 
             switch (opcion) {
                 case 1:
-                    int idSucursalVer = Consola.leerEntero("Ingrese el ID de su Sucursal: ");
-                    try {
-                        Sucursal sucursalVer = sucursalService.buscarPorId(idSucursalVer);
-
-                        if (sucursalVer != null && sucursalVer.getIdGimnasio() == admin.getIdGimnasio()) { //que coincida con el gimnasio del admin
-                            Consola.mostrarLista(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursalVer), "No hay máquinas activas en esta sucursal");
-                        } else {
-                            System.out.println("Esa sucursal no existe o no pertenece a tu gimnasio");
-                        }
-                    } catch (ValorNoValidoException e) {
-                        System.err.println("Error: " + e.getMessage());
-                    }
+                    menuListadoMaquinas();
                     break;
                 case 2:
                     int idSucursalAgregar = Consola.leerEntero("Ingrese el ID de su Sucursal: ");
@@ -820,6 +809,51 @@ public class MenuAdministrador {
                         System.err.println("Error: " + e.getMessage());
                     }
                     break;
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void menuListadoMaquinas(){
+        int opcion;
+
+        do {
+            Consola.titulo("LISTADOS DE MÁQUINAS");
+            System.out.println("1 - Ver todas las máquinas");
+            System.out.println("2 - Ver maquinas ordenadas por cantidad ascendente");
+            System.out.println("3 - Ver maquinas ordenadas por cantidad descendente");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 3);
+
+            if (opcion != 0) {
+                int idSucursal = Consola.leerEntero("Ingrese el ID de la sucursal: ");
+                try {
+                    Sucursal sucursal = sucursalService.buscarPorId(idSucursal);
+
+                    if (sucursal != null) {
+                        if (sucursal.getIdGimnasio() == admin.getIdGimnasio()) {
+                            switch (opcion) {
+                                case 1:
+                                    // Ajustá el nombre del método si en tu Service se llama distinto (ej. verListadoPorSucursal)
+                                    Consola.mostrarLista(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    break;
+                                case 2:
+                                    Consola.mostrarLista(sucursalMaquinaService.verActivosOrdenadoPorCantidadAscendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    break;
+                                case 3:
+                                    Consola.mostrarLista(sucursalMaquinaService.verActivosOrdenadoPorCantidadDescendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    break;
+                            }
+                        } else {
+                            System.out.println("Acceso denegado: La sucursal pertenece a otro gimnasio.");
+                        }
+                    } else {
+                        System.out.println("No existe ninguna sucursal con ese ID.");
+                    }
+                } catch (ValorNoValidoException e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
             }
 
         } while (opcion != 0);
