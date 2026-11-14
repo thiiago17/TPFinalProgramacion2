@@ -18,7 +18,7 @@ public class SocioDAO implements ABCMLDAO<Socio> {
     @Override
     public Socio agregar(Socio socio) {
         // Primero manejamos la membresia: si el socio tiene una, la guardamos en la BD para obtener su ID
-        Integer idMembresia = guardarOActualizarMembresia(socio.getMembresia());
+        Integer idMembresia = insertarMembresia(socio.getMembresia());
 
         String sql = "INSERT INTO socio (nombre, apellido, dni, email, contrasenia, fechaDeNacimiento, activo, pesoActual, altura, fechaAlta, id_membresia, id_sucursal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -136,8 +136,17 @@ public class SocioDAO implements ABCMLDAO<Socio> {
 
     @Override
     public boolean modificar(Socio socio) {
-        // Actualizamos o guardamos la membresía primero
-        Integer idMembresia = guardarOActualizarMembresia(socio.getMembresia());
+        // Si el socio ya tiene una membresia en la BD se actualiza esa misma fila;
+        // solo se inserta una nueva si todavia no tenia (asi no quedan membresias huerfanas)
+        Integer idMembresia = buscarIdMembresiaDelSocio(socio.getId());
+
+        if (idMembresia != null && socio.getMembresia() != null) {
+            if (!actualizarMembresia(idMembresia, socio.getMembresia())) {
+                return false;
+            }
+        } else {
+            idMembresia = insertarMembresia(socio.getMembresia());
+        }
 
         String sql = "UPDATE socio SET nombre = ?, apellido = ?, dni = ?, email = ?, contrasenia = ?, fechaDeNacimiento = ?, activo = ?, pesoActual = ?, altura = ?, fechaAlta = ?, id_membresia = ?, id_sucursal = ? WHERE id_socio = ?";
 
@@ -246,7 +255,7 @@ public class SocioDAO implements ABCMLDAO<Socio> {
     }
 
     // Método auxiliar para guardar una membresía nueva en su tabla y retornar su ID generado
-    private Integer guardarOActualizarMembresia(Membresia membresia) {
+    private Integer insertarMembresia(Membresia membresia) {
         if (membresia == null) {
             return null;
         }
@@ -271,6 +280,50 @@ public class SocioDAO implements ABCMLDAO<Socio> {
             System.out.println("Error al guardar la membresía: " + e.getMessage());
         }
         return null;
+    }
+
+    // Devuelve el id_membresia que tiene el socio en la BD, o null si no tiene
+    private Integer buscarIdMembresiaDelSocio(int idSocio) {
+        String sql = "SELECT id_membresia FROM socio WHERE id_socio = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, idSocio);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int idMembresia = rs.getInt("id_membresia");
+                    // Si la columna esta en NULL, getInt devuelve 0
+                    if (idMembresia > 0) {
+                        return idMembresia;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al buscar la membresía del socio: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Actualiza los datos de una membresia que ya existe en la BD
+    private boolean actualizarMembresia(int idMembresia, Membresia membresia) {
+        String sql = "UPDATE membresia SET fechaInicio = ?, fechaVencimiento = ?, plan = ? WHERE id_membresia = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            FechasBD.setFecha(ps, 1, membresia.getFechaInicio());
+            FechasBD.setFecha(ps, 2, membresia.getFechaVencimiento());
+            ps.setString(3, membresia.getPlan().name());
+            ps.setInt(4, idMembresia);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar la membresía: " + e.getMessage());
+            return false;
+        }
     }
 
     private void setSucursal(PreparedStatement ps, int posicion, Sucursal sucursal) throws SQLException {

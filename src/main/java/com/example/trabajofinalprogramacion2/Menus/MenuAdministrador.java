@@ -422,11 +422,16 @@ public class MenuAdministrador {
         LocalDateTime fecha = Consola.leerFechaHora("Fecha y hora del turno");
         double precio = Consola.leerDouble("Precio: ");
 
-        Turno turno = new Turno(null, nutricionista, fecha, precio);
+        // El constructor de Turno valida horario y precio: si estan mal tira ValorNoValidoException
+        try {
+            Turno turno = new Turno(null, nutricionista, fecha, precio);
 
-        Consola.resultado(turnosService.agregar(turno),
-                "Turno creado con ID " + turno.getId(),
-                "No se pudo crear (horario de 10:00 a 18:30 cada 30 min, sin pisarse con otro turno, precio >= 0)");
+            Consola.resultado(turnosService.agregar(turno),
+                    "Turno creado con ID " + turno.getId(),
+                    "No se pudo crear: se pisa con otro turno de ese nutricionista");
+        } catch (ValorNoValidoException e) {
+            System.out.println("No se pudo crear el turno: " + e.getMessage());
+        }
     }
 
     // SOCIOS =================================================================================
