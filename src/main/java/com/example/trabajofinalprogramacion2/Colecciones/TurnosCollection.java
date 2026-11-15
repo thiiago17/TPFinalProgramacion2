@@ -23,9 +23,15 @@ public class TurnosCollection {
 
     // LISTADO =================================================================================
 
-    // Todos los turnos, ordenados por fecha
+    // Todos los turnos vigentes (que no hayan pasado), ordenados por fecha
     public List<Turno> verListado() {
-        return ordenarPorFecha(new ArrayList<>(turnos));
+        List<Turno> vigentes = new ArrayList<>();
+        for (Turno turno : turnos) {
+            if (!turno.yaPaso()) {
+                vigentes.add(turno);
+            }
+        }
+        return ordenarPorFecha(vigentes);
     }
 
     // ALTA =================================================================================
