@@ -1,11 +1,13 @@
 package com.example.trabajofinalprogramacion2.Menus;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Maquina;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Administrador;
 import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.MaquinaService;
 import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 
@@ -21,12 +23,14 @@ public class MenuAdministradorSistema {
     private final AdministradorService administradorService;
     private final GimnasioService gimnasioService;
     private final SucursalService sucursalService;
+    private final MaquinaService maquinaService;
 
-    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService, GimnasioService gimnasioService, SucursalService sucursalService) {
+    public MenuAdministradorSistema(Administrador admin, AdministradorService administradorService, GimnasioService gimnasioService, SucursalService sucursalService, MaquinaService maquinaService) {
         this.admin = admin;
         this.administradorService = administradorService;
         this.gimnasioService = gimnasioService;
         this.sucursalService = sucursalService;
+        this.maquinaService = maquinaService;
     }
 
     public void mostrar() {
@@ -72,6 +76,7 @@ public class MenuAdministradorSistema {
             System.out.println("5 - Dar de baja gimnasio");
             System.out.println("6 - Reactivar gimnasio");
             System.out.println("7 - Ver sucursales");
+            System.out.println("8 - Maquinas");
             System.out.println("0 - Volver");
 
             opcion = Consola.leerOpcion(0, 7);
@@ -144,6 +149,8 @@ public class MenuAdministradorSistema {
                     break;
                 case 7:
                     menuSucursales();
+                case 8:
+                    menuMaquinas();
             }
 
         } while (opcion != 0);
@@ -473,6 +480,252 @@ public class MenuAdministradorSistema {
 
             } while (opcion != 0);
         }
+
+        //MENU DE MAQUINAS
+        private void menuMaquinas(){
+            int opcion;
+
+            do {
+                Consola.titulo("MAQUINAS");
+                System.out.println("1 - Ver máquinas");
+                System.out.println("2 - Agregar máquina");
+                System.out.println("3 - Modificar cantidad");
+                System.out.println("4 - Busqueda filtrada");
+                System.out.println("5 - Dar de baja máquina");
+                System.out.println("6 - Reactivar máquina");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 6);
+
+                switch (opcion) {
+                    case 1:
+                        menuVerMaquinas();
+                        break;
+
+                    case 2:
+                        String nombre = Consola.leerTexto("Nombre: ");
+                        String descripcion = Consola.leerTexto("Descripción: ");
+                        double pesoLimite = Consola.leerDouble("Peso límite (kg): ");
+                        String grupoMuscular = Consola.leerTexto("Grupo muscular: ");
+
+                        try {
+                            Maquina maquina = new Maquina(nombre, descripcion, pesoLimite, grupoMuscular);
+                            maquina.setEstado(1);
+
+                            Consola.resultado(maquinaService.agregar(maquina), "Máquina agregada correctamente", "No se pudo agregar la máquina");
+                        } catch (SQLException | ObjetoNuloException e) {
+                            System.err.println("Error al intentar agregar: " + e.getMessage());
+                        }
+                        break;
+
+                    case 3:
+                        menuModificarMaquinas();
+                        break;
+
+                    case 4:
+                        menuBusquedaMaquinas();
+
+                    case 5:
+                        int idBaja = Consola.leerEntero("Ingrese el ID de la máquina a dar de baja: ");
+                        try {
+                            Maquina maquinaBaja = maquinaService.buscarPorId(idBaja);
+                            if (maquinaBaja != null) {
+                                if (maquinaBaja.getEstado() == 0) {
+                                    System.out.println("La máquina ya se encuentra inactiva.");
+                                } else {
+                                    Consola.resultado(maquinaService.baja(maquinaBaja), "Máquina dada de baja correctamente", "No se pudo dar de baja la máquina");
+                                }
+                            } else {
+                                System.out.println("No existe ninguna máquina con ese ID.");
+                            }
+                        } catch (ValorNoValidoException | SQLException | ObjetoNuloException e) {
+                            System.err.println("Error al dar de baja: " + e.getMessage());
+                        }
+                        break;
+
+                    case 6:
+                        int idAlta = Consola.leerEntero("Ingrese el ID de la máquina a reactivar: ");
+                        try {
+                            Maquina maquinaAlta = maquinaService.buscarPorId(idAlta);
+                            if (maquinaAlta != null) {
+                                if (maquinaAlta.getEstado() == 1) {
+                                    System.out.println("La máquina ya se encuentra activa.");
+                                } else {
+                                    Consola.resultado(maquinaService.alta(maquinaAlta), "Máquina reactivada correctamente", "No se pudo reactivar la máquina");
+                                }
+                            } else {
+                                System.out.println("No existe ninguna máquina con ese ID.");
+                            }
+                        } catch (ValorNoValidoException | SQLException | ObjetoNuloException e) {
+                            System.err.println("Error al reactivar: " + e.getMessage());
+                        }
+                        break;
+                }
+            } while (opcion != 0);
+        }
+
+    private void menuVerMaquinas(){
+        int opcion;
+
+        do {
+            Consola.titulo("LISTADO DE MAQUINAS");
+            System.out.println("1 - Ver listado completo");
+            System.out.println("2 - Ver activas ordenadas por nombre");
+            System.out.println("3 - Ver inactivas ordenadas por nombre");
+            System.out.println("4 - Ver activas ordenadas por grupo muscular");
+            System.out.println("5 - Ver inactivas ordenadas por grupo muscular");
+            System.out.println("6 - Ver activas ordenadas por peso límite ascendente");
+            System.out.println("7 - Ver inactivas ordenadas por peso límite ascendente");
+            System.out.println("8 - Ver activas ordenadas por peso límite descendente");
+            System.out.println("9 - Ver inactivas ordenadas por peso límite descendente");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 9);
+
+            switch (opcion) {
+                case 1:
+                    Consola.mostrarLista(maquinaService.verListado(), "No hay máquinas registradas en el sistema.");
+                    break;
+                case 2:
+                    Consola.mostrarLista(maquinaService.verActivosOrdenadoPorNombre(), "No hay máquinas activas registradas.");
+                    break;
+                case 3:
+                    Consola.mostrarLista(maquinaService.verInactivosOrdenadoPorNombre(), "No hay máquinas inactivas registradas.");
+                    break;
+                case 4:
+                    Consola.mostrarLista(maquinaService.verActivosOrdenadoPorGrupoMuscular(), "No hay máquinas activas registradas.");
+                    break;
+                case 5:
+                    Consola.mostrarLista(maquinaService.verInactivosOrdenadoPorGrupoMuscular(), "No hay máquinas inactivas registradas.");
+                    break;
+                case 6:
+                    Consola.mostrarLista(maquinaService.verActivosOrdenadoPorPesoLimiteAscendente(), "No hay máquinas activas registradas.");
+                    break;
+                case 7:
+                    Consola.mostrarLista(maquinaService.verInactivosOrdenadoPorPesoLimiteAscendente(), "No hay máquinas inactivas registradas.");
+                    break;
+                case 8:
+                    Consola.mostrarLista(maquinaService.verActivosOrdenadoPorPesoLimiteDescendente(), "No hay máquinas activas registradas.");
+                    break;
+                case 9:
+                    Consola.mostrarLista(maquinaService.verInactivosOrdenadoPorPesoLimiteDescendente(), "No hay máquinas inactivas registradas.");
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void menuModificarMaquinas() {
+        int id = Consola.leerEntero("Ingrese el ID de la máquina a modificar: ");
+
+        try {
+            Maquina maquina = maquinaService.buscarPorId(id);
+            if (maquina == null) {
+                System.out.println("No existe ninguna máquina con ese ID.");
+                return;
+            }
+
+            int opcion;
+            do {
+                Consola.titulo("MODIFICAR MÁQUINA");
+                System.out.println("1 - Modificar nombre");
+                System.out.println("2 - Modificar descripción");
+                System.out.println("3 - Modificar peso límite");
+                System.out.println("4 - Modificar grupo muscular");
+                System.out.println("5 - Modificar todos los datos");
+                System.out.println("0 - Volver");
+
+                opcion = Consola.leerOpcion(0, 5);
+
+                try {
+                    switch (opcion) {
+                        case 1:
+                            String nuevoNombre = Consola.leerTexto("Nuevo nombre: ");
+                            Consola.resultado(maquinaService.modificarNombre(id, nuevoNombre),
+                                    "Nombre modificado correctamente.", "No se pudo modificar el nombre.");
+                            break;
+
+                        case 2:
+                            String nuevaDescripcion = Consola.leerTexto("Nueva descripción: ");
+                            Consola.resultado(maquinaService.modificarDescripcion(id, nuevaDescripcion),
+                                    "Descripción modificada correctamente.", "No se pudo modificar la descripción.");
+                            break;
+
+                        case 3:
+                            double nuevoPeso = Consola.leerDouble("Nuevo peso límite (kg): ");
+                            Consola.resultado(maquinaService.modificarPesoLimite(id, nuevoPeso),
+                                    "Peso límite modificado correctamente.", "No se pudo modificar el peso límite.");
+                            break;
+
+                        case 4:
+                            String nuevoGrupo = Consola.leerTexto("Nuevo grupo muscular: ");
+                            Consola.resultado(maquinaService.modificarGrupoMuscular(id, nuevoGrupo),
+                                    "Grupo muscular modificado correctamente.", "No se pudo modificar el grupo muscular.");
+                            break;
+
+                        case 5:
+                            Maquina actual = maquinaService.buscarPorId(id);
+                            Maquina maquinaModificada = new Maquina();
+                            maquinaModificada.setId(actual.getId());
+                            maquinaModificada.setEstado(actual.getEstado());
+                            maquinaModificada.setNombre(Consola.leerTexto("Nuevo nombre: "));
+                            maquinaModificada.setDescripcion(Consola.leerTexto("Nueva descripción: "));
+                            maquinaModificada.setPesoLimite(Consola.leerDouble("Nuevo peso límite (kg): "));
+                            maquinaModificada.setGrupoMuscular(Consola.leerTexto("Nuevo grupo muscular: "));
+
+                            Consola.resultado(maquinaService.modificar(maquinaModificada),
+                                    "Máquina modificada correctamente.", "No se pudo modificar la máquina.");
+                            break;
+                    }
+                } catch (SQLException | ObjetoNuloException | ValorNoValidoException e) {
+                    System.err.println("Error al modificar: " + e.getMessage());
+                }
+
+            } while (opcion != 0);
+
+        } catch (ValorNoValidoException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void menuBusquedaMaquinas() {
+        int opcion;
+
+        do {
+            Consola.titulo("MENU DE BUSQUEDA DE MAQUINAS");
+            System.out.println("1 - Buscar por nombre");
+            System.out.println("2 - Buscar por activas");
+            System.out.println("3 - Buscar por inactivas");
+            System.out.println("0 - Volver");
+
+            opcion = Consola.leerOpcion(0, 3);
+
+            switch (opcion) {
+                case 1:
+                    String nombre = Consola.leerTexto("Ingrese el nombre de la máquina a buscar: ");
+                    try {
+                        Maquina maquinaEncontrada = maquinaService.buscarPorNombre(nombre);
+                        if (maquinaEncontrada != null) {
+                            System.out.println("--- MÁQUINA ENCONTRADA ---");
+                            System.out.println(maquinaEncontrada.toString());
+                        } else {
+                            System.out.println("No se encontró ninguna máquina con el nombre \"" + nombre + "\".");
+                        }
+                    } catch (ValorNoValidoException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    Consola.mostrarLista(maquinaService.buscarPorActivos(), "No hay máquinas activas registradas en el sistema.");
+                    break;
+
+                case 3:
+                    Consola.mostrarLista(maquinaService.buscarPorInactivos(), "No hay máquinas inactivas registradas en el sistema.");
+                    break;
+            }
+
+        } while (opcion != 0);
+    }
 
     private void mostrarSucursalConNombreGimnasio(Sucursal sucursal) {
         String nombreGym = "Desconocido";

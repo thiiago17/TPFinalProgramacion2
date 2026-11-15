@@ -107,7 +107,7 @@ public class MenuPrincipal {
         }
 
         if (admin.isEsAdminSistema()) {
-            new MenuAdministradorSistema(admin, administradorService, gimnasioService, sucursalService).mostrar();
+            new MenuAdministradorSistema(admin, administradorService, gimnasioService, sucursalService, maquinaService).mostrar();
         } else {
             new MenuAdministrador(admin, administradorService, entrenadorService, nutricionistaService,
                     turnosService, socioService, sucursalService, sucursalMaquinaService, gastoService, gimnasioService, maquinaService).mostrar();
