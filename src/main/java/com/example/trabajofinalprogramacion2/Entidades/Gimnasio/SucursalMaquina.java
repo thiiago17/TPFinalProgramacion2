@@ -108,12 +108,9 @@ public class SucursalMaquina {
 
     @Override
     public String toString() {
-        return "SucursalMaquina{" +
-                "idSucursalMaquina=" + idSucursalMaquina +
-                ", idSucursal=" + idSucursal +
-                ", idMaquina=" + idMaquina +
-                ", cantidad=" + cantidad +
-                ", estado=" + estado +
-                '}';
+        return "#" + idSucursalMaquina + " | ID Sucursal: " + idSucursal
+                + " | ID Máquina: " + idMaquina
+                + " | Cantidad: " + cantidad
+                + " | " + (estado == 1 ? "Activo" : "Inactivo");
     }
 }

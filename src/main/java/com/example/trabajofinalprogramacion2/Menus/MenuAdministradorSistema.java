@@ -394,22 +394,22 @@ public class MenuAdministradorSistema {
 
                 switch (opcion) {
                     case 1:
-                        Consola.mostrarLista(sucursalService.verListadoOrdenadoPorCalle(), "No hay sucursales registradas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verListadoOrdenadoPorCalle(), "No hay sucursales registradas en el sistema.");
                         break;
                     case 2:
-                        Consola.mostrarLista(sucursalService.verListadoOrdenadoPorCiudad(), "No hay sucursales registradas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verListadoOrdenadoPorCiudad(), "No hay sucursales registradas en el sistema.");
                         break;
                     case 3:
-                        Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCalle(), "No hay sucursales activas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verActivosOrdenadoPorCalle(), "No hay sucursales activas en el sistema.");
                         break;
                     case 4:
-                        Consola.mostrarLista(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales activas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verActivosOrdenadoPorCiudad(), "No hay sucursales activas en el sistema.");
                         break;
                     case 5:
-                        Consola.mostrarLista(sucursalService.verInactivosOrdenadoPorCalle(), "No hay sucursales inactivas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verInactivosOrdenadoPorCalle(), "No hay sucursales inactivas en el sistema.");
                         break;
                     case 6:
-                        Consola.mostrarLista(sucursalService.verInactivosOrdenadoPorCiudad(), "No hay sucursales inactivas en el sistema.");
+                        mostrarListaSucursalesConNombreGimnasio(sucursalService.verInactivosOrdenadoPorCiudad(), "No hay sucursales inactivas en el sistema.");
                         break;
                 }
             } while (opcion != 0);
@@ -436,7 +436,7 @@ public class MenuAdministradorSistema {
                             Sucursal sucursalEncontrada = sucursalService.buscarPorDireccion(calle, altura);
                             if (sucursalEncontrada != null) {
                                 System.out.println("--- SUCURSAL ENCONTRADA ---");
-                                System.out.println(sucursalEncontrada.toString());
+                                mostrarSucursalConNombreGimnasio(sucursalEncontrada);
                             } else {
                                 System.out.println("No se encontró ninguna sucursal en " + calle + " " + altura + ".");
                             }
@@ -448,7 +448,7 @@ public class MenuAdministradorSistema {
                     case 2:
                         String ciudad = Consola.leerTexto("Ingrese la ciudad a buscar: ");
                         try {
-                            Consola.mostrarLista(sucursalService.buscarPorCiudad(ciudad), "No se encontraron sucursales en esa ciudad.");
+                            mostrarListaSucursalesConNombreGimnasio(sucursalService.buscarPorCiudad(ciudad), "No se encontraron sucursales en esa ciudad.");
                         } catch (ValorNoValidoException e) {
                             System.err.println("Error: " + e.getMessage());
                         }
@@ -456,7 +456,7 @@ public class MenuAdministradorSistema {
 
                     case 3:
                         try {
-                            Consola.mostrarLista(sucursalService.buscarPorActivos(), "No hay sucursales activas registradas en el sistema.");
+                            mostrarListaSucursalesConNombreGimnasio(sucursalService.buscarPorActivos(), "No hay sucursales activas registradas en el sistema.");
                         } catch (ValorNoValidoException e) {
                             System.err.println("Error: " + e.getMessage());
                         }
@@ -464,7 +464,7 @@ public class MenuAdministradorSistema {
 
                     case 4:
                         try {
-                            Consola.mostrarLista(sucursalService.buscarPorInactivos(), "No hay sucursales inactivas registradas en el sistema.");
+                            mostrarListaSucursalesConNombreGimnasio(sucursalService.buscarPorInactivos(), "No hay sucursales inactivas registradas en el sistema.");
                         } catch (ValorNoValidoException e) {
                             System.err.println("Error: " + e.getMessage());
                         }
@@ -473,4 +473,28 @@ public class MenuAdministradorSistema {
 
             } while (opcion != 0);
         }
+
+    private void mostrarSucursalConNombreGimnasio(Sucursal sucursal) {
+        String nombreGym = "Desconocido";
+        try {
+            Gimnasio gym = gimnasioService.buscarPorId(sucursal.getIdGimnasio());
+            if (gym != null && gym.getNombre() != null) {
+                nombreGym = gym.getNombre();
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println(sucursal.toString() + " (" + nombreGym + ")");
+    }
+
+    private void mostrarListaSucursalesConNombreGimnasio(List<Sucursal> lista, String mensajeVacia) {
+        if (lista == null || lista.isEmpty()) {
+            System.out.println(mensajeVacia);
+        } else {
+            for (Sucursal sucursal : lista) {
+                mostrarSucursalConNombreGimnasio(sucursal);
+            }
+        }
+    }
 }

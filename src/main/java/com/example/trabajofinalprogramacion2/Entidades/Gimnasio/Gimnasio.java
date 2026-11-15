@@ -93,10 +93,7 @@ public class Gimnasio {
 
     @Override
     public String toString() {
-        return "Gimnasio{" +
-                "id=" + id +
-                ", nombre='" + (nombre != null ? nombre : "-") + '\'' +
-                ", estado=" + estado +
-                '}';
+        return "#" + id + " | Nombre: " + (nombre != null ? nombre : "-")
+                + " | " + (estado == 1 ? "Activo" : "Inactivo");
     }
 }

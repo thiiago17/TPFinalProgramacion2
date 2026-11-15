@@ -2,6 +2,8 @@ package com.example.trabajofinalprogramacion2.Menus;
 
 import com.example.trabajofinalprogramacion2.Entidades.Gastos.Gasto;
 import com.example.trabajofinalprogramacion2.Entidades.Gastos.TipoGasto;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Gimnasio;
+import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Maquina;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.Sucursal;
 import com.example.trabajofinalprogramacion2.Entidades.Gimnasio.SucursalMaquina;
 import com.example.trabajofinalprogramacion2.Entidades.Membresias.Membresia;
@@ -13,9 +15,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Excepciones.ObjetoNuloException;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.GastoService;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalMaquinaService;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.*;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
@@ -43,10 +43,13 @@ public class MenuAdministrador {
     private final SucursalService sucursalService;
     private final SucursalMaquinaService sucursalMaquinaService;
     private final GastoService gastoService;
+    private final GimnasioService gimnasioService;
+    private final MaquinaService maquinaService;
 
     public MenuAdministrador(Administrador admin, AdministradorService administradorService,
                              EntrenadorService entrenadorService, NutricionistaService nutricionistaService,
-                             TurnosService turnosService, SocioService socioService, SucursalService sucursalService, SucursalMaquinaService sucursalMaquinaService, GastoService gastoService) {
+                             TurnosService turnosService, SocioService socioService, SucursalService sucursalService, SucursalMaquinaService sucursalMaquinaService,
+                             GastoService gastoService, GimnasioService gimnasioService, MaquinaService maquinaService) {
         this.admin = admin;
         this.administradorService = administradorService;
         this.entrenadorService = entrenadorService;
@@ -56,6 +59,8 @@ public class MenuAdministrador {
         this.sucursalService = sucursalService;
         this.sucursalMaquinaService = sucursalMaquinaService;
         this.gastoService = gastoService;
+        this.gimnasioService = gimnasioService;
+        this.maquinaService = maquinaService;
     }
 
     public void mostrar() {
@@ -598,11 +603,10 @@ public class MenuAdministrador {
     // SUCURSALES =================================================================================
 
     private void menuSucursales() {
-
         int opcion;
 
         do {
-            Consola.titulo("SUCURSALES");
+            Consola.titulo(armarTituloConNombreGimnasio("SUCURSAL"));
             System.out.println("1 - Ver sucursales del gimnasio");
             System.out.println("2 - Buscar sucursales");
             System.out.println("3 - Agregar sucursal");
@@ -683,7 +687,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("MODIFICACION DE SUCURSALES");
+            Consola.titulo(armarTituloConNombreGimnasio("MODIFICACION DE SUCURSALES"));
             System.out.println("1 - Modificar todo");
             System.out.println("2 - Modificar direccion");
             System.out.println("3 - Modificar ciudad");
@@ -753,7 +757,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE SUCURSALES");
+            Consola.titulo(armarTituloConNombreGimnasio("BUSQUEDA DE SUCURSALES"));
             System.out.println("1 - Buscar por direccion");
             System.out.println("2 - Buscar por ciudad");
             System.out.println("3 - Buscar por activos");
@@ -820,7 +824,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("MÁQUINAS");
+            Consola.titulo(armarTituloConNombreGimnasio("MAQUINAS"));
             System.out.println("1 - Ver máquinas");
             System.out.println("2 - Agregar máquina");
             System.out.println("3 - Modificar cantidad");
@@ -927,7 +931,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("LISTADOS DE MÁQUINAS");
+            Consola.titulo(armarTituloConNombreGimnasio("LISTADOS DE MÁQUINAS"));
             System.out.println("1 - Ver todas las máquinas");
             System.out.println("2 - Ver maquinas ordenadas por cantidad ascendente");
             System.out.println("3 - Ver maquinas ordenadas por cantidad descendente");
@@ -944,13 +948,13 @@ public class MenuAdministrador {
                         if (sucursal.getIdGimnasio() == admin.getIdGimnasio()) {
                             switch (opcion) {
                                 case 1:
-                                    Consola.mostrarLista(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    mostrarListaSucursalMaquinasCompleto(sucursalMaquinaService.buscarActivosPorIdSucursal(idSucursal), "No hay máquinas registradas en esta sucursal.");
                                     break;
                                 case 2:
-                                    Consola.mostrarLista(sucursalMaquinaService.verActivosOrdenadoPorCantidadAscendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    mostrarListaSucursalMaquinasCompleto(sucursalMaquinaService.verActivosOrdenadoPorCantidadAscendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
                                     break;
                                 case 3:
-                                    Consola.mostrarLista(sucursalMaquinaService.verActivosOrdenadoPorCantidadDescendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
+                                    mostrarListaSucursalMaquinasCompleto(sucursalMaquinaService.verActivosOrdenadoPorCantidadDescendente(idSucursal), "No hay máquinas registradas en esta sucursal.");
                                     break;
                             }
                         } else {
@@ -967,14 +971,48 @@ public class MenuAdministrador {
         } while (opcion != 0);
     }
 
+    private void mostrarSucursalMaquinaCompleto(SucursalMaquina sm) {
+        String nombreMaquina = "Desconocida";
+        String direccionSucursal = "Sin dirección";
+
+        try {
+            Maquina maquina = maquinaService.buscarPorId(sm.getIdMaquina());
+            if (maquina != null && maquina.getNombre() != null) {
+                nombreMaquina = maquina.getNombre();
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            Sucursal sucursal = sucursalService.buscarPorId(sm.getIdSucursal());
+            if (sucursal != null) {
+                String calle = sucursal.getCalle() != null ? sucursal.getCalle() : "-";
+                direccionSucursal = calle + " " + sucursal.getAltura();
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println(sm.toString() + " Maquina: " + nombreMaquina + " - Sucursal ubicada en: " + direccionSucursal + ")");
+    }
+
+    private void mostrarListaSucursalMaquinasCompleto(List<SucursalMaquina> lista, String mensajeVacia) {
+        if (lista == null || lista.isEmpty()) {
+            System.out.println(mensajeVacia);
+        } else {
+            for (SucursalMaquina sm : lista) {
+                mostrarSucursalMaquinaCompleto(sm);
+            }
+        }
+    }
     // GASTOS =================================================================================
 
     private void menuGastos() {
-
         int opcion;
 
         do {
-            Consola.titulo("GASTOS");
+            Consola.titulo(armarTituloConNombreGimnasio("GASTOS"));
             System.out.println("1 - Ver gastos");
             System.out.println("2 - Registrar gasto");
             System.out.println("3 - Total del mes");
@@ -1078,7 +1116,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("VER GASTOS");
+            Consola.titulo(armarTituloConNombreGimnasio("VER GASTOS"));
             System.out.println("1 - Ver gastos historicos");
             System.out.println("2 - Ver gastos anuales");
             System.out.println("3 - Ver gastos mensuales");
@@ -1105,7 +1143,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("VER GASTOS HISTORICOS");
+            Consola.titulo(armarTituloConNombreGimnasio("VER GASTOS HISTORICOS"));
             System.out.println("1 - Ver por monto ascendente");
             System.out.println("2 - Ver por monto descendente");
             System.out.println("3 - Ver por fecha ascendente");
@@ -1151,7 +1189,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("VER GASTOS ANUALES");
+            Consola.titulo(armarTituloConNombreGimnasio("VER GASTOS ANUALES"));
             System.out.println("1 - Ver por monto ascendente");
             System.out.println("2 - Ver por monto descendente");
             System.out.println("3 - Ver por fecha ascendente");
@@ -1202,7 +1240,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("VER GASTOS MENSUALES");
+            Consola.titulo(armarTituloConNombreGimnasio("VER GASTOS MENSUALES"));
             System.out.println("1 - Ver por monto ascendente");
             System.out.println("2 - Ver por monto descendente");
             System.out.println("3 - Ver por fecha ascendente");
@@ -1256,7 +1294,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("CALCULAR TOTAL");
+            Consola.titulo(armarTituloConNombreGimnasio("CALCULAR TOTAL"));
             System.out.println("1 - Total historico");
             System.out.println("2 - Total anual");
             System.out.println("3 - Total mensual");
@@ -1302,7 +1340,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("CALCULAR TOTAL POR TIPO");
+            Consola.titulo(armarTituloConNombreGimnasio("CALCULAR TOTAL POR TIPO"));
             System.out.println("1 - Total historico");
             System.out.println("2 - Total anual");
             System.out.println("3 - Total mensual");
@@ -1377,7 +1415,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE GASTOS");
+            Consola.titulo(armarTituloConNombreGimnasio("BUSQUEDA DE GASTOS"));
             System.out.println("1 - Gastos historicos");
             System.out.println("2 - Gastos anuales");
             System.out.println("3 - Gastos mensuales");
@@ -1413,7 +1451,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE GASTOS HISTORICOS");
+            Consola.titulo(armarTituloConNombreGimnasio("BUSQUEDA DE GASTOS HISTORICOS"));
             System.out.println("1 - Busqueda general");
             System.out.println("2 - Busqueda por tipo");
             System.out.println("3 - Busqueda por monto menor a");
@@ -1467,7 +1505,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE GASTOS ANUALES");
+            Consola.titulo(armarTituloConNombreGimnasio("BUSQUEDA DE GASTOS ANUALES"));
             System.out.println("1 - Busqueda general");
             System.out.println("2 - Busqueda por tipo");
             System.out.println("3 - Busqueda por monto menor a");
@@ -1525,7 +1563,7 @@ public class MenuAdministrador {
         int opcion;
 
         do {
-            Consola.titulo("BUSQUEDA DE GASTOS MENSUALES");
+            Consola.titulo(armarTituloConNombreGimnasio("BUSQUEDA DE GASTOS MENSUALES"));
             System.out.println("1 - Busqueda general");
             System.out.println("2 - Busqueda por tipo");
             System.out.println("3 - Busqueda por monto menor a");
@@ -1598,7 +1636,7 @@ public class MenuAdministrador {
 
         int opcion;
         do {
-            Consola.titulo("MODIFICAR GASTO #" + id);
+            Consola.titulo(armarTituloConNombreGimnasio("MODIFICAR GASTO"));
             System.out.println("1 - Detalles");
             System.out.println("2 - Monto");
             System.out.println("3 - Tipo de gasto");
@@ -1766,5 +1804,17 @@ public class MenuAdministrador {
 
         System.out.println("Esa no es una sucursal activa de tu gimnasio");
         return null;
+    }
+
+    private String armarTituloConNombreGimnasio(String titulo) {
+        try {
+            Gimnasio gimnasio = gimnasioService.buscarPorId(admin.getIdGimnasio());
+            if (gimnasio != null && gimnasio.getNombre() != null) {
+                return titulo + " - " + gimnasio.getNombre().toUpperCase();
+            }
+        } catch (ValorNoValidoException e) {
+            System.err.println(e.getMessage());
+        }
+        return titulo;
     }
 }

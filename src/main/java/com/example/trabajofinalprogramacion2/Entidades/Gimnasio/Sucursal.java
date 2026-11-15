@@ -114,12 +114,10 @@ public class Sucursal extends Gimnasio {
 
     @Override
     public String toString() {
-        return super.toString() + " Sucursal{" +
-                "calle='" + (calle != null ? calle : "-") + '\'' +
-                ", altura=" + altura +
-                ", ciudad='" + (ciudad != null ? ciudad : "-") + '\'' +
-                ", idGimnasio=" + idGimnasio +
-                '}';
+        return "#" + getId() + " | Direccion: " + (calle != null ? calle : "-") + " " + altura
+                + " | Ciudad: " + (ciudad != null ? ciudad : "-")
+                + " | " + (getEstado() == 1 ? "Activo" : "Inactivo")
+                + " | ID Gimnasio: " + idGimnasio;
     }
 
     // METODOS

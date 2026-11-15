@@ -159,14 +159,11 @@ public class Gasto {
 
     @Override
     public String toString() {
-        return "Gasto{" +
-                "id=" + id +
-                ", detalles='" + (detalles != null ? detalles : "-") + '\'' +
-                ", monto=" + monto +
-                ", tipoGasto=" + tipoGasto +
-                ", fecha=" + fecha +
-                ", idGimnasio=" + idGimnasio +
-                ", estado=" + estado +
-                '}';
+        return "#" + id + " | Tipo: " + (tipoGasto != null ? tipoGasto : "-")
+                + " | Detalles: " + (detalles != null ? detalles : "-")
+                + " | Monto: $" + monto
+                + " | Fecha: " + (fecha != null ? fecha : "-")
+                + " | " + (estado == 1 ? "Activo" : "Inactivo")
+                + " | ID Gimnasio: " + idGimnasio;
     }
 }

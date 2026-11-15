@@ -146,13 +146,10 @@ public class Maquina {
 
     @Override
     public String toString() {
-        return "Maquina{" +
-                "id=" + id +
-                ", nombre='" + (nombre != null ? nombre : "-") + '\'' +
-                ", descripcion='" + (descripcion != null ? descripcion : "-") + '\'' +
-                ", pesoLimite=" + pesoLimite +
-                ", grupoMuscular='" + (grupoMuscular != null ? grupoMuscular : "-") + '\'' +
-                ", estado=" + estado +
-                '}';
+        return "#" + id + " | Nombre: " + (nombre != null ? nombre : "-")
+                + " | Grupo Muscular: " + (grupoMuscular != null ? grupoMuscular : "-")
+                + " | Peso Límite: " + pesoLimite + " kg"
+                + " | Descripción: " + (descripcion != null ? descripcion : "-")
+                + " | " + (estado == 1 ? "Activo" : "Inactivo");
     }
 }

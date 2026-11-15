@@ -10,10 +10,7 @@ import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Nutricionista;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Socio;
 import com.example.trabajofinalprogramacion2.Entidades.Usuarios.Usuarios;
 import com.example.trabajofinalprogramacion2.Excepciones.ValorNoValidoException;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.GastoService;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.GimnasioService;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalMaquinaService;
-import com.example.trabajofinalprogramacion2.Service.Gimnasio.SucursalService;
+import com.example.trabajofinalprogramacion2.Service.Gimnasio.*;
 import com.example.trabajofinalprogramacion2.Service.TurnosService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.AdministradorService;
 import com.example.trabajofinalprogramacion2.Service.Usuarios.EntrenadorService;
@@ -38,6 +35,7 @@ public class MenuPrincipal {
     private final SucursalService sucursalService;
     private final SucursalMaquinaService sucursalMaquinaService;
     private final GastoService gastoService;
+    private final MaquinaService maquinaService;
 
     public MenuPrincipal() {
         administradorService = new AdministradorService();
@@ -55,6 +53,7 @@ public class MenuPrincipal {
             gimnasioService = new GimnasioService();
             sucursalService = new SucursalService();
             sucursalMaquinaService = new SucursalMaquinaService();
+            maquinaService = new MaquinaService();
         } catch (SQLException e) {
             throw new RuntimeException("No se pudieron cargar gimnasios/sucursales de la BD: " + e.getMessage());
         }
@@ -111,7 +110,7 @@ public class MenuPrincipal {
             new MenuAdministradorSistema(admin, administradorService, gimnasioService, sucursalService).mostrar();
         } else {
             new MenuAdministrador(admin, administradorService, entrenadorService, nutricionistaService,
-                    turnosService, socioService, sucursalService, sucursalMaquinaService, gastoService).mostrar();
+                    turnosService, socioService, sucursalService, sucursalMaquinaService, gastoService, gimnasioService, maquinaService).mostrar();
         }
     }
 

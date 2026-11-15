@@ -184,6 +184,14 @@ public class MaquinaService {
     }
 
     //BUSQUEDA
+    public Maquina buscarPorId(int id) throws ValorNoValidoException {
+        if (id <= 0) {
+            throw new ValorNoValidoException("El ID de la máquina no es válido");
+        }
+
+        return coleccion.buscar(id);
+    }
+
     public Maquina buscarPorNombre(String nombre){
         if(nombre==null){
             throw new ValorNoValidoException("El nombre a buscar no puede ser nulo");
