@@ -79,7 +79,7 @@ public class MenuAdministradorSistema {
             System.out.println("8 - Maquinas");
             System.out.println("0 - Volver");
 
-            opcion = Consola.leerOpcion(0, 7);
+            opcion = Consola.leerOpcion(0, 8);
 
             switch (opcion) {
                 case 1:
