@@ -149,8 +149,10 @@ public class MenuAdministradorSistema {
                     break;
                 case 7:
                     menuSucursales();
+                    break;
                 case 8:
                     menuMaquinas();
+                    break;
             }
 
         } while (opcion != 0);
